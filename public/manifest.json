@@ -1,0 +1,21 @@
+{
+  "name": "EDER - Araç Değerleme Platformu",
+  "short_name": "EDER",
+  "description": "Türkiye'nin en güvenilir araç değerleme platformu",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff7a18",
+  "icons": [
+    {
+      "src": "/eder-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/eder-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

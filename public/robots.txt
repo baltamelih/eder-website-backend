@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://eder-web.vercel.app/sitemap.xml
