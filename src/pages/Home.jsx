@@ -450,7 +450,7 @@ export default function Home() {
       <FreeOnly>
         <div className="ad-section">
           <div className="container">
-            <AdSlot slot="SLOT_HOME_BOTTOM" style={{ minHeight: 250 }} />
+            <AdSlot enabled slot="SLOT_HOME_BOTTOM" style={{ minHeight: 250 }} />
           </div>
         </div>
       </FreeOnly>

@@ -123,8 +123,8 @@ export default function FooterBar() {
               <h3 className="fb-nav-title">Ürün</h3>
               <div className="fb-nav-links">
                 <FooterLink to="/pricing" icon={Crown}>Premium</FooterLink>
-                <FooterLink to="/valuation">Değerleme</FooterLink>
-                <FooterLink to="/dashboard">Dashboard</FooterLink>
+                <FooterLink to="/app/valuation">Değerleme</FooterLink>
+                <FooterLink to="/app/dashboard">Dashboard</FooterLink>
               </div>
             </div>
 

@@ -8,7 +8,7 @@ export default function GlobalAdBar() {
     <FreeOnly>
       <div style={{ marginTop: 16 }}>
         <Card style={{ borderRadius: 16 }} bodyStyle={{ padding: 12 }}>
-          <AdSlot enabled slot= {SLOT_GLOBAL} style={{ minHeight: 120 }} />
+          <AdSlot enabled slot={SLOT_GLOBAL} style={{ minHeight: 120 }} />
         </Card>
       </div>
     </FreeOnly>

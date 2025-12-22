@@ -5,11 +5,14 @@ const ADS_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT;
 
 export default function AdSlot({ enabled, slot, style }) {
   const { adsDisabled } = useAuth();
-  const pushedRef = useRef(false);
-  const loc = useLocation();
+  
+  console.log('AdSlot Debug:', { enabled, slot, adsDisabled, ADS_CLIENT });
   
   if (adsDisabled) return null;
 
+  const pushedRef = useRef(false);
+  const loc = useLocation();
+  
   useEffect(() => {
     pushedRef.current = false; // route değişince yeniden dene
   }, [loc.pathname]);
