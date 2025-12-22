@@ -1,0 +1,46 @@
+:root{
+  /* 1120 çok dar. 1280–1360 aralığı premium web için daha iyi */
+  --container: 1320px;
+
+  /* Yan boşluklar (desktop) */
+  --gutter: 28px;
+
+  /* mobilde yan boşluk */
+  --gutter-sm: 16px;
+
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: rgba(15, 23, 42, .62);
+  --border: rgba(15, 23, 42, .10);
+
+  --accent: #ff7a18;
+  --shadow: 0 14px 30px rgba(15, 23, 42, .08);
+}
+
+/* Sayfanın her yerde aynı arkaplanı */
+html, body{
+  background: var(--bg);
+}
+
+.container{
+  width: min(var(--container), calc(100% - (var(--gutter) * 2)));
+  margin: 0 auto;
+}
+
+@media (max-width: 640px){
+  .container{
+    width: calc(100% - (var(--gutter-sm) * 2));
+  }
+}
+
+/* Tam genişlik bant (full-bleed) */
+.fullBleed{
+  width: 100%;
+}
+
+.band{
+  background: linear-gradient(180deg, rgba(255,122,24,.06), transparent 65%), var(--bg);
+  border-top: 1px solid rgba(15,23,42,.06);
+  border-bottom: 1px solid rgba(15,23,42,.06);
+}
