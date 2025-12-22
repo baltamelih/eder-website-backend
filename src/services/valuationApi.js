@@ -1,20 +1,17 @@
 // src/services/valuationApi.js
-const API = (import.meta.env.VITE_API_BASE || "").trim()
-  .replace(/\/+$/, "") // sondaki / temizle
-  .replace(/^https?:\/\/https?:\/\//, "https://"); // double protocol fix (senin api.js ile aynı)
+let API = (import.meta.env.VITE_API_BASE || "").trim();
+
+// API URL temizleme (api.js ile aynı mantık)
+API = API.replace(/\/+$/, "");
+API = API.replace(/^https?:\/\/https?:\/\//, "https://");
 
 async function httpGet(path, params = {}) {
-  // path: "/api/brands" gibi
   const url = new URL(`${API}${path}`);
-
   Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && String(v).length > 0) {
-      url.searchParams.set(k, v);
-    }
+    if (v !== undefined && v !== null && String(v).length > 0) url.searchParams.set(k, v);
   });
 
   const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
-
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`GET ${path} failed (${res.status}): ${text}`);
