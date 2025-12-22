@@ -18,7 +18,7 @@ import {
 import { useAuth } from "../services/AuthContext";
 import FreeOnly from "../components/FreeOnly";
 import AdSlot from "../components/AdSlot";
-import "./home.css";
+import "./Home.css";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
