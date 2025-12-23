@@ -5,7 +5,7 @@ import matter from "gray-matter";
 
 // Vite: markdown dosyalarını raw string olarak al
 const mdModules = import.meta.glob("../blog/posts/*.md", { as: "raw", eager: true });
-console.log("BLOG MODULES", Object.keys(mdModules));
+
 
 function safeDate(d) {
   const t = Date.parse(d);
