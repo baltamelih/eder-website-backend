@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import matter from "gray-matter";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Helmet } from "react-helmet-async";
+
 
 // (Opsiyonel) AdSense slotları:
 // Eğer AdSlot component’in varsa import et. Yoksa aşağıdaki satırı yorumlu bırak.
@@ -93,10 +93,10 @@ export default function BlogPost() {
   if (!post) {
     return (
       <div style={{ padding: "28px 0" }}>
-        <Helmet>
+        
           <title>Yazı Bulunamadı | EDER Blog</title>
           <meta name="robots" content="noindex" />
-        </Helmet>
+        
 
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px" }}>
           <h1 style={{ margin: 0, fontSize: 30 }}>Yazı bulunamadı</h1>
@@ -113,7 +113,7 @@ export default function BlogPost() {
 
   return (
     <div style={{ padding: "28px 0" }}>
-      <Helmet>
+      
         <title>{post.title} | EDER Blog</title>
         {post.description ? <meta name="description" content={post.description} /> : null}
         <link rel="canonical" href={canonical} />
@@ -146,7 +146,7 @@ export default function BlogPost() {
             },
           })}
         </script>
-      </Helmet>
+      
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px" }}>
         <div style={{ marginBottom: 14 }}>

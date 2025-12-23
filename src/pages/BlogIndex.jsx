@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import matter from "gray-matter";
-import { Helmet } from "react-helmet-async";
+
 
 // Vite: markdown dosyalarını raw string olarak al
 const mdModules = import.meta.glob("../blog/posts/*.md", { as: "raw", eager: true });
@@ -92,7 +92,7 @@ export default function BlogIndex() {
 
   return (
     <div style={{ padding: "28px 0" }}>
-      <Helmet>
+      
         <title>EDER Blog | Araç Değerleme ve Piyasa Analizi</title>
         <meta
           name="description"
@@ -103,7 +103,7 @@ export default function BlogIndex() {
         <meta property="og:title" content="EDER Blog" />
         <meta property="og:description" content="Araç değerleme ve piyasa analizi içerikleri." />
         <meta property="og:url" content={canonical} />
-      </Helmet>
+      
 
       <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 16px" }}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
