@@ -25,6 +25,10 @@ import Dashboard from "../pages/Dashboard";
 import Valuation from "../pages/Valuation";
 import Account from "../pages/Account";
 import Settings from "../pages/Settings";
+import BlogIndex from "../pages/BlogIndex";
+import BlogPost from "../pages/BlogPost";
+
+
 
 export const router = createBrowserRouter([
   // 🌍 PUBLIC (login olmuş kullanıcı: /login /register’a giremez)
@@ -38,9 +42,10 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Home /> },
-      { path: "v", element: <PublicValuation /> },
+      { path: "/blog", element: <BlogIndex /> },
+    { path: "/blog/:slug", element: <BlogPost /> },
       { path: "pricing", element: <Pricing /> },
-
+      
       // ✅ Login/Register sadece "PublicRoute" ile sarılı
       {
         path: "login",
