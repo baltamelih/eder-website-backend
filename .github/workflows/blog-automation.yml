@@ -52,6 +52,7 @@ jobs:
 
       - name: Install Node deps (for sanity sync)
         run: |
+          cd eder
           npm ci
 
       - name: Sync MD posts to Sanity (upsert by slug)
