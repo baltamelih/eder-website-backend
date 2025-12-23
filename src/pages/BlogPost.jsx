@@ -15,11 +15,16 @@ function safeDate(d) {
 function formatDateTR(dateStr) {
   const d = safeDate(dateStr);
   if (!d) return "";
-  return new Intl.DateTimeFormat("tr-TR", { year: "numeric", month: "long", day: "2-digit" }).format(d);
+  return new Intl.DateTimeFormat("tr-TR", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  }).format(d);
 }
 
 export default function BlogPost() {
   const { slug } = useParams();
+
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,43 +36,60 @@ export default function BlogPost() {
 
   useEffect(() => {
     let alive = true;
-    setLoading(true);
 
-    const q = `*[_type=="post" && slug.current==$slug][0]{
-      title,
-      description,
-      canonical,
-      publishedAt,
-      tags,
-      "slug": slug.current,
-      markdown,
-      mainImage{asset->{url}}
-    }`;
+    async function run() {
+      try {
+        setLoading(true);
 
-    sanity.fetch(q)
-        .then((rows) => {
-            console.log("SANITY POSTS:", rows);
-            setPosts(Array.isArray(rows) ? rows : []);
-        })
-        .catch((e) => {
-            console.error("SANITY ERROR:", e);
-            setPosts([]);
-        })
-        .finally(() => setLoading(false));
+        if (!slug) {
+          if (!alive) return;
+          setPost(null);
+          return;
+        }
 
+        const q = `*[_type=="post" && slug.current==$slug][0]{
+          title,
+          description,
+          canonical,
+          publishedAt,
+          tags,
+          "slug": slug.current,
+          markdown,
+          mainImage{asset->{url}}
+        }`;
+
+        const doc = await sanity.fetch(q, { slug });
+
+        if (!alive) return;
+        setPost(doc || null);
+      } catch (e) {
+        console.error("SANITY ERROR:", e);
+        if (!alive) return;
+        setPost(null);
+      } finally {
+        if (!alive) return;
+        setLoading(false);
+      }
+    }
+
+    run();
 
     return () => {
       alive = false;
     };
   }, [slug]);
 
-  const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://ederapp.com";
-  const canonical = post?.canonical?.length ? post.canonical : `${siteUrl}/blog/${slug || ""}`;
+  const siteUrl =
+    typeof window !== "undefined" ? window.location.origin : "https://ederapp.com";
+  const canonical = post?.canonical?.length
+    ? post.canonical
+    : `${siteUrl}/blog/${slug || ""}`;
 
   // markdown alanına raw md basmış olabilirsin (frontmatter dahil). Onu ayıkla:
   const { fm, mdBody } = useMemo(() => {
     const raw = post?.markdown || "";
     if (!raw) return { fm: {}, mdBody: "" };
+
     try {
       const parsed = matter(raw);
       return { fm: parsed.data || {}, mdBody: parsed.content || "" };
@@ -77,15 +99,29 @@ export default function BlogPost() {
   }, [post?.markdown]);
 
   const title = post?.title || "Yazı";
-  const description = (post?.description || fm?.description || "").toString().trim();
+  const description = (post?.description || fm?.description || "")
+    .toString()
+    .trim();
   const datePublished = post?.publishedAt || fm?.date || "";
-  const tags = Array.isArray(post?.tags) ? post.tags : Array.isArray(fm?.tags) ? fm.tags : [];
-  const ogImage = post?.mainImage?.asset?.url || (fm?.image ? String(fm.image) : "");
+  const tags = Array.isArray(post?.tags)
+    ? post.tags
+    : Array.isArray(fm?.tags)
+    ? fm.tags
+    : [];
+  const ogImage =
+    post?.mainImage?.asset?.url || (fm?.image ? String(fm.image) : "");
 
   if (loading) {
     return (
       <div style={{ padding: "28px 0" }}>
-        <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px", color: "rgba(0,0,0,0.7)" }}>
+        <div
+          style={{
+            maxWidth: 860,
+            margin: "0 auto",
+            padding: "0 16px",
+            color: "rgba(0,0,0,0.7)",
+          }}
+        >
           Yükleniyor…
         </div>
       </div>
@@ -95,17 +131,15 @@ export default function BlogPost() {
   if (!post) {
     return (
       <div style={{ padding: "28px 0" }}>
-        
-          <title>Yazı Bulunamadı | EDER Blog</title>
-          <meta name="robots" content="noindex" />
-        
-
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px" }}>
           <h1 style={{ margin: 0, fontSize: 30 }}>Yazı bulunamadı</h1>
           <p style={{ color: "rgba(0,0,0,0.7)", lineHeight: 1.65 }}>
             Bu sayfa kaldırılmış olabilir ya da bağlantı hatalı olabilir.
           </p>
-          <Link to="/blog" style={{ color: "#FF7A18", fontWeight: 700, textDecoration: "none" }}>
+          <Link
+            to="/blog"
+            style={{ color: "#FF7A18", fontWeight: 700, textDecoration: "none" }}
+          >
             ← Blog’a geri dön
           </Link>
         </div>
@@ -115,45 +149,26 @@ export default function BlogPost() {
 
   return (
     <div style={{ padding: "28px 0" }}>
-      
-        <title>{title} | EDER Blog</title>
-        {description ? <meta name="description" content={description} /> : null}
-        <link rel="canonical" href={canonical} />
-
-        <meta property="og:type" content="article" />
-        <meta property="og:title" content={title} />
-        {description ? <meta property="og:description" content={description} /> : null}
-        <meta property="og:url" content={canonical} />
-        {ogImage ? <meta property="og:image" content={ogImage} /> : null}
-
-        <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
-        <meta name="twitter:title" content={title} />
-        {description ? <meta name="twitter:description" content={description} /> : null}
-        {ogImage ? <meta name="twitter:image" content={ogImage} /> : null}
-
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: title,
-            description: description || undefined,
-            datePublished: datePublished || undefined,
-            mainEntityOfPage: canonical,
-            url: canonical,
-            publisher: { "@type": "Organization", name: "EDER", url: siteUrl },
-          })}
-        </script>
-      
-
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px" }}>
         <div style={{ marginBottom: 14 }}>
-          <Link to="/blog" style={{ color: "#FF7A18", fontWeight: 800, textDecoration: "none" }}>
+          <Link
+            to="/blog"
+            style={{ color: "#FF7A18", fontWeight: 800, textDecoration: "none" }}
+          >
             ← Blog
           </Link>
         </div>
 
         <header style={{ marginBottom: 14 }}>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", color: "rgba(0,0,0,0.55)" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              flexWrap: "wrap",
+              alignItems: "center",
+              color: "rgba(0,0,0,0.55)",
+            }}
+          >
             {datePublished ? <span>{formatDateTR(datePublished)}</span> : null}
             {tags?.length ? (
               <>
@@ -179,10 +194,26 @@ export default function BlogPost() {
             ) : null}
           </div>
 
-          <h1 style={{ margin: "10px 0 0", fontSize: 36, letterSpacing: -0.6, lineHeight: 1.15 }}>{title}</h1>
+          <h1
+            style={{
+              margin: "10px 0 0",
+              fontSize: 36,
+              letterSpacing: -0.6,
+              lineHeight: 1.15,
+            }}
+          >
+            {title}
+          </h1>
 
           {description ? (
-            <p style={{ margin: "10px 0 0", color: "rgba(0,0,0,0.72)", lineHeight: 1.7, fontSize: 16 }}>
+            <p
+              style={{
+                margin: "10px 0 0",
+                color: "rgba(0,0,0,0.72)",
+                lineHeight: 1.7,
+                fontSize: 16,
+              }}
+            >
               {description}
             </p>
           ) : null}
@@ -206,10 +237,38 @@ export default function BlogPost() {
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
-              h2: (props) => <h2 style={{ marginTop: 22, marginBottom: 10, fontSize: 22, letterSpacing: -0.2 }} {...props} />,
-              h3: (props) => <h3 style={{ marginTop: 18, marginBottom: 8, fontSize: 18 }} {...props} />,
-              p: (props) => <p style={{ margin: "10px 0", lineHeight: 1.75, color: "rgba(0,0,0,0.82)" }} {...props} />,
-              a: (props) => <a style={{ color: "#FF7A18", fontWeight: 700 }} target="_blank" rel="noreferrer" {...props} />,
+              h2: (props) => (
+                <h2
+                  style={{
+                    marginTop: 22,
+                    marginBottom: 10,
+                    fontSize: 22,
+                    letterSpacing: -0.2,
+                  }}
+                  {...props}
+                />
+              ),
+              h3: (props) => (
+                <h3 style={{ marginTop: 18, marginBottom: 8, fontSize: 18 }} {...props} />
+              ),
+              p: (props) => (
+                <p
+                  style={{
+                    margin: "10px 0",
+                    lineHeight: 1.75,
+                    color: "rgba(0,0,0,0.82)",
+                  }}
+                  {...props}
+                />
+              ),
+              a: (props) => (
+                <a
+                  style={{ color: "#FF7A18", fontWeight: 700 }}
+                  target="_blank"
+                  rel="noreferrer"
+                  {...props}
+                />
+              ),
               li: (props) => <li style={{ margin: "6px 0", lineHeight: 1.7 }} {...props} />,
               blockquote: (props) => (
                 <blockquote
@@ -230,7 +289,8 @@ export default function BlogPost() {
                       padding: "2px 6px",
                       borderRadius: 8,
                       background: "rgba(0,0,0,0.06)",
-                      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                      fontFamily:
+                        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
                       fontSize: 13,
                     }}
                     {...props}
@@ -269,14 +329,31 @@ export default function BlogPost() {
           </div>
         ) : null}
 
-        <div style={{ marginTop: 18, display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-          <Link to="/blog" style={{ color: "#FF7A18", fontWeight: 800, textDecoration: "none" }}>
+        <div
+          style={{
+            marginTop: 18,
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <Link
+            to="/blog"
+            style={{ color: "#FF7A18", fontWeight: 800, textDecoration: "none" }}
+          >
             ← Tüm yazılar
           </Link>
-          <Link to="/valuation" style={{ color: "#111", fontWeight: 800, textDecoration: "none" }}>
+          <Link
+            to="/valuation"
+            style={{ color: "#111", fontWeight: 800, textDecoration: "none" }}
+          >
             Araç değerle →
           </Link>
         </div>
+
+        {/* Debug (istersen sonra kaldır) */}
+        {/* <pre style={{ marginTop: 18, fontSize: 12, opacity: 0.7 }}>{canonical} | {ogImage}</pre> */}
       </div>
     </div>
   );
