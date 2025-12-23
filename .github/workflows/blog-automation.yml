@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name "eder-bot"
           git config user.email "bot@ederapp.com"
-          git add src/blog/posts
+          git add src/blog/posts content_pipeline/generated.json
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "chore(blog): add automated posts"
           git push
