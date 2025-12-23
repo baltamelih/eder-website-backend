@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "/blog", element: <BlogIndex /> },
-    { path: "/blog/:slug", element: <BlogPost /> },
+      { path: "/blog/:slug", element: <BlogPost /> },
       { path: "pricing", element: <Pricing /> },
       
       // ✅ Login/Register sadece "PublicRoute" ile sarılı
