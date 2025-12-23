@@ -1,11 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import matter from "gray-matter";
 
-
-// Vite: markdown dosyalarını raw string olarak al
-const mdModules = import.meta.glob("../blog/posts/*.md", { as: "raw", eager: true });
-
+import { sanity } from "../lib/sanity";
 
 function safeDate(d) {
   const t = Date.parse(d);
@@ -15,81 +11,60 @@ function safeDate(d) {
 function formatDateTR(dateStr) {
   const d = safeDate(dateStr);
   if (!d) return "";
-  return new Intl.DateTimeFormat("tr-TR", { year: "numeric", month: "long", day: "2-digit" }).format(d);
+  return new Intl.DateTimeFormat("tr-TR", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  }).format(d);
 }
 
-function makeExcerpt(content, maxLen = 160) {
-  const text = content
-    .replace(/```[\s\S]*?```/g, "")
-    .replace(/`[^`]*`/g, "")
-    .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
-    .replace(/\[[^\]]*\]\([^)]+\)/g, "")
-    .replace(/[#>*_~\-]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (text.length <= maxLen) return text;
-  return text.slice(0, maxLen).trimEnd() + "…";
-}
-
-function normalizeSlug(slug, fallbackTitle) {
-  const base = (slug || fallbackTitle || "post").toString().trim().toLowerCase();
-  return base
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function readAllPosts() {
-  const entries = Object.entries(mdModules);
-
-  return entries
-    .map(([path, raw]) => {
-      const { data, content } = matter(raw);
-
-      const title = data?.title?.toString() || "Untitled";
-      const slug = normalizeSlug(data?.slug, title);
-
-      // date yoksa dosya isminden yakalamaya çalış
-      let date = data?.date?.toString();
-      if (!date) {
-        const m = path.match(/(\d{4}-\d{2}-\d{2})/);
-        if (m) date = m[1];
-      }
-
-      const description = (data?.description?.toString() || "").trim();
-      const tags = Array.isArray(data?.tags) ? data.tags.map(String) : [];
-
-      return {
-        title,
-        slug,
-        date: date || "",
-        description,
-        excerpt: description || makeExcerpt(content, 180),
-        tags,
-        // İstersen kapak görseli eklemek için frontmatter'a image koyabilirsin:
-        image: data?.image ? String(data.image) : "",
-      };
-    })
-    .sort((a, b) => {
-      const da = safeDate(a.date)?.getTime() ?? 0;
-      const db = safeDate(b.date)?.getTime() ?? 0;
-      return db - da;
-    });
+function makeExcerpt(text, maxLen = 160) {
+  const t = (text || "").replace(/\s+/g, " ").trim();
+  if (t.length <= maxLen) return t;
+  return t.slice(0, maxLen).trimEnd() + "…";
 }
 
 export default function BlogIndex() {
-  const posts = useMemo(() => readAllPosts(), []);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+
+    const q = `*[_type=="post"] | order(publishedAt desc){
+      title,
+      description,
+      "slug": slug.current,
+      publishedAt,
+      tags
+    }`;
+
+    sanity
+      .fetch(q)
+      .then((rows) => {
+        if (!alive) return;
+        setPosts(Array.isArray(rows) ? rows : []);
+      })
+      .catch((e) => console.error("Sanity fetch error:", e))
+      .finally(() => alive && setLoading(false));
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://ederapp.com";
   const canonical = `${siteUrl}/blog`;
+
+  const viewPosts = useMemo(() => {
+    return posts.map((p) => ({
+      title: p?.title || "Untitled",
+      slug: p?.slug || "",
+      date: p?.publishedAt || "",
+      tags: Array.isArray(p?.tags) ? p.tags : [],
+      excerpt: p?.description?.trim() ? makeExcerpt(p.description.trim(), 180) : "",
+    }));
+  }, [posts]);
 
   return (
     <div style={{ padding: "28px 0" }}>
@@ -107,13 +82,31 @@ export default function BlogIndex() {
       
 
       <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 16px" }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
           <h1 style={{ margin: 0, fontSize: 34, letterSpacing: -0.4 }}>Blog</h1>
           <div style={{ color: "rgba(0,0,0,0.55)" }}>Araç değerleme ve piyasa analizi</div>
         </div>
 
         <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 16 }}>
-          {posts.map((p) => (
+          {loading ? (
+            <div style={{ gridColumn: "span 12", color: "rgba(0,0,0,0.6)" }}>Yükleniyor…</div>
+          ) : null}
+
+          {!loading && viewPosts.length === 0 ? (
+            <div style={{ gridColumn: "span 12", color: "rgba(0,0,0,0.6)" }}>
+              Henüz blog yazısı yok.
+            </div>
+          ) : null}
+
+          {viewPosts.map((p) => (
             <article
               key={p.slug}
               style={{
@@ -126,7 +119,10 @@ export default function BlogIndex() {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-                <div style={{ fontSize: 13, color: "rgba(0,0,0,0.55)" }}>{p.date ? formatDateTR(p.date) : ""}</div>
+                <div style={{ fontSize: 13, color: "rgba(0,0,0,0.55)" }}>
+                  {p.date ? formatDateTR(p.date) : ""}
+                </div>
+
                 {p.tags?.length ? (
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {p.tags.slice(0, 4).map((t) => (
@@ -154,9 +150,9 @@ export default function BlogIndex() {
                 </Link>
               </h2>
 
-              <p style={{ margin: 0, color: "rgba(0,0,0,0.70)", lineHeight: 1.65 }}>
-                {p.excerpt}
-              </p>
+              {p.excerpt ? (
+                <p style={{ margin: 0, color: "rgba(0,0,0,0.70)", lineHeight: 1.65 }}>{p.excerpt}</p>
+              ) : null}
 
               <div style={{ marginTop: 12 }}>
                 <Link
