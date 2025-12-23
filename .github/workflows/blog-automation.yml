@@ -5,7 +5,6 @@ on:
     - cron: "0 6 * * *"   # 09:00 TR (UTC+3)
   workflow_dispatch:
 
-# Artık repo'ya yazmayacağımız için contents:write gerekmiyor
 permissions:
   contents: read
 
@@ -20,17 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- PYTHON: generate_posts.py çalıştır ---
+      # -------------------------
+      # 1) PYTHON: MD yazı üret
+      # -------------------------
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Debug repo files
-        run: |
-          pwd
-          ls -la
-          ls -la content_pipeline || true
-          ls -la src/blog/posts || true
 
       - name: Install Python deps
         run: |
@@ -45,33 +39,29 @@ jobs:
         run: |
           python content_pipeline/generate_posts.py
 
-      # --- NODE: Sanity'ye upsert et ---
+      - name: Debug generated md files
+        run: |
+          ls -la src/blog/posts || true
+          find src/blog/posts -maxdepth 1 -type f -name "*.md" -print | head -n 20
+
+      # -------------------------
+      # 2) NODE: Sanity'ye upsert
+      # (eder-web içinde package.json var)
+      # -------------------------
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Node deps (for sanity sync)
+      - name: Install Node deps (eder-web)
+        working-directory: eder-web
         run: |
-          cd eder
           npm ci
 
-      - name: Sync MD posts to Sanity (upsert by slug)
+      - name: Sync MD posts to Sanity
+        working-directory: eder-web
         env:
           SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
         run: |
-          node scripts/sync_md_to_sanity.js
-
-      # --- Opsiyonel: Repo'ya commit/push yapmak istersen aç ---
-      # Bu adımı KAPALI bırakmanı öneririm (deploy/DNS sorununu tetikler)
-      #
-      # - name: Commit & Push (OPTIONAL - NOT RECOMMENDED)
-      #   if: false
-      #   run: |
-      #     git config user.name "eder-bot"
-      #     git config user.email "bot@ederapp.com"
-      #     git add src/blog/posts content_pipeline/generated.json
-      #     git diff --cached --quiet && echo "No changes" && exit 0
-      #     git commit -m "chore(blog): add automated posts"
-      #     git push
+          node src/lib/sync_md_to_sanity.js
