@@ -18,6 +18,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Debug repo files
+        run: |
+          pwd
+          ls -la
+          ls -la content_pipeline || true
+          find . -maxdepth 3 -type f -name "requirements.txt"
 
       - name: Install deps
         run: |
