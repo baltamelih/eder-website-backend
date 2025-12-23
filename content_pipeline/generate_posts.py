@@ -16,7 +16,7 @@ Write helpful, original, non-spammy content. Avoid making absolute price claims.
 Include at least 4 H2 sections and a short FAQ section at the end (3 Q/A).
 Add a short disclaimer about prices changing.
 Include internal link suggestions in plain text (do not use markdown links), like:
-- /valuation
+- app/valuation
 - /pricing
 """
 
@@ -59,7 +59,7 @@ def fetch_rows():
     reader = csv.DictReader(io.StringIO(data))
     return list(reader)
 
-def pick_ready(rows, limit=2):
+def pick_ready(rows, limit=3):
     ready = [row for row in rows if (row.get("status","").strip().upper() == "READY")]
     return ready[:limit]
 
