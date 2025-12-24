@@ -19,9 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # -------------------------
+      - name: Debug repo structure
+        run: |
+          ls -la
+          find . -maxdepth 4 -name "package.json" -print
+          find . -maxdepth 6 -name "sync_md_to_sanity.js" -print
+
       # 1) PYTHON: MD yazı üret
-      # -------------------------
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -44,23 +48,17 @@ jobs:
           ls -la src/blog/posts || true
           find src/blog/posts -maxdepth 1 -type f -name "*.md" -print | head -n 20
 
-      # -------------------------
       # 2) NODE: Sanity'ye upsert
-      # (eder-web içinde package.json var)
-      # -------------------------
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Node deps (eder-web)
-        run: |
-          npm ci
+      - name: Install Node deps
+        run: npm ci
 
       - name: Sync MD posts to Sanity
-        working-directory: eder-web
         env:
           SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
-        run: |
-          node src/lib/sync_md_to_sanity.js
+        run: node src/lib/sync_md_to_sanity.js
