@@ -12,7 +12,7 @@ const client = createClient({
 });
 
 // MD’lerin olduğu klasör (senin örneğe göre)
-const POSTS_DIR = path.resolve(process.cwd(), "..", "src", "blog", "posts");
+const POSTS_DIR = path.resolve(process.cwd(), "src", "blog", "posts");
 
 
 function normalizeSlug(slug) {
