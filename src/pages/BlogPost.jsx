@@ -345,7 +345,7 @@ export default function BlogPost() {
             ← Tüm yazılar
           </Link>
           <Link
-            to="/valuation"
+            to="app/valuation"
             style={{ color: "#111", fontWeight: 800, textDecoration: "none" }}
           >
             Araç değerle →

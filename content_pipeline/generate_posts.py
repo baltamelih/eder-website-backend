@@ -65,11 +65,7 @@ def get_sheet_client():
     creds = Credentials.from_service_account_info(info, scopes=scopes)
     return gspread.authorize(creds)
 
-def mark_status_in_sheet(row_index: int, status: str = DONE_STATUS):
-    """
-    row_index: Sheet'teki gerçek satır numarası (1 header dahil).
-    status: Yazılacak durum (DONE, ERROR vb.)
-    """
+def mark_status_in_sheet_by_slug(slug_value: str, status="DONE"):
     if not SHEET_ID:
         raise RuntimeError("SHEET_ID missing")
 
@@ -78,11 +74,29 @@ def mark_status_in_sheet(row_index: int, status: str = DONE_STATUS):
     ws = sh.worksheet(SHEET_WORKSHEET)
 
     headers = ws.row_values(1)
+    if "slug" not in headers:
+        raise RuntimeError(f"'slug' column not found in sheet headers: {headers}")
     if STATUS_COL_NAME not in headers:
         raise RuntimeError(f"'{STATUS_COL_NAME}' column not found in sheet headers: {headers}")
 
-    status_col = headers.index(STATUS_COL_NAME) + 1  # 1-based index
-    ws.update_cell(row_index, status_col, status)
+    slug_col = headers.index("slug") + 1
+    status_col = headers.index(STATUS_COL_NAME) + 1
+
+    # tüm slug kolonunu al (2'den başlıyor)
+    slugs = ws.col_values(slug_col)
+
+    # slugs[0] header, data 1-based row index
+    target_row = None
+    for i in range(2, len(slugs) + 1):
+        if (slugs[i-1] or "").strip() == slug_value:
+            target_row = i
+            break
+
+    if not target_row:
+        raise RuntimeError(f"Slug not found in sheet: {slug_value}")
+
+    ws.update_cell(target_row, status_col, status)
+
 
 # ----------------------------
 # Local state (generated.json)
@@ -262,7 +276,7 @@ def main():
             # ✅ Sheet status -> DONE (post üretimi başarılıysa)
             row_index = row.get("_row")
             if row_index:
-                mark_status_in_sheet(int(row_index), DONE_STATUS)
+                mark_status_in_sheet_by_slug(int(row_index), DONE_STATUS)
                 print(f"Sheet updated: row {row_index} -> {DONE_STATUS}")
 
         except Exception as e:
@@ -270,8 +284,9 @@ def main():
             row_index = row.get("_row")
             if row_index:
                 try:
-                    mark_status_in_sheet(int(row_index), "ERROR")
-                    print(f"Sheet updated: row {row_index} -> ERROR")
+                    mark_status_in_sheet_by_slug(slug, "DONE")
+                    print(f"Sheet updated: {slug} -> DONE")
+
                 except Exception as e2:
                     print("Failed to update sheet status to ERROR:", e2)
 
