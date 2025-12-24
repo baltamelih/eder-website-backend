@@ -1,3 +1,5 @@
 openai
 requests
 python-slugify
+gspread
+google-auth
