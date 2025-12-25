@@ -284,8 +284,8 @@ def main():
             row_index = row.get("_row")
             if row_index:
                 try:
-                    mark_status_in_sheet_by_slug(slug, "DONE")
-                    print(f"Sheet updated: {slug} -> DONE")
+                    mark_status_in_sheet_by_slug(slug, "ERROR")
+                    print(f"Sheet updated: {slug} -> ERROR")
 
                 except Exception as e2:
                     print("Failed to update sheet status to ERROR:", e2)
