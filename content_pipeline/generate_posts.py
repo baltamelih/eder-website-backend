@@ -1,9 +1,8 @@
-import os, csv, io, re
+import os, csv, io, re, json
 import requests
 from datetime import datetime
 from slugify import slugify
 from openai import OpenAI
-import json
 
 import gspread
 from google.oauth2.service_account import Credentials
@@ -50,13 +49,12 @@ Do not include HTML. Output Markdown only.
 """
 
 # ----------------------------
-# Google Sheets write helpers
+# Google Sheets helpers
 # ----------------------------
 def get_sheet_client():
     raw = os.environ.get("GSERVICE_ACCOUNT_JSON", "").strip()
     if not raw:
         raise RuntimeError("GSERVICE_ACCOUNT_JSON missing")
-
     info = json.loads(raw)
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -65,30 +63,67 @@ def get_sheet_client():
     creds = Credentials.from_service_account_info(info, scopes=scopes)
     return gspread.authorize(creds)
 
-def mark_status_in_sheet_by_slug(slug_value: str, status="DONE"):
+def _open_worksheet():
     if not SHEET_ID:
         raise RuntimeError("SHEET_ID missing")
 
     gc = get_sheet_client()
     sh = gc.open_by_key(SHEET_ID)
-    ws = sh.worksheet(SHEET_WORKSHEET)
 
+    # Worksheet ismi yanlışsa daha açıklayıcı hata:
+    try:
+        ws = sh.worksheet(SHEET_WORKSHEET)
+    except Exception:
+        titles = [w.title for w in sh.worksheets()]
+        raise RuntimeError(
+            f"Worksheet not found: {SHEET_WORKSHEET}. Available: {titles}"
+        )
+    return ws
+
+def _get_header_map(ws):
     headers = ws.row_values(1)
-    if "slug" not in headers:
-        raise RuntimeError(f"'slug' column not found in sheet headers: {headers}")
-    if STATUS_COL_NAME not in headers:
+    if not headers:
+        raise RuntimeError("Sheet header row (row 1) is empty.")
+    header_map = {h.strip(): (idx + 1) for idx, h in enumerate(headers) if (h or "").strip()}
+    if STATUS_COL_NAME not in header_map:
         raise RuntimeError(f"'{STATUS_COL_NAME}' column not found in sheet headers: {headers}")
+    return headers, header_map
 
-    slug_col = headers.index("slug") + 1
-    status_col = headers.index(STATUS_COL_NAME) + 1
+def mark_status_in_sheet_by_row(row_index: int, status: str):
+    """
+    En sağlam yöntem: CSV'den gelen _row (sheet satır numarası) ile direkt update.
+    """
+    if not isinstance(row_index, int) or row_index < 2:
+        raise RuntimeError(f"Invalid row_index: {row_index}")
 
-    # tüm slug kolonunu al (2'den başlıyor)
-    slugs = ws.col_values(slug_col)
+    ws = _open_worksheet()
+    _, header_map = _get_header_map(ws)
 
-    # slugs[0] header, data 1-based row index
+    status_col = header_map[STATUS_COL_NAME]
+    ws.update_cell(row_index, status_col, status)
+
+def mark_status_in_sheet_by_slug(slug_value: str, status: str):
+    """
+    Fallback: _row yoksa slug kolonunda arayıp update.
+    """
+    slug_value = (slug_value or "").strip()
+    if not slug_value:
+        raise RuntimeError("slug_value is empty")
+
+    ws = _open_worksheet()
+    headers, header_map = _get_header_map(ws)
+
+    if "slug" not in header_map:
+        raise RuntimeError(f"'slug' column not found in sheet headers: {headers}")
+
+    slug_col = header_map["slug"]
+    status_col = header_map[STATUS_COL_NAME]
+
+    # col_values 1-based index; [0] header
+    col_vals = ws.col_values(slug_col)
     target_row = None
-    for i in range(2, len(slugs) + 1):
-        if (slugs[i-1] or "").strip() == slug_value:
+    for i in range(2, len(col_vals) + 1):
+        if (col_vals[i - 1] or "").strip() == slug_value:
             target_row = i
             break
 
@@ -96,7 +131,6 @@ def mark_status_in_sheet_by_slug(slug_value: str, status="DONE"):
         raise RuntimeError(f"Slug not found in sheet: {slug_value}")
 
     ws.update_cell(target_row, status_col, status)
-
 
 # ----------------------------
 # Local state (generated.json)
@@ -131,7 +165,7 @@ def fetch_rows():
     rows = []
     # CSV'de 1. satır header, veri 2. satırdan başlar
     for i, row in enumerate(reader, start=2):
-        row["_row"] = i  # ✅ sheet satır numarası gibi kullanacağız
+        row["_row"] = i  # ✅ sheet satır numarası
         rows.append(row)
 
     return rows
@@ -142,7 +176,6 @@ def fetch_rows():
 def pick_ready(rows, generated, limit=3):
     """
     READY olanlardan, generated.json'da olmayan slug'ları seçer.
-    Skip olanları geçip limit kadar doldurur.
     """
     picked = []
     for row in rows:
@@ -247,6 +280,7 @@ def main():
         if notes:
             user_prompt += f"\nExtra notes: {notes}\n"
 
+        row_index = row.get("_row")  # sheet row number
         try:
             resp = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -273,25 +307,33 @@ def main():
             generated[slug] = date
             save_generated(generated)
 
-            # ✅ Sheet status -> DONE (post üretimi başarılıysa)
-            row_index = row.get("_row")
-            if row_index:
-                mark_status_in_sheet_by_slug(slug, DONE_STATUS)
-                print(f"Sheet updated: row {row_index} -> {DONE_STATUS}")
-
-        except Exception as e:
-            # İstersen sheet'e ERROR basabilirsin:
-            row_index = row.get("_row")
+            # ✅ Sheet status -> DONE
             if row_index:
                 try:
-                    mark_status_in_sheet_by_slug(slug, "ERROR")
-                    print(f"Sheet updated: {slug} -> ERROR")
+                    mark_status_in_sheet_by_row(int(row_index), DONE_STATUS)
+                    print(f"Sheet updated: row {row_index} -> {DONE_STATUS}")
+                except Exception as e_row:
+                    # fallback: slug ile dene
+                    print(f"[warn] Row update failed ({e_row}). Trying slug fallback...")
+                    mark_status_in_sheet_by_slug(slug, DONE_STATUS)
+                    print(f"Sheet updated: slug {slug} -> {DONE_STATUS}")
 
-                except Exception as e2:
-                    print("Failed to update sheet status to ERROR:", e2)
+        except Exception as e:
+            # Sheet status -> ERROR (best-effort)
+            if row_index:
+                try:
+                    mark_status_in_sheet_by_row(int(row_index), "ERROR")
+                    print(f"Sheet updated: row {row_index} -> ERROR")
+                except Exception as e_row:
+                    print(f"[warn] Row ERROR update failed ({e_row}). Trying slug fallback...")
+                    try:
+                        mark_status_in_sheet_by_slug(slug, "ERROR")
+                        print(f"Sheet updated: slug {slug} -> ERROR")
+                    except Exception as e2:
+                        print("Failed to update sheet status to ERROR:", e2)
 
             print("Error generating/saving post for slug:", slug)
-            raise  # workflow fail etsin istiyorsan raise kalsın, istemiyorsan kaldır.
+            raise  # workflow fail etsin istiyorsan kalsın
 
     if not created_paths:
         print("No posts created.")
