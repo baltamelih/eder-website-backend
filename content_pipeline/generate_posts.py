@@ -276,7 +276,7 @@ def main():
             # ✅ Sheet status -> DONE (post üretimi başarılıysa)
             row_index = row.get("_row")
             if row_index:
-                mark_status_in_sheet_by_slug(int(row_index), DONE_STATUS)
+                mark_status_in_sheet_by_slug(slug, DONE_STATUS)
                 print(f"Sheet updated: row {row_index} -> {DONE_STATUS}")
 
         except Exception as e:
