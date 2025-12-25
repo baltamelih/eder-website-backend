@@ -39,6 +39,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
+          SHEET_ID: ${{secrets.SHEET_ID}}
           MAX_POSTS_PER_RUN: "3"
         run: |
           python content_pipeline/generate_posts.py
