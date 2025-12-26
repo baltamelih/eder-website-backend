@@ -27,6 +27,7 @@ import Account from "../pages/Account";
 import Settings from "../pages/Settings";
 import BlogIndex from "../pages/BlogIndex";
 import BlogPost from "../pages/BlogPost";
+import PremiumCheckout from "../pages/PremiumCheckout";
 
 
 
@@ -90,6 +91,7 @@ export const router = createBrowserRouter([
       { path: "valuation", element: <Valuation /> },
       { path: "account", element: <Account /> },
       { path: "settings", element: <Settings /> },
+      { path: "premium", element: <PremiumCheckout /> },
 
       { path: "*", element: <NotFound /> },
     ],

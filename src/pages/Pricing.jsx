@@ -5,6 +5,7 @@ import { useSubscription } from "../services/SubscriptionContext";
 import FreeOnly from "../components/FreeOnly";
 import AdSlot from "../components/AdSlot";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const SLOT_PRICING = import.meta.env.VITE_ADS_SLOT_PRICING;
 const { Title, Paragraph, Text } = Typography;
@@ -432,6 +433,7 @@ export default function Pricing() {
             </Paragraph>
             <Button 
               size="large"
+              onClick={() => nav("/app/premium")}
               style={{ 
                 height: 56,
                 padding: "0 40px",
