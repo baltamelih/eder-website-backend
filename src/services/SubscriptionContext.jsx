@@ -28,7 +28,7 @@ async function fetchMe() {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    credentials: "include",
+    
   });
 
   const data = await res.json().catch(() => ({}));
