@@ -22,19 +22,19 @@ async function fetchMe() {
   const token = getToken();
   if (!API_BASE) throw new Error("VITE_API_BASE is missing");
 
-  const res = await fetch(`${API_BASE}/api/me`, {
+  const res = await fetch(`${API_BASE}/api/auth/me`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    
+    // credentials kullanmıyorsan ekleme (JWT ile gerek yok)
   });
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
   return data;
 }
+
 
 export function SubscriptionProvider({ children }) {
   const { isAuthed, loading: authLoading } = useAuth();
