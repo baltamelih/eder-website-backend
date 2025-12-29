@@ -19,6 +19,8 @@ import Privacy from "../pages/Privacy";
 import Terms from "../pages/Terms";
 import DeleteAccount from "../pages/DeleteAccount";
 import NotFound from "../pages/NotFound";
+import Contact from "../pages/Contact";
+import Faq from "../pages/Faq";
 
 // App Pages
 import Dashboard from "../pages/Dashboard";
@@ -28,7 +30,8 @@ import Settings from "../pages/Settings";
 import BlogIndex from "../pages/BlogIndex";
 import BlogPost from "../pages/BlogPost";
 import PremiumCheckout from "../pages/PremiumCheckout";
-
+import ResetPassword from "../pages/ResetPassword";
+import ForgotPassword from "../pages/ForgotPassword";
 
 
 export const router = createBrowserRouter([
@@ -46,6 +49,9 @@ export const router = createBrowserRouter([
       { path: "/blog", element: <BlogIndex /> },
       { path: "/blog/:slug", element: <BlogPost /> },
       { path: "pricing", element: <Pricing /> },
+      { path: "/forgot-password", element: <ForgotPassword /> },
+      { path: "/reset-password", element: <ResetPassword /> },
+      
       
       // ✅ Login/Register sadece "PublicRoute" ile sarılı
       {
@@ -69,6 +75,8 @@ export const router = createBrowserRouter([
       { path: "privacy", element: <Privacy /> },
       { path: "terms", element: <Terms /> },
       { path: "delete-account", element: <DeleteAccount /> },
+      { path: "contact", element: <Contact /> },
+      { path: "faq", element: <Faq /> },
 
       { path: "*", element: <NotFound /> },
     ],

@@ -1,14 +1,15 @@
+// src/pages/Login.jsx
 import React, { useState } from "react";
 import { Button, Card, Form, Input, Typography, message } from "antd";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { 
-  Mail, 
-  Lock, 
-  ArrowRight, 
+import {
+  Mail,
+  Lock,
+  ArrowRight,
   Sparkles,
   Shield,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
 import { useAuth } from "../services/AuthContext";
 import "./auth.css";
@@ -20,10 +21,10 @@ const fadeUp = {
   show: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { 
-      delay: 0.1 * i, 
-      duration: 0.6, 
-      ease: [0.25, 0.46, 0.45, 0.94] 
+    transition: {
+      delay: 0.1 * i,
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94],
     },
   }),
 };
@@ -31,7 +32,7 @@ const fadeUp = {
 const features = [
   { icon: Shield, text: "Güvenli veri koruması" },
   { icon: Sparkles, text: "Hızlı değerleme sistemi" },
-  { icon: CheckCircle, text: "Doğru piyasa analizi" }
+  { icon: CheckCircle, text: "Doğru piyasa analizi" },
 ];
 
 export default function Login() {
@@ -49,7 +50,7 @@ export default function Login() {
       message.success("Giriş başarılı!");
       navigate(from, { replace: true });
     } catch (error) {
-      message.error(error.message || "Giriş yapılamadı");
+      message.error(error?.message || "Giriş yapılamadı");
     } finally {
       setLoading(false);
     }
@@ -57,15 +58,13 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      {/* Background */}
       <div className="auth-bg">
         <div className="auth-bg-gradient" />
         <div className="auth-bg-dots" />
       </div>
 
       <div className="auth-content">
-        {/* Left side - Form */}
-        <motion.div 
+        <motion.div
           className="auth-form-section"
           initial="hidden"
           animate="show"
@@ -73,14 +72,14 @@ export default function Login() {
         >
           <motion.div className="auth-brand" variants={fadeUp} custom={0}>
             <div className="auth-logo">
-              <motion.span 
-                className="auth-dot" 
-                animate={{ 
+              <motion.span
+                className="auth-dot"
+                animate={{
                   boxShadow: [
                     "0 0 0 0 rgba(255,122,24,0.4)",
                     "0 0 0 8px rgba(255,122,24,0)",
-                    "0 0 0 0 rgba(255,122,24,0)"
-                  ]
+                    "0 0 0 0 rgba(255,122,24,0)",
+                  ],
                 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               />
@@ -98,11 +97,7 @@ export default function Login() {
 
           <motion.div variants={fadeUp} custom={2}>
             <Card className="auth-card">
-              <Form
-                layout="vertical"
-                onFinish={onFinish}
-                className="auth-form"
-              >
+              <Form layout="vertical" onFinish={onFinish} className="auth-form">
                 <Form.Item
                   name="email"
                   label="E-posta"
@@ -111,9 +106,9 @@ export default function Login() {
                     { type: "email", message: "Geçerli e-posta girin" },
                   ]}
                 >
-                  <Input 
+                  <Input
                     prefix={<Mail size={18} />}
-                    placeholder="ornek@ederapp.com" 
+                    placeholder="ornek@ederapp.com"
                     size="large"
                     className="auth-input"
                   />
@@ -122,25 +117,30 @@ export default function Login() {
                 <Form.Item
                   name="password"
                   label="Şifre"
-                  rules={[
-                    { required: true, message: "Şifre zorunlu" }
-                  ]}
+                  rules={[{ required: true, message: "Şifre zorunlu" }]}
                 >
-                  <Input.Password 
+                  <Input.Password
                     prefix={<Lock size={18} />}
-                    placeholder="Şifrenizi girin" 
+                    placeholder="Şifrenizi girin"
                     size="large"
                     className="auth-input"
                   />
                 </Form.Item>
 
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button 
-                    type="primary" 
-                    htmlType="submit" 
+                {/* ✅ Şifremi Unuttum */}
+                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+                  <Link
+                    to="/forgot-password"
+                    style={{ fontWeight: 600, color: "rgba(255,122,24,0.9)" }}
+                  >
+                    Şifremi unuttum
+                  </Link>
+                </div>
+
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
                     size="large"
                     loading={loading}
                     className="auth-submit"
@@ -156,20 +156,17 @@ export default function Login() {
                 <span>Hesabın yok mu?</span>
               </div>
 
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link to="/register">
-                  <Button 
-                    size="large" 
+                  <Button
+                    size="large"
                     block
                     style={{
                       height: "56px",
                       borderRadius: "16px",
                       fontWeight: "700",
                       border: "1px solid rgba(255,122,24,0.3)",
-                      color: "rgba(255,122,24,0.8)"
+                      color: "rgba(255,122,24,0.8)",
                     }}
                   >
                     Hesap Oluştur
@@ -180,8 +177,7 @@ export default function Login() {
           </motion.div>
         </motion.div>
 
-        {/* Right side - Info */}
-        <motion.div 
+        <motion.div
           className="auth-info-section"
           initial="hidden"
           animate="show"
@@ -197,7 +193,7 @@ export default function Login() {
 
             <motion.div className="auth-features" variants={fadeUp}>
               {features.map((feature, index) => (
-                <motion.div 
+                <motion.div
                   key={index}
                   className="auth-feature"
                   variants={fadeUp}
@@ -213,68 +209,27 @@ export default function Login() {
             </motion.div>
 
             <motion.div className="auth-stats" variants={fadeUp}>
-              <motion.div 
-                style={{ textAlign: "center" }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div style={{ 
-                  fontSize: "24px", 
-                  fontWeight: "800", 
-                  color: "rgba(255,122,24,0.9)",
-                  marginBottom: "4px"
-                }}>
-                  50K+
-                </div>
-                <div style={{ 
-                  fontSize: "13px", 
-                  fontWeight: "600", 
-                  color: "rgba(15,23,42,0.7)" 
-                }}>
-                  Değerleme
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                style={{ textAlign: "center" }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div style={{ 
-                  fontSize: "24px", 
-                  fontWeight: "800", 
-                  color: "rgba(255,122,24,0.9)",
-                  marginBottom: "4px"
-                }}>
-                  10K+
-                </div>
-                <div style={{ 
-                  fontSize: "13px", 
-                  fontWeight: "600", 
-                  color: "rgba(15,23,42,0.7)" 
-                }}>
-                  Kullanıcı
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                style={{ textAlign: "center" }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div style={{ 
-                  fontSize: "24px", 
-                  fontWeight: "800", 
-                  color: "rgba(255,122,24,0.9)",
-                  marginBottom: "4px"
-                }}>
-                  99%
-                </div>
-                <div style={{ 
-                  fontSize: "13px", 
-                  fontWeight: "600", 
-                  color: "rgba(15,23,42,0.7)" 
-                }}>
-                  Doğruluk
-                </div>
-              </motion.div>
+              {[
+                { v: "50K+", t: "Değerleme" },
+                { v: "10K+", t: "Kullanıcı" },
+                { v: "99%", t: "Doğruluk" },
+              ].map((s, i) => (
+                <motion.div key={i} style={{ textAlign: "center" }} whileHover={{ scale: 1.05 }}>
+                  <div
+                    style={{
+                      fontSize: "24px",
+                      fontWeight: "800",
+                      color: "rgba(255,122,24,0.9)",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    {s.v}
+                  </div>
+                  <div style={{ fontSize: "13px", fontWeight: "600", color: "rgba(15,23,42,0.7)" }}>
+                    {s.t}
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </motion.div>

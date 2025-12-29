@@ -9,7 +9,42 @@ function isAuthPath(path) {
   return path.startsWith("/api/auth/");
 }
 
-async function handleResponse(res) {
+/**
+ * Auth endpointleri içinde "yanlış şifre" gibi 401'ler refresh'e düşmemeli.
+ * (Sen zaten auth path'leri refresh'ten hariç tutuyorsun.)
+ */
+function isLoginPath(path) {
+  // senin route'un neyse burada onu yakalayalım (en yaygınlarını ekledim)
+  return (
+    path === "/api/auth/login" ||
+    path === "/api/auth/signin" ||
+    path === "/api/auth/token"
+  );
+}
+
+function pickErrorMessage(data, status, path) {
+  // backend tarafında bazen {error: "..."} bazen {message: "..."} olabiliyor
+  const backendMsg =
+    (typeof data?.error === "string" && data.error) ||
+    (typeof data?.message === "string" && data.message) ||
+    (typeof data?.detail === "string" && data.detail) ||
+    "";
+
+  // ✅ Login'de 401 => kullanıcı dostu sabit mesaj
+  if (status === 401 && isLoginPath(path)) {
+    return "E-posta veya şifre hatalı.";
+  }
+
+  // ✅ Genel 401 (auth dışı) refresh ile çözülecek, ama buraya düşerse:
+  if (status === 401 && !isAuthPath(path)) {
+    return backendMsg || "Oturum süreniz dolmuş olabilir. Lütfen tekrar giriş yapın.";
+  }
+
+  // ✅ Diğer durumlar
+  return backendMsg || `HTTP ${status}`;
+}
+
+async function handleResponse(res, path = "") {
   const text = await res.text();
   let data = {};
 
@@ -20,11 +55,13 @@ async function handleResponse(res) {
   }
 
   if (!res.ok) {
-    const error = new Error(data.message || `HTTP ${res.status}`);
+    const msg = pickErrorMessage(data, res.status, path);
+    const error = new Error(msg);
     error.status = res.status;
     error.data = data;
     throw error;
   }
+
   return data;
 }
 
@@ -72,12 +109,11 @@ export async function apiFetch(path, options = {}) {
         // refresh sürüyor → sıraya gir
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        })
-          .then(async (newToken) => {
-            const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
-            const retryRes = await doFetch(retryHeaders);
-            return handleResponse(retryRes);
-          });
+        }).then(async (newToken) => {
+          const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
+          const retryRes = await doFetch(retryHeaders);
+          return handleResponse(retryRes, path);
+        });
       }
 
       isRefreshing = true;
@@ -90,7 +126,7 @@ export async function apiFetch(path, options = {}) {
         // orijinal isteği retry
         const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
         const retryRes = await doFetch(retryHeaders);
-        return handleResponse(retryRes);
+        return handleResponse(retryRes, path);
       } catch (refreshError) {
         processQueue(refreshError, null);
         clearAuthTokens();
@@ -107,7 +143,8 @@ export async function apiFetch(path, options = {}) {
       }
     }
 
-    return handleResponse(res);
+    // ✅ auth login gibi yerlerde 401 vs: refresh yok, handleResponse kendi mesajını verir
+    return handleResponse(res, path);
   } catch (e) {
     throw e;
   }

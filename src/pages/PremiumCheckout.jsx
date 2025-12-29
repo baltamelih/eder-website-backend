@@ -38,7 +38,7 @@ export default function PremiumCheckout() {
   // user token'ını senin projende nereden alıyorsan ona göre ayarla.
   // Çoğu projede localStorage token olur:
   const token = useMemo(() => localStorage.getItem("token") || "", []);
-  console.log(token)
+  
   const alreadyPremium = !!isPremium;
 
   useEffect(() => {
