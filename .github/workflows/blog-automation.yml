@@ -25,7 +25,7 @@ jobs:
           find . -maxdepth 4 -name "package.json" -print
           find . -maxdepth 6 -name "sync_md_to_sanity.js" -print
 
-      # 1) PYTHON: Generate MD posts + Tweet
+      # 1) PYTHON: MD yazı üret
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -35,33 +35,23 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r content_pipeline/requirements.txt
 
-      - name: Generate posts (writes MD files + tweets)
+      - name: Generate posts (writes MD files)
         env:
-          # required for content generation
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
-          SHEET_ID: ${{ secrets.SHEET_ID }}
+          SHEET_ID: ${{secrets.SHEET_ID}}
           GSERVICE_ACCOUNT_JSON: ${{ secrets.GSERVICE_ACCOUNT_JSON }}
           SHEET_WORKSHEET: "Sheet1"
           MAX_POSTS_PER_RUN: "3"
-
-          # tweet toggle (1 = on, 0 = off)
-          ENABLE_TWEET: "1"
-
-          # X (Twitter) API credentials
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           python content_pipeline/generate_posts.py
 
       - name: Debug generated md files
         run: |
           ls -la src/blog/posts || true
-          find src/blog/posts -maxdepth 1 -type f -name "*.md" -print | head -n 50
+          find src/blog/posts -maxdepth 1 -type f -name "*.md" -print | head -n 20
 
-      # 2) NODE: Sync to Sanity
+      # 2) NODE: Sanity'ye upsert
       - uses: actions/setup-node@v4
         with:
           node-version: 20
