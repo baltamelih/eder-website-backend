@@ -25,7 +25,7 @@ jobs:
           find . -maxdepth 4 -name "package.json" -print
           find . -maxdepth 6 -name "sync_md_to_sanity.js" -print
 
-      # 1) PYTHON: Generate MD posts + Tweet
+      # 1) PYTHON: Generate MD posts + Tweet via BACKEND WEBHOOK
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -35,7 +35,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r content_pipeline/requirements.txt
 
-      - name: Generate posts (writes MD files + tweets)
+      - name: Generate posts (writes MD files + tweet webhook)
         env:
           # required for content generation
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -48,11 +48,9 @@ jobs:
           # tweet toggle (1 = on, 0 = off)
           ENABLE_TWEET: "1"
 
-          # X (Twitter) API credentials
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          # ✅ Tweet via backend webhook (instead of X keys here)
+          TWEET_WEBHOOK_URL: ${{ secrets.TWEET_WEBHOOK_URL }}
+          TWEET_WEBHOOK_TOKEN: ${{ secrets.TWEET_WEBHOOK_TOKEN }}
         run: |
           python content_pipeline/generate_posts.py
 
