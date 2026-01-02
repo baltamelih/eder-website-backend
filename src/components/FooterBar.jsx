@@ -111,9 +111,9 @@ export default function FooterBar() {
             
             {/* Social Links */}
             <div className="fb-socials">
-              <SocialLink href="https://twitter.com/eder" icon={Twitter} label="Twitter" />
-              <SocialLink href="https://github.com/eder" icon={Github} label="GitHub" />
-              <SocialLink href="mailto:hello@eder.com" icon={Mail} label="E-posta" />
+              <SocialLink href="https://twitter.com/ederapp" icon={Twitter} label="Twitter" />
+              <SocialLink href="https://www.instagram.com/ederapptr/" icon={Github} label="Instagram" />
+              <SocialLink href="mailto:destek@eder.com" icon={Mail} label="E-posta" />
             </div>
           </motion.div>
 

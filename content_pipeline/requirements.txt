@@ -3,3 +3,4 @@ requests
 python-slugify
 gspread
 google-auth
+requests-oauthlib

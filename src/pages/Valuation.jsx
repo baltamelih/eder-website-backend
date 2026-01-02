@@ -870,11 +870,7 @@ export default function Valuation() {
             </Col>
           </Row>
 
-          <FreeOnly>
-            <Card style={{ marginTop: 20, borderRadius: 16, border: "1px solid rgba(15,23,42,0.08)" }}>
-              <AdSlot enabled slot={SLOT_VALUATION} style={{ minHeight: 180 }} />
-            </Card>
-          </FreeOnly>
+          
         </Card>
       );
     }
@@ -902,11 +898,7 @@ export default function Valuation() {
           <ChipGroup label="Renk" value={formData.color} options={colors} onChange={(v) => setFormData((p) => ({ ...p, color: v, result: null }))} />
           <ChipGroup label="Çekiş" value={formData.traction} options={tractions} onChange={(v) => setFormData((p) => ({ ...p, traction: v, result: null }))} />
 
-          <FreeOnly>
-            <Card style={{ marginTop: 20, borderRadius: 16, border: "1px solid rgba(15,23,42,0.08)" }}>
-              <AdSlot enabled slot={SLOT_VALUATION} style={{ minHeight: 160 }} />
-            </Card>
-          </FreeOnly>
+          
         </Card>
       );
     }
@@ -1004,11 +996,7 @@ export default function Valuation() {
                 />
               </div>
 
-              <FreeOnly>
-                <Card style={{ marginTop: 16, borderRadius: 16, border: "1px solid rgba(15,23,42,0.08)" }}>
-                  <AdSlot enabled slot={SLOT_VALUATION} style={{ minHeight: 140 }} />
-                </Card>
-              </FreeOnly>
+              
             </div>
           </Card>
 
@@ -1302,20 +1290,12 @@ export default function Valuation() {
                 </Text>
               </div>
 
-              <FreeOnly>
-                <Card style={{ marginTop: 16, borderRadius: 16, border: "1px solid rgba(15,23,42,0.08)" }}>
-                  <AdSlot enabled slot={SLOT_VALUATION} style={{ minHeight: 200 }} />
-                </Card>
-              </FreeOnly>
+              
             </div>
           )}
         </Card>
 
-        <FreeOnly>
-          <Card style={{ marginTop: 16, borderRadius: 16, border: "1px solid rgba(15,23,42,0.08)" }}>
-            <AdSlot enabled slot={SLOT_VALUATION} style={{ minHeight: 180 }} />
-          </Card>
-        </FreeOnly>
+        
 
         {!isPremium && (
           <Card

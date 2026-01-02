@@ -1,40 +1,75 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
+
 const ADS_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT;
 
-export default function AdSlot({ enabled, slot, style }) {
+export default function AdSlot({ enabled = true, slot, style }) {
   const { adsDisabled } = useAuth();
-  
-  console.log('AdSlot Debug:', { enabled, slot, adsDisabled, ADS_CLIENT });
-  
-  if (adsDisabled) return null;
+  const loc = useLocation();
+
+  // ✅ Hook order safe: return-null check AFTER hooks are declared
+  const canRender = useMemo(() => {
+    if (adsDisabled) return false;
+    if (!enabled) return false;
+    if (!ADS_CLIENT) return false;
+    if (!slot) return false;
+    return true;
+  }, [adsDisabled, enabled, slot]);
 
   const pushedRef = useRef(false);
-  const loc = useLocation();
-  
+  const insRef = useRef(null);
+
+  // Debug sadece dev’de
   useEffect(() => {
-    pushedRef.current = false; // route değişince yeniden dene
+    if (import.meta.env.DEV) {
+      console.log("AdSlot Debug:", {
+        enabled,
+        slot,
+        adsDisabled,
+        ADS_CLIENT,
+        pathname: loc.pathname,
+      });
+    }
+  }, [enabled, slot, adsDisabled, loc.pathname]);
+
+  // route değişince yeniden dene
+  useEffect(() => {
+    pushedRef.current = false;
   }, [loc.pathname]);
 
   useEffect(() => {
-    if (!enabled || !ADS_CLIENT || !slot) return;
+    if (!canRender) return;
     if (pushedRef.current) return;
 
     const t = setTimeout(() => {
       try {
+        // ✅ Aynı ins içine tekrar push etmeyi azalt
+        const ins = insRef.current;
+        if (!ins) return;
+
+        // Eğer daha önce doldurulduysa tekrar push etme
+        // (Google bazen içine iframe/script ekliyor)
+        if (ins.getAttribute("data-adsbygoogle-status") === "done") {
+          pushedRef.current = true;
+          return;
+        }
+
         (window.adsbygoogle = window.adsbygoogle || []).push({});
         pushedRef.current = true;
-      } catch (_) {}
-    }, 100);
+      } catch (_) {
+        // sessiz geç
+      }
+    }, 150);
 
     return () => clearTimeout(t);
-  }, [enabled, slot, loc.pathname]);
+  }, [canRender, slot, loc.pathname]);
 
-  if (!enabled || !ADS_CLIENT || !slot) return null;
+  if (!canRender) return null;
 
   return (
     <ins
+      ref={insRef}
       className="adsbygoogle"
       style={{ display: "block", minHeight: 140, ...style }}
       data-ad-client={ADS_CLIENT}

@@ -446,14 +446,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Free User Ad */}
-      <FreeOnly>
+      {/* Free User Ad - KALDIRILDI */}
+      {/* <FreeOnly>
         <div className="ad-section">
           <div className="container">
             <AdSlot enabled slot="SLOT_HOME_BOTTOM" style={{ minHeight: 250 }} />
           </div>
         </div>
-      </FreeOnly>
+      </FreeOnly> */}
     </div>
   );
 }

@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import matter from "gray-matter";
+import { MetaTags } from '../components/MetaTags';
+import { BlogPostSkeleton } from '../components/SkeletonLoader';
 
 import AdSlot from "../components/AdSlot";
 import { sanity } from "../lib/sanity";
@@ -112,38 +114,17 @@ export default function BlogPost() {
     post?.mainImage?.asset?.url || (fm?.image ? String(fm.image) : "");
 
   if (loading) {
-    return (
-      <div style={{ padding: "28px 0" }}>
-        <div
-          style={{
-            maxWidth: 860,
-            margin: "0 auto",
-            padding: "0 16px",
-            color: "rgba(0,0,0,0.7)",
-          }}
-        >
-          Yükleniyor…
-        </div>
-      </div>
-    );
+    return <BlogPostSkeleton />;
   }
 
   if (!post) {
     return (
-      <div style={{ padding: "28px 0" }}>
-        <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px" }}>
-          <h1 style={{ margin: 0, fontSize: 30 }}>Yazı bulunamadı</h1>
-          <p style={{ color: "rgba(0,0,0,0.7)", lineHeight: 1.65 }}>
-            Bu sayfa kaldırılmış olabilir ya da bağlantı hatalı olabilir.
-          </p>
-          <Link
-            to="/blog"
-            style={{ color: "#FF7A18", fontWeight: 700, textDecoration: "none" }}
-          >
-            ← Blog’a geri dön
-          </Link>
-        </div>
-      </div>
+      <Result
+        status="404"
+        title="Blog yazısı bulunamadı"
+        subTitle="Aradığınız blog yazısı mevcut değil."
+        extra={<Button type="primary" onClick={() => navigate('/blog')}>Blog'a Dön</Button>}
+      />
     );
   }
 

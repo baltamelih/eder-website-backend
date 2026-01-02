@@ -116,7 +116,7 @@ export default function Register() {
                 >
                   <Input 
                     prefix={<User size={18} />}
-                    placeholder="Örn: Ahmet Yılmaz" 
+                    placeholder="Örn: Emre Balta" 
                     size="large"
                     className="auth-input"
                   />

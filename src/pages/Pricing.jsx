@@ -2,12 +2,11 @@ import { Button, Card, Col, Row, Typography, Tag, Divider, Space } from "antd";
 import { CheckCircleOutlined, StarOutlined, CrownOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import { Crown, Zap, Shield, TrendingUp, Users, Award, ArrowRight } from "lucide-react";
 import { useSubscription } from "../services/SubscriptionContext";
-import FreeOnly from "../components/FreeOnly";
-import AdSlot from "../components/AdSlot";
+// FreeOnly ve AdSlot import'larını kaldır
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const SLOT_PRICING = import.meta.env.VITE_ADS_SLOT_PRICING;
+// SLOT_PRICING const'ını kaldır
 const { Title, Paragraph, Text } = Typography;
 
 const fadeUp = {
@@ -452,7 +451,7 @@ export default function Pricing() {
         )}
 
         {/* Free Ad Slot */}
-        <FreeOnly>
+       
           <motion.div 
             style={{ marginTop: 40 }}
             initial="initial"
@@ -467,10 +466,10 @@ export default function Pricing() {
               }} 
               bodyStyle={{ padding: 20 }}
             >
-              <AdSlot enabled slot={SLOT_PRICING} style={{ minHeight: 120 }} />
+              
             </Card>
           </motion.div>
-        </FreeOnly>
+       
       </div>
     </div>
   );
