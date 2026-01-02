@@ -392,13 +392,30 @@ def post_tweet(text: str) -> dict:
     if not can_tweet():
         raise RuntimeError("X API env vars missing (X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET)")
 
-    url = "https://api.twitter.com/2/tweets"
-    auth = OAuth1(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET)
+    # ✅ OAuth1 ile en uyumlu endpoint (v1.1)
+    url = "https://api.twitter.com/1.1/statuses/update.json"
 
-    r = requests.post(url, auth=auth, json={"text": text}, timeout=30)
+    auth = OAuth1(
+        X_API_KEY,
+        X_API_KEY_SECRET,
+        X_ACCESS_TOKEN,
+        X_ACCESS_TOKEN_SECRET
+    )
+
+    headers = {
+        "User-Agent": "EDERBlogBot/1.0 (+https://ederapp.com)",
+        "Accept": "application/json",
+    }
+
+    r = requests.post(url, auth=auth, data={"status": text}, headers=headers, timeout=30)
+
     if r.status_code >= 400:
-        raise RuntimeError(f"Tweet failed: {r.status_code} {r.text}")
+        # Eğer Cloudflare HTML geldiyse gömülü olarak loglamak yerine kısalt
+        snippet = (r.text or "")[:300].replace("\n", " ")
+        raise RuntimeError(f"Tweet failed: {r.status_code} {snippet}")
+
     return r.json()
+
 
 # ----------------------------
 # Main
