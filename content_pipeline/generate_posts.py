@@ -7,9 +7,6 @@ from openai import OpenAI
 import gspread
 from google.oauth2.service_account import Credentials
 
-# X (Twitter) API
-from requests_oauthlib import OAuth1
-
 # ----------------------------
 # Config
 # ----------------------------
@@ -21,8 +18,8 @@ SHEET_ID = os.environ.get("SHEET_ID", "").strip()
 SHEET_WORKSHEET = os.environ.get("SHEET_WORKSHEET", "Sheet1").strip()
 
 POSTS_DIR = os.path.join("src", "blog", "posts")
-STATUS_COL_NAME = "status"   # Sheet header'da status kolon adı
-DONE_STATUS = "DONE"         # READY -> DONE yapılacak değer
+STATUS_COL_NAME = "status"
+DONE_STATUS = "DONE"
 
 # ----------------------------
 # Blog constraints
@@ -31,15 +28,13 @@ MIN_WORDS = 1000
 MAX_WORDS = 1500
 
 # ----------------------------
-# X (Twitter) env
+# Tweet Webhook (backend will tweet)
 # ----------------------------
-X_API_KEY = os.environ.get("X_API_KEY", "").strip()
-X_API_KEY_SECRET = os.environ.get("X_API_KEY_SECRET", "").strip()
-X_ACCESS_TOKEN = os.environ.get("X_ACCESS_TOKEN", "").strip()
-X_ACCESS_TOKEN_SECRET = os.environ.get("X_ACCESS_TOKEN_SECRET", "").strip()
+TWEET_WEBHOOK_URL = os.environ.get("TWEET_WEBHOOK_URL", "").strip()
+TWEET_WEBHOOK_TOKEN = os.environ.get("TWEET_WEBHOOK_TOKEN", "").strip()
 
-def can_tweet():
-    return all([X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET])
+def can_webhook_tweet() -> bool:
+    return bool(TWEET_WEBHOOK_URL and TWEET_WEBHOOK_TOKEN)
 
 SYSTEM = """You are a professional Turkish SEO blog writer for EDER (ederapp.com).
 Write helpful, original, non-spammy content. Avoid making absolute claims.
@@ -106,9 +101,7 @@ def _open_worksheet():
         ws = sh.worksheet(SHEET_WORKSHEET)
     except Exception:
         titles = [w.title for w in sh.worksheets()]
-        raise RuntimeError(
-            f"Worksheet not found: {SHEET_WORKSHEET}. Available: {titles}"
-        )
+        raise RuntimeError(f"Worksheet not found: {SHEET_WORKSHEET}. Available: {titles}")
     return ws
 
 def _get_header_map(ws):
@@ -204,9 +197,7 @@ def pick_ready(rows, generated, limit=3):
         if not title:
             continue
 
-        slug = (row.get("slug") or "").strip()
-        if not slug:
-            slug = slugify(title, lowercase=True)
+        slug = (row.get("slug") or "").strip() or slugify(title, lowercase=True)
 
         if slug in generated:
             continue
@@ -256,12 +247,12 @@ def write_post(md, slug, date):
 # Content safety: remove price-like patterns
 # ----------------------------
 _PRICE_PATTERNS = [
-    r"\b\d{1,3}(?:\.\d{3})+(?:,\d+)?\b",                 # 850.000 / 1.250.000
-    r"\b\d{2,4}\s?(?:bin|k)\b",                         # 850 bin / 850k
-    r"(?:₺|TL)\s?\d[\d\.\,]*",                          # ₺850.000 / TL 850.000
-    r"\b\d[\d\.\,]*\s?(?:₺|TL)\b",                      # 850.000 TL
-    r"\b\d{2,4}\s?-\s?\d{2,4}\s?(?:bin|k)\b",           # 800-900 bin
-    r"\b\d{1,3}\s?-\s?\d{1,3}\s?(?:bin|k)\b",           # 80-90 bin (just in case)
+    r"\b\d{1,3}(?:\.\d{3})+(?:,\d+)?\b",
+    r"\b\d{2,4}\s?(?:bin|k)\b",
+    r"(?:₺|TL)\s?\d[\d\.\,]*",
+    r"\b\d[\d\.\,]*\s?(?:₺|TL)\b",
+    r"\b\d{2,4}\s?-\s?\d{2,4}\s?(?:bin|k)\b",
+    r"\b\d{1,3}\s?-\s?\d{1,3}\s?(?:bin|k)\b",
 ]
 
 def sanitize_prices(md: str) -> str:
@@ -281,12 +272,17 @@ def word_count(text: str) -> int:
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     return len(cleaned.split(" "))
 
-def expand_to_range(client: OpenAI, title: str, kw: str, draft_md: str) -> str:
-    wc = word_count(draft_md)
-    if wc >= MIN_WORDS:
-        return draft_md
+def expand_to_range(client: OpenAI, title: str, kw: str, draft_md: str, tries: int = 2) -> str:
+    """
+    2 tur genişletme: MIN_WORDS altındaysa tekrar dener (daha stabil 1000+).
+    """
+    out = draft_md
+    for _ in range(max(1, tries)):
+        wc = word_count(out)
+        if wc >= MIN_WORDS:
+            return out
 
-    expand_prompt = f"""
+        expand_prompt = f"""
 Aşağıdaki yazıyı 1000-1500 kelime aralığına çıkar.
 - Yeni H2 ekleyebilirsin.
 - İçeriği derinleştir (kontrol listeleri, dikkat edilmesi gerekenler, bakım/versiyon farkları).
@@ -295,17 +291,21 @@ Aşağıdaki yazıyı 1000-1500 kelime aralığına çıkar.
 - Ana anahtar kelime: {kw}
 
 Mevcut taslak (Markdown):
-{draft_md}
+{out}
 """
-    resp = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": SYSTEM},
-            {"role": "user", "content": expand_prompt},
-        ],
-        temperature=0.6,
-    )
-    return (resp.choices[0].message.content or "").strip() or draft_md
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": SYSTEM},
+                {"role": "user", "content": expand_prompt},
+            ],
+            temperature=0.6,
+        )
+        out2 = (resp.choices[0].message.content or "").strip()
+        if out2:
+            out = out2
+        out = sanitize_prices(out)
+    return out
 
 def trim_to_range(client: OpenAI, title: str, kw: str, draft_md: str) -> str:
     wc = word_count(draft_md)
@@ -331,21 +331,17 @@ Mevcut taslak (Markdown):
         ],
         temperature=0.4,
     )
-    return (resp.choices[0].message.content or "").strip() or draft_md
+    out = (resp.choices[0].message.content or "").strip() or draft_md
+    return sanitize_prices(out)
 
 # ----------------------------
-# Tweet helpers (Title + intro + link)
+# Webhook tweet payload helpers
 # ----------------------------
 def extract_intro(md: str, max_chars: int = 240) -> str:
-    """
-    Markdown içinden ilk 1-2 paragrafı alır; başlık/listeleri atlar.
-    """
     if not md:
         return ""
-
     md2 = re.sub(r"(?s)^---.*?---\s*", "", md).strip()
     parts = [p.strip() for p in md2.split("\n\n") if p.strip()]
-
     intro_parts = []
     for p in parts:
         if p.startswith("#") or p.startswith("```") or p.startswith("- ") or p.startswith("* "):
@@ -353,69 +349,48 @@ def extract_intro(md: str, max_chars: int = 240) -> str:
         intro_parts.append(p)
         if len(intro_parts) >= 2:
             break
-
     intro = " ".join(intro_parts)
     intro = re.sub(r"\s+", " ", intro).strip()
-
     if len(intro) > max_chars:
         intro = intro[:max_chars].rsplit(" ", 1)[0].rstrip() + "…"
     return intro
 
 def build_tweet_text(title: str, slug: str, body_md: str) -> str:
     link = f"https://ederapp.com/blog/{slug}"
-    intro = extract_intro(body_md, max_chars=240)
-    intro = sanitize_prices(intro)
-
-    # Başlık + giriş + link (senin istediğin format)
-    # Başlık çok uzunsa kısalt
+    intro = sanitize_prices(extract_intro(body_md, max_chars=240))
     safe_title = (title or "").strip()
     if len(safe_title) > 90:
         safe_title = safe_title[:90].rsplit(" ", 1)[0] + "…"
-
     if intro:
         text = f"{safe_title}\n\n{intro}\n\n{link}"
     else:
         text = f"{safe_title}\n\n{link}"
-
-    # Çok uzunsa biraz kırp (X linki otomatik kısaltır ama yine de güvenli)
     if len(text) > 275:
-        # intro’yu kırp
         max_intro = max(80, 275 - len(safe_title) - len(link) - 6)
-        intro2 = extract_intro(body_md, max_chars=max_intro)
-        intro2 = sanitize_prices(intro2)
+        intro2 = sanitize_prices(extract_intro(body_md, max_chars=max_intro))
         text = f"{safe_title}\n\n{intro2}\n\n{link}"
         if len(text) > 280:
             text = (text[:280].rsplit(" ", 1)[0] + "…")
     return text
 
-def post_tweet(text: str) -> dict:
-    if not can_tweet():
-        raise RuntimeError("X API env vars missing (X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET)")
-
-    # ✅ OAuth1 ile en uyumlu endpoint (v1.1)
-    url = "https://api.twitter.com/1.1/statuses/update.json"
-
-    auth = OAuth1(
-        X_API_KEY,
-        X_API_KEY_SECRET,
-        X_ACCESS_TOKEN,
-        X_ACCESS_TOKEN_SECRET
-    )
+def webhook_tweet(payload: dict) -> dict:
+    """
+    Backend webhook'a tweet isteği gönderir.
+    Backend X API ile tweet atar.
+    """
+    if not can_webhook_tweet():
+        raise RuntimeError("Tweet webhook env missing: TWEET_WEBHOOK_URL / TWEET_WEBHOOK_TOKEN")
 
     headers = {
-        "User-Agent": "EDERBlogBot/1.0 (+https://ederapp.com)",
-        "Accept": "application/json",
+        "Authorization": f"Bearer {TWEET_WEBHOOK_TOKEN}",
+        "Content-Type": "application/json",
+        "User-Agent": "EDERBlogAutomation/1.0 (+https://ederapp.com)",
     }
-
-    r = requests.post(url, auth=auth, data={"status": text}, headers=headers, timeout=30)
-
+    r = requests.post(TWEET_WEBHOOK_URL, headers=headers, json=payload, timeout=30)
     if r.status_code >= 400:
-        # Eğer Cloudflare HTML geldiyse gömülü olarak loglamak yerine kısalt
-        snippet = (r.text or "")[:300].replace("\n", " ")
-        raise RuntimeError(f"Tweet failed: {r.status_code} {snippet}")
-
-    return r.json()
-
+        snippet = (r.text or "")[:400].replace("\n", " ")
+        raise RuntimeError(f"Webhook tweet failed: {r.status_code} {snippet}")
+    return r.json() if r.text else {"ok": True}
 
 # ----------------------------
 # Main
@@ -428,7 +403,7 @@ def main():
     generated = load_generated()
 
     rows = fetch_rows()
-    selected = pick_ready(rows, generated, limit=3)
+    selected = pick_ready(rows, generated, limit=int(os.environ.get("MAX_POSTS_PER_RUN", "3")))
 
     if not selected:
         print("No READY rows found (or all READY are already generated).")
@@ -445,15 +420,9 @@ def main():
         kw = (row.get("primary_keyword") or "").strip() or title
         tags = (row.get("tags") or "").strip()
 
-        date = (row.get("date") or "").strip()
-        if not date:
-            date = datetime.now().strftime("%Y-%m-%d")
+        date = (row.get("date") or "").strip() or datetime.now().strftime("%Y-%m-%d")
+        slug = (row.get("slug") or "").strip() or slugify(title, lowercase=True)
 
-        slug = (row.get("slug") or "").strip()
-        if not slug:
-            slug = slugify(title, lowercase=True)
-
-        # generated.json: slug obj olabilir (tweet bilgisi)
         if slug in generated:
             print(f"Skip (already generated): {slug}")
             continue
@@ -478,18 +447,15 @@ def main():
             if not body:
                 raise RuntimeError("OpenAI returned empty content")
 
-            # 1) fiyat benzeri kalıpları temizle
             body = sanitize_prices(body)
 
-            # 2) Kelime aralığına zorla (1 expand / 1 trim turu)
-            wc = word_count(body)
-            if wc < MIN_WORDS:
-                body2 = expand_to_range(client, title, kw, body)
-                body = sanitize_prices(body2)
-            wc = word_count(body)
-            if wc > MAX_WORDS:
-                body2 = trim_to_range(client, title, kw, body)
-                body = sanitize_prices(body2)
+            # 1) Expand (2 tries) until MIN_WORDS
+            if word_count(body) < MIN_WORDS:
+                body = expand_to_range(client, title, kw, body, tries=2)
+
+            # 2) Trim if too long
+            if word_count(body) > MAX_WORDS:
+                body = trim_to_range(client, title, kw, body)
 
             wc_final = word_count(body)
             if wc_final < MIN_WORDS or wc_final > MAX_WORDS:
@@ -503,38 +469,49 @@ def main():
             created_paths.append(path)
             print("Created:", path, "| words:", wc_final)
 
-            # ✅ generated.json güncelle (slug -> object)
             generated[slug] = {
                 "date": date,
+                "tweet_requested": False,
                 "tweeted": False,
                 "tweet_id": None,
                 "tweeted_at": None,
             }
             save_generated(generated)
 
-            # ✅ Tweet at (best-effort)
+            # ✅ Tweet request to backend (best-effort)
             try:
-                # İstersen env ile tweet'i kapat: ENABLE_TWEET=0
                 enable_tweet = os.environ.get("ENABLE_TWEET", "1").strip() != "0"
-
-                if enable_tweet and can_tweet():
+                if enable_tweet and can_webhook_tweet():
                     tweet_text = build_tweet_text(title, slug, body)
-                    res = post_tweet(tweet_text)
-                    tweet_id = (res.get("data") or {}).get("id")
+                    payload = {
+                        "source": "blog-automation",
+                        "title": title,
+                        "slug": slug,
+                        "url": f"https://ederapp.com/blog/{slug}",
+                        "tweet_text": tweet_text,
+                        "created_at": datetime.utcnow().isoformat() + "Z",
+                    }
+                    res = webhook_tweet(payload)
 
-                    generated[slug]["tweeted"] = True
-                    generated[slug]["tweet_id"] = tweet_id
-                    generated[slug]["tweeted_at"] = datetime.utcnow().isoformat() + "Z"
+                    generated[slug]["tweet_requested"] = True
                     save_generated(generated)
 
-                    print("Tweet posted:", tweet_id)
+                    # Backend response may include tweet_id if it tweets immediately
+                    tweet_id = res.get("tweet_id") or res.get("id") or None
+                    if tweet_id:
+                        generated[slug]["tweeted"] = True
+                        generated[slug]["tweet_id"] = tweet_id
+                        generated[slug]["tweeted_at"] = datetime.utcnow().isoformat() + "Z"
+                        save_generated(generated)
+
+                    print("Tweet webhook OK:", res)
                 else:
                     if not enable_tweet:
                         print("[warn] Tweet skipped: ENABLE_TWEET=0")
-                    elif not can_tweet():
-                        print("[warn] Tweet skipped: X API env vars missing.")
+                    elif not can_webhook_tweet():
+                        print("[warn] Tweet skipped: webhook env missing.")
             except Exception as te:
-                print("[warn] Tweet failed (continuing):", te)
+                print("[warn] Tweet webhook failed (continuing):", te)
 
             # ✅ Sheet status -> DONE
             if row_index:
@@ -546,19 +523,17 @@ def main():
                     mark_status_in_sheet_by_slug(slug, DONE_STATUS)
                     print(f"Sheet updated: slug {slug} -> {DONE_STATUS}")
 
-        except Exception as e:
+        except Exception:
             if row_index:
                 try:
                     mark_status_in_sheet_by_row(int(row_index), "ERROR")
                     print(f"Sheet updated: row {row_index} -> ERROR")
-                except Exception as e_row:
-                    print(f"[warn] Row ERROR update failed ({e_row}). Trying slug fallback...")
+                except Exception:
                     try:
                         mark_status_in_sheet_by_slug(slug, "ERROR")
                         print(f"Sheet updated: slug {slug} -> ERROR")
-                    except Exception as e2:
-                        print("Failed to update sheet status to ERROR:", e2)
-
+                    except Exception:
+                        pass
             print("Error generating/saving post for slug:", slug)
             raise
 
