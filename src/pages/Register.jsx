@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Button, Card, Form, Input, Typography, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { 
-  Mail, 
-  Lock, 
-  User, 
-  ArrowRight, 
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
   Sparkles,
   Shield,
   CheckCircle
@@ -21,10 +21,10 @@ const fadeUp = {
   show: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { 
-      delay: 0.1 * i, 
-      duration: 0.6, 
-      ease: [0.25, 0.46, 0.45, 0.94] 
+    transition: {
+      delay: 0.1 * i,
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94]
     },
   }),
 };
@@ -32,7 +32,7 @@ const fadeUp = {
 const features = [
   { icon: Shield, text: "Güvenli veri koruması" },
   { icon: Sparkles, text: "Hızlı değerleme sistemi" },
-  { icon: CheckCircle, text: "Doğru piyasa analizi" }
+  { icon: CheckCircle, text: "Piyasa odaklı analiz" }
 ];
 
 export default function Register() {
@@ -68,7 +68,7 @@ export default function Register() {
 
       <div className="auth-content">
         {/* Left side - Form */}
-        <motion.div 
+        <motion.div
           className="auth-form-section"
           initial="hidden"
           animate="show"
@@ -76,9 +76,9 @@ export default function Register() {
         >
           <motion.div className="auth-brand" variants={fadeUp} custom={0}>
             <div className="auth-logo">
-              <motion.span 
-                className="auth-dot" 
-                animate={{ 
+              <motion.span
+                className="auth-dot"
+                animate={{
                   boxShadow: [
                     "0 0 0 0 rgba(255,122,24,0.4)",
                     "0 0 0 8px rgba(255,122,24,0)",
@@ -114,9 +114,9 @@ export default function Register() {
                   label="Ad Soyad"
                   rules={[{ required: true, message: "Ad Soyad zorunlu" }]}
                 >
-                  <Input 
+                  <Input
                     prefix={<User size={18} />}
-                    placeholder="Örn: Emre Balta" 
+                    placeholder="Örn: Emre Balta"
                     size="large"
                     className="auth-input"
                   />
@@ -130,9 +130,9 @@ export default function Register() {
                     { type: "email", message: "Geçerli e-posta girin" },
                   ]}
                 >
-                  <Input 
+                  <Input
                     prefix={<Mail size={18} />}
-                    placeholder="ornek@ederapp.com" 
+                    placeholder="ornek@ederapp.com"
                     size="large"
                     className="auth-input"
                   />
@@ -146,9 +146,9 @@ export default function Register() {
                     { min: 6, message: "Şifre en az 6 karakter olmalı" }
                   ]}
                 >
-                  <Input.Password 
+                  <Input.Password
                     prefix={<Lock size={18} />}
-                    placeholder="En az 6 karakter" 
+                    placeholder="En az 6 karakter"
                     size="large"
                     className="auth-input"
                   />
@@ -158,9 +158,9 @@ export default function Register() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Button 
-                    type="primary" 
-                    htmlType="submit" 
+                  <Button
+                    type="primary"
+                    htmlType="submit"
                     size="large"
                     loading={loading}
                     className="auth-submit"
@@ -196,14 +196,14 @@ export default function Register() {
         </motion.div>
 
         {/* Right side - Features */}
-        <motion.div 
+        <motion.div
           className="auth-info-section"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
         >
           <div className="auth-info-content">
-            <motion.div 
+            <motion.div
               className="auth-info-header"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -213,7 +213,7 @@ export default function Register() {
                 Neden EDER?
               </Title>
               <Text className="auth-info-subtitle">
-                Araç değerleme konusunda güvenilir çözümler sunuyoruz.
+                Araç bilgilerini adım adım girerek tahmini piyasa aralığını keşfedin.
               </Text>
             </motion.div>
 
@@ -234,23 +234,23 @@ export default function Register() {
               ))}
             </div>
 
-            <motion.div 
+            <motion.div
               className="auth-stats"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9 }}
             >
               <div className="auth-stat">
-                <div className="auth-stat-number">10K+</div>
-                <div className="auth-stat-label">Değerlenen Araç</div>
+                <div className="auth-stat-number">Ücretsiz</div>
+                <div className="auth-stat-label">Temel Değerleme</div>
               </div>
               <div className="auth-stat">
-                <div className="auth-stat-number">98%</div>
-                <div className="auth-stat-label">Doğruluk Oranı</div>
+                <div className="auth-stat-number">Şeffaf</div>
+                <div className="auth-stat-label">Tahmini Aralık</div>
               </div>
               <div className="auth-stat">
-                <div className="auth-stat-number">5dk</div>
-                <div className="auth-stat-label">Ortalama Süre</div>
+                <div className="auth-stat-number">Güvenli</div>
+                <div className="auth-stat-label">Korunan Akış</div>
               </div>
             </motion.div>
           </div>

@@ -25,7 +25,7 @@ function normalizeSlug(slug) {
 
 async function upsertPostFromFile(filePath) {
   const raw = fs.readFileSync(filePath, "utf-8");
-  const { data, content } = matter(raw);
+  const { data } = matter(raw);
 
   // Frontmatter alanları
   const title = data.title || path.basename(filePath, ".md");
@@ -48,7 +48,7 @@ async function upsertPostFromFile(filePath) {
     canonical,
     tags,
     publishedAt,
-    markdown: raw,     // İstersen sadece content bas: content
+    markdown: raw,
   };
 
   // Aynı slug var mı?

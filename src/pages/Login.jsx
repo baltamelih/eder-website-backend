@@ -32,7 +32,7 @@ const fadeUp = {
 const features = [
   { icon: Shield, text: "Güvenli veri koruması" },
   { icon: Sparkles, text: "Hızlı değerleme sistemi" },
-  { icon: CheckCircle, text: "Doğru piyasa analizi" },
+  { icon: CheckCircle, text: "Piyasa odaklı analiz" },
 ];
 
 export default function Login() {
@@ -187,7 +187,7 @@ export default function Login() {
             <motion.div className="auth-info-header" variants={fadeUp}>
               <Title className="auth-info-title">Araç Değerleme Platformu</Title>
               <Text className="auth-info-subtitle">
-                Türkiye'nin en güvenilir araç değerleme sistemi ile doğru fiyatları keşfedin
+                Aracının özelliklerini gir, tahmini piyasa aralığını sade bir akışta keşfet.
               </Text>
             </motion.div>
 
@@ -210,9 +210,9 @@ export default function Login() {
 
             <motion.div className="auth-stats" variants={fadeUp}>
               {[
-                { v: "50K+", t: "Değerleme" },
-                { v: "10K+", t: "Kullanıcı" },
-                { v: "99%", t: "Doğruluk" },
+                { v: "Ücretsiz", t: "Temel değerleme" },
+                { v: "Şeffaf", t: "Tahmini değer aralığı" },
+                { v: "Güvenli", t: "Kötüye kullanım koruması" },
               ].map((s, i) => (
                 <motion.div key={i} style={{ textAlign: "center" }} whileHover={{ scale: 1.05 }}>
                   <div

@@ -1,0 +1,20 @@
+.eder-turnstile {
+  min-height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 14px;
+}
+
+.eder-turnstile--missing {
+  min-height: 54px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 14px;
+  text-align: center;
+}

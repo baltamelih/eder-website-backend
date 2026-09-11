@@ -11,7 +11,7 @@ export default function Privacy() {
           <Shield size={24} style={{ marginRight: 8, verticalAlign: "middle" }} />
           Gizlilik Politikası
         </Title>
-        
+
         <Paragraph style={{ color: "rgba(0,0,0,0.70)", fontSize: 16, marginBottom: 24 }}>
           Son güncelleme: {new Date().toLocaleDateString('tr-TR')} | KVKK uyumlu
         </Paragraph>
@@ -30,7 +30,7 @@ export default function Privacy() {
           <Database size={20} style={{ marginRight: 8, verticalAlign: "middle" }} />
           Topladığımız Veriler
         </Title>
-        
+
         <div style={{ marginBottom: 24 }}>
           <Text strong>Hesap Bilgileri:</Text>
           <Paragraph style={{ color: "rgba(0,0,0,0.70)", marginLeft: 24 }}>

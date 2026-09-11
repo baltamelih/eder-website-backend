@@ -1,459 +1,279 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { 
-  ArrowRight, 
-  Shield, 
-  Zap, 
-  TrendingUp,
-  CheckCircle,
-  Star,
-  Users,
-  Clock,
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  ArrowRight,
   BarChart3,
-  Car,
-  Award,
-  Sparkles
+  CarFront,
+  Check,
+  Gauge,
+  ScanSearch,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
 } from "lucide-react";
-import { useAuth } from "../services/AuthContext";
-import FreeOnly from "../components/FreeOnly";
 import AdSlot from "../components/AdSlot";
+import { MetaTags } from "../components/MetaTags";
 import "./Home.css";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i = 0) => ({
+const HOME_AD_SLOT = import.meta.env.VITE_ADS_SLOT_HOME;
+
+const reveal = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
     opacity: 1,
     y: 0,
-    transition: { 
-      delay: 0.1 * i, 
-      duration: 0.6, 
-      ease: [0.25, 0.46, 0.45, 0.94] 
-    },
-  }),
+    transition: { duration: 0.62, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
-const stagger = {
-  visible: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+const vehicleSteps = [
+  "Araç kimliği",
+  "Teknik detaylar",
+  "Kondisyon",
+  "Piyasa aralığı",
+];
 
-function Stat({ icon: Icon, label, value, trend }) {
+function MarketCanvas({ reducedMotion }) {
   return (
-    <motion.div 
-      className="stat-card"
-      whileHover={{ scale: 1.02, y: -2 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    >
-      <div className="stat-icon">
-        <Icon size={20} />
+    <div className="market-canvas" aria-label="EDER değerleme akışı görseli">
+      <div className="market-canvas__topline">
+        <span>EDER / MARKET VIEW</span>
+        <span className="market-canvas__live">
+          <i aria-hidden />
+          Değerleme akışı
+        </span>
       </div>
-      <div className="stat-content">
-        <div className="stat-value">{value}</div>
-        <div className="stat-label">{label}</div>
-        {trend && <div className="stat-trend">+{trend}% bu ay</div>}
-      </div>
-    </motion.div>
-  );
-}
 
-function Feature({ icon: Icon, title, desc, highlight }) {
-  return (
-    <motion.div 
-      className={`feature-card ${highlight ? 'featured' : ''}`}
-      whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    >
-      <div className="feature-icon">
-        <Icon size={24} />
+      <div className="market-canvas__vehicle">
+        <svg viewBox="0 0 620 238" role="img" aria-label="Araç silüeti">
+          <defs>
+            <linearGradient id="eder-car-line" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ff6b1a" />
+              <stop offset="100%" stopColor="#ffad66" />
+            </linearGradient>
+          </defs>
+          <motion.path
+            d="M88 150 C116 112 151 87 207 79 L355 76 C404 77 442 92 474 121 L519 143 C543 154 554 171 554 186 L554 193 L516 193 C511 162 488 145 458 145 C428 145 404 162 399 193 L217 193 C212 162 188 145 158 145 C128 145 104 162 99 193 L66 193 L66 179 C66 164 73 156 88 150 Z"
+            fill="none"
+            stroke="url(#eder-car-line)"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={reducedMotion ? false : { pathLength: 0, opacity: 0.2 }}
+            animate={reducedMotion ? undefined : { pathLength: 1, opacity: 1 }}
+            transition={{ duration: 1.35, ease: "easeInOut" }}
+          />
+          <path
+            d="M204 82 L259 124 L425 124 C405 98 381 84 349 80 Z"
+            fill="rgba(255,107,26,0.08)"
+            stroke="rgba(255,107,26,0.24)"
+            strokeWidth="2"
+          />
+          <circle cx="158" cy="193" r="31" fill="#111827" stroke="#334155" strokeWidth="7" />
+          <circle cx="458" cy="193" r="31" fill="#111827" stroke="#334155" strokeWidth="7" />
+          <circle cx="158" cy="193" r="10" fill="#f8fafc" />
+          <circle cx="458" cy="193" r="10" fill="#f8fafc" />
+        </svg>
       </div>
-      <div className="feature-content">
-        <h3 className="feature-title">{title}</h3>
-        <p className="feature-desc">{desc}</p>
-      </div>
-      {highlight && <div className="feature-badge">Popüler</div>}
-    </motion.div>
-  );
-}
 
-function Step({ no, title, desc, icon: Icon }) {
-  return (
-    <motion.div 
-      className="step-card"
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    >
-      <div className="step-header">
-        <div className="step-number">{no}</div>
-        <div className="step-icon">
-          <Icon size={20} />
-        </div>
+      <div className="market-canvas__curve" aria-hidden>
+        <svg viewBox="0 0 620 160" preserveAspectRatio="none">
+          <path
+            d="M0 124 C76 120 97 76 158 83 C220 91 241 41 306 53 C371 66 402 22 468 43 C520 60 552 30 620 24"
+            fill="none"
+            stroke="rgba(255,107,26,0.82)"
+            strokeWidth="3"
+          />
+          <path
+            d="M0 139 C85 125 109 103 171 107 C235 112 258 74 322 82 C386 89 421 56 486 67 C543 77 570 57 620 50"
+            fill="none"
+            stroke="rgba(148,163,184,0.32)"
+            strokeWidth="2"
+            strokeDasharray="6 8"
+          />
+        </svg>
       </div>
-      <div className="step-content">
-        <h3 className="step-title">{title}</h3>
-        <p className="step-desc">{desc}</p>
-      </div>
-    </motion.div>
-  );
-}
 
-function Testimonial({ name, role, content, avatar, rating }) {
-  return (
-    <motion.div 
-      className="testimonial-card"
-      whileHover={{ y: -4 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    >
-      <div className="testimonial-rating">
-        {[...Array(rating)].map((_, i) => (
-          <Star key={i} size={16} fill="currentColor" />
+      <div className="market-canvas__steps">
+        {vehicleSteps.map((item, index) => (
+          <div className="market-canvas__step" key={item}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <p>{item}</p>
+            <Check size={14} aria-hidden />
+          </div>
         ))}
       </div>
-      <p className="testimonial-content">"{content}"</p>
-      <div className="testimonial-author">
-        <div className="testimonial-avatar">{avatar}</div>
-        <div>
-          <div className="testimonial-name">{name}</div>
-          <div className="testimonial-role">{role}</div>
-        </div>
-      </div>
-    </motion.div>
+    </div>
   );
 }
 
 export default function Home() {
-  const { isAuthed, user } = useAuth();
-
-  const isPremium = !!user?.is_premium;
-  const isAdsFree = !!user?.is_ads_free;
-
-  const carCountText = isAuthed ? `${user?.car_count ?? 0}/${user?.car_limit ?? 1}` : "0/1";
-  const planText = isAuthed ? (isPremium ? "Premium" : "Free") : "Misafir";
+  const reducedMotion = useReducedMotion();
 
   return (
-    <div className="home-page">
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-bg">
-          <div className="hero-gradient" />
-          <div className="hero-dots" />
-        </div>
-        
-        <div className="container">
-          <motion.div 
-            className="hero-content"
+    <main className="eder-home">
+      <MetaTags
+        title="Araç Değerleme"
+        description="Aracınızın marka, model, yıl, kilometre, teknik özellik ve kondisyon bilgilerini kullanarak tahmini piyasa değer aralığını öğrenin."
+        canonical="https://ederapp.com/"
+        ogType="website"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "EDER",
+          url: "https://ederapp.com/",
+          applicationCategory: "AutomotiveApplication",
+          operatingSystem: "Web",
+          description:
+            "Araç özellikleri ve piyasa verileriyle tahmini piyasa değer aralığı sunan web uygulaması.",
+        }}
+      />
+
+      <section className="eder-hero">
+        <div className="eder-shell eder-hero__grid">
+          <motion.div
+            className="eder-hero__copy"
             initial="hidden"
-            animate="visible"
-            variants={stagger}
+            animate="show"
+            variants={reveal}
           >
-            <motion.div className="hero-badge" variants={fadeUp} custom={0}>
-              <Sparkles size={16} />
-              <span>Türkiye'nin en güvenilir araç değerleme platformu</span>
-            </motion.div>
+            <div className="eder-kicker">
+              <Sparkles size={15} aria-hidden />
+              Trink EDER'ini öğren
+            </div>
 
-            <motion.h1 className="hero-title" variants={fadeUp} custom={1}>
-              Aracınızın gerçek değerini
-              <span className="hero-accent"> saniyeler içinde </span>
-              öğrenin
-            </motion.h1>
+            <h1>
+              Aracının piyasadaki
+              <span> yerini gör.</span>
+            </h1>
 
-            <motion.p className="hero-subtitle" variants={fadeUp} custom={2}>
-              Yapay zeka destekli algoritma ile marka, model, yıl ve donanım bazında 
-              en doğru değer aralığını hesaplıyoruz. Giriş yapın, araçlarınızı kaydedin, 
-              geçmişinizi takip edin.
-            </motion.p>
-
-            <motion.div className="hero-actions" variants={fadeUp} custom={3}>
-              <Link to="/app/valuation" className="btn-primary">
-                <span>Hemen Değerle</span>
-                <ArrowRight size={18} />
-              </Link>
-              
-              {!isAuthed ? (
-                <Link to="/register" className="btn-secondary">
-                  Ücretsiz Hesap Oluştur
-                </Link>
-              ) : (
-                <Link to="/app/dashboard" className="btn-secondary">
-                  Dashboard'a Git
-                </Link>
-              )}
-            </motion.div>
-
-            <motion.div className="hero-stats" variants={fadeUp} custom={4}>
-              <Stat 
-                icon={Car} 
-                label="Araç Hakkı" 
-                value={carCountText}
-              />
-              <Stat 
-                icon={Award} 
-                label="Plan" 
-                value={planText}
-                trend={isPremium ? "Premium" : null}
-              />
-              <Stat 
-                icon={Shield} 
-                label="Güvenlik" 
-                value="256-bit SSL"
-              />
-            </motion.div>
-
-            <motion.div className="hero-trust" variants={fadeUp} custom={5}>
-              <div className="trust-item">
-                <CheckCircle size={16} />
-                <span>Aralık yaklaşımı</span>
-              </div>
-              <div className="trust-item">
-                <CheckCircle size={16} />
-                <span>Gizlilik odağı</span>
-              </div>
-              <div className="trust-item">
-                <CheckCircle size={16} />
-                <span>Şeffaf süreç</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="stats-section">
-        <div className="container">
-          <motion.div 
-            className="stats-grid"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={stagger}
-          >
-            <motion.div className="stat-item" variants={fadeUp}>
-              <div className="stat-number">25K+</div>
-              <div className="stat-text">Değerlenen Araç</div>
-            </motion.div>
-            <motion.div className="stat-item" variants={fadeUp}>
-              <div className="stat-number">98%</div>
-              <div className="stat-text">Doğruluk Oranı</div>
-            </motion.div>
-            <motion.div className="stat-item" variants={fadeUp}>
-              <div className="stat-number">30sn</div>
-              <div className="stat-text">Ortalama Süre</div>
-            </motion.div>
-            <motion.div className="stat-item" variants={fadeUp}>
-              <div className="stat-number">5K+</div>
-              <div className="stat-text">Aktif Kullanıcı</div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="features-section">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <h2 className="section-title">Neden EDER?</h2>
-            <p className="section-subtitle">
-              Araç değerleme konusunda size en iyi deneyimi sunmak için geliştirdiğimiz özellikler
+            <p className="eder-hero__lead">
+              Marka, model, kilometre, teknik detaylar ve kondisyon bilgilerini
+              tek akışta birleştir. EDER sana anlaşılır bir tahmini piyasa
+              değer aralığı sunsun.
             </p>
+
+            <div className="eder-hero__actions">
+              <Link to="/valuation" className="eder-button eder-button--primary">
+                Ücretsiz değerle
+                <ArrowRight size={18} aria-hidden />
+              </Link>
+              <a href="#nasil-calisir" className="eder-button eder-button--quiet">
+                Nasıl çalışıyor?
+              </a>
+            </div>
+
+            <div className="eder-proof-strip" aria-label="EDER özellikleri">
+              <span>
+                <ShieldCheck size={16} aria-hidden />
+                Güvenlik doğrulamalı
+              </span>
+              <span>
+                <Gauge size={16} aria-hidden />
+                Hızlı akış
+              </span>
+              <span>
+                <BarChart3 size={16} aria-hidden />
+                Tek sayı yerine aralık
+              </span>
+            </div>
           </motion.div>
 
-          <motion.div 
-            className="features-grid"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={stagger}
+          <motion.div
+            initial={reducedMotion ? false : { opacity: 0, x: 28 }}
+            animate={reducedMotion ? undefined : { opacity: 1, x: 0 }}
+            transition={{ duration: 0.72, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Feature
-              icon={BarChart3}
-              title="Donanım Bazlı Analiz"
-              desc="Sadece marka-model değil, trim ve donanım farklarını da hesaba katarak en doğru sonucu verir."
-              highlight={true}
-            />
-            <Feature
-              icon={TrendingUp}
-              title="Piyasa Metrikleri"
-              desc="Güncel piyasa verileri ve istatistiksel analizlerle desteklenen tahmin algoritması."
-            />
-            <Feature
-              icon={Shield}
-              title="Güvenli Kayıt"
-              desc="Araçlarınızı güvenle kaydedin, geçmiş değerlemelerinizi takip edin."
-            />
-            <Feature
-              icon={Zap}
-              title="Hızlı Sonuç"
-              desc="30 saniye içinde detaylı değerleme raporu alın, zaman kaybetmeyin."
-            />
-            <Feature
-              icon={Users}
-              title="Uzman Desteği"
-              desc="Sorularınız için 7/24 müşteri desteği ve uzman danışmanlık hizmeti."
-            />
-            <Feature
-              icon={Clock}
-              title="Geçmiş Takibi"
-              desc="Değerleme geçmişinizi görün, araçlarınızın değer değişimini takip edin."
-            />
+            <MarketCanvas reducedMotion={reducedMotion} />
           </motion.div>
+        </div>
+
+        <div className="eder-hero__rail" aria-hidden>
+          <span>MARKA</span>
+          <i />
+          <span>MODEL</span>
+          <i />
+          <span>KİLOMETRE</span>
+          <i />
+          <span>KONDİSYON</span>
+          <i />
+          <strong>EDER</strong>
         </div>
       </section>
 
-      {/* How it Works */}
-      <section className="steps-section">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <h2 className="section-title">Nasıl Çalışır?</h2>
-            <p className="section-subtitle">3 basit adımda aracınızın değerini öğrenin</p>
-          </motion.div>
+      <section className="eder-process" id="nasil-calisir">
+        <div className="eder-shell">
+          <div className="eder-section-head">
+            <div>
+              <span className="eder-section-head__eyebrow">Değerleme mantığı</span>
+              <h2>Kararı değil, karar vermeyi kolaylaştıran veriyi sunuyoruz.</h2>
+            </div>
+            <p>
+              Değerleme sonucu kesin satış fiyatı değildir. Araç kondisyonu,
+              bakım geçmişi, bölgesel talep ve piyasa hareketleri nihai fiyatı
+              değiştirebilir.
+            </p>
+          </div>
 
-          <motion.div 
-            className="steps-grid"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={stagger}
-          >
-            <Step
-              no="01"
-              icon={Car}
-              title="Araç Bilgilerini Girin"
-              desc="Marka, model, yıl, donanım ve kilometre bilgilerini seçin."
-            />
-            <Step
-              no="02"
-              icon={BarChart3}
-              title="Analiz Edilsin"
-              desc="Yapay zeka algoritması piyasa verilerini analiz ederek değer aralığını hesaplar."
-            />
-            <Step
-              no="03"
-              icon={CheckCircle}
-              title="Sonucu Alın"
-              desc="Detaylı rapor ile birlikte değer aralığını görün ve kaydedin."
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="testimonials-section">
-        <div className="container">
-          <motion.div 
-            className="section-header"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <h2 className="section-title">Kullanıcılarımız Ne Diyor?</h2>
-            <p className="section-subtitle">Binlerce memnun kullanıcımızdan bazı yorumlar</p>
-          </motion.div>
-
-          <motion.div 
-            className="testimonials-grid"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={stagger}
-          >
-            <Testimonial
-              name="Ahmet Yılmaz"
-              role="Araç Sahibi"
-              content="EDER sayesinde aracımın gerçek değerini öğrendim. Çok hızlı ve güvenilir bir platform."
-              avatar="AY"
-              rating={5}
-            />
-            <Testimonial
-              name="Elif Kaya"
-              role="Premium Kullanıcı"
-              content="Donanım bazlı değerleme özelliği harika. Diğer platformlarda bulamadığım detayı burada buldum."
-              avatar="EK"
-              rating={5}
-            />
-            <Testimonial
-              name="Mehmet Demir"
-              role="Galeri Sahibi"
-              content="İş yerimde sürekli kullanıyorum. Müşterilerime güvenilir değer aralığı sunabiliyorum."
-              avatar="MD"
-              rating={5}
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="container">
-          <motion.div 
-            className="cta-card"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <div className="cta-content">
-              <h2 className="cta-title">
-                {isAuthed ? "Premium'a Geçin" : "Hemen Başlayın"}
-              </h2>
-              <p className="cta-subtitle">
-                {isAuthed 
-                  ? "Reklamsız deneyim ve daha fazla araç hakkı için Premium'a geçin."
-                  : "Ücretsiz hesap oluşturun ve araç değerleme dünyasına adım atın."
-                }
+          <div className="eder-process__grid">
+            <article className="eder-process-card">
+              <span className="eder-process-card__index">01</span>
+              <CarFront size={24} aria-hidden />
+              <h3>Aracı doğru tanımla</h3>
+              <p>
+                Marka, model, yıl, versiyon ve kilometre bilgisiyle doğru araç
+                grubunu seç.
               </p>
-            </div>
-            
-            <div className="cta-actions">
-              {!isAuthed ? (
-                <>
-                  <Link to="/register" className="btn-primary">
-                    <span>Ücretsiz Başla</span>
-                    <ArrowRight size={18} />
-                  </Link>
-                  <Link to="/pricing" className="btn-secondary">
-                    Planları İncele
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/pricing" className="btn-primary">
-                    <span>Premium'a Geç</span>
-                    <ArrowRight size={18} />
-                  </Link>
-                  <Link to="/dashboard" className="btn-secondary">
-                    Dashboard
-                  </Link>
-                </>
-              )}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+            </article>
 
-      {/* Free User Ad - KALDIRILDI */}
-      {/* <FreeOnly>
-        <div className="ad-section">
-          <div className="container">
-            <AdSlot enabled slot="SLOT_HOME_BOTTOM" style={{ minHeight: 250 }} />
+            <article className="eder-process-card">
+              <span className="eder-process-card__index">02</span>
+              <ScanSearch size={24} aria-hidden />
+              <h3>Kondisyonu ekle</h3>
+              <p>
+                Değişen, boya ve ağır hasar gibi değeri etkileyen bilgileri
+                parça bazında işaretle.
+              </p>
+            </article>
+
+            <article className="eder-process-card">
+              <span className="eder-process-card__index">03</span>
+              <TrendingUp size={24} aria-hidden />
+              <h3>Aralığı yorumla</h3>
+              <p>
+                Sonucu tek bir kesin fiyat gibi değil, piyasa koşullarını
+                yansıtan tahmini bir değer aralığı olarak değerlendir.
+              </p>
+            </article>
           </div>
         </div>
-      </FreeOnly> */}
-    </div>
+      </section>
+
+      <section className="eder-home-ad" aria-label="Reklam">
+        <div className="eder-shell">
+          <AdSlot enabled slot={HOME_AD_SLOT} style={{ minHeight: 120 }} />
+        </div>
+      </section>
+
+      <section className="eder-final-cta">
+        <div className="eder-shell">
+          <div className="eder-final-cta__card">
+            <div className="eder-final-cta__copy">
+              <span>Aracın kaç EDER?</span>
+              <h2>Değerleme akışına geç ve piyasa aralığını öğren.</h2>
+              <p>
+                Güvenlik doğrulaması ve günlük kullanım sınırı, servisin
+                sürdürülebilir ve adil kullanılmasına yardımcı olur.
+              </p>
+            </div>
+            <Link to="/valuation" className="eder-button eder-button--primary">
+              Değerlemeyi başlat
+              <ArrowRight size={18} aria-hidden />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

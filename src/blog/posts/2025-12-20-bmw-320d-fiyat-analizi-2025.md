@@ -57,19 +57,19 @@ Bu adımlar, BMW 320d alım sürecinde daha bilinçli kararlar vermenize yardım
 
 ## Sık Sorulan Sorular
 
-**S: BMW 320d'nin en güçlü motor seçeneği hangisidir?**  
+**S: BMW 320d'nin en güçlü motor seçeneği hangisidir?**
 C: BMW 320d genellikle 190 beygir gücünde bir motorla gelir. Ancak farklı motor seçenekleri de mevcut olabilir.
 
-**S: BMW 320d'nin yakıt tüketimi nasıldır?**  
+**S: BMW 320d'nin yakıt tüketimi nasıldır?**
 C: BMW 320d, ortalama 4-5 litre/100 km yakıt tüketimi sunarak, oldukça ekonomik bir seçenek olarak öne çıkmaktadır.
 
-**S: İkinci el BMW 320d alırken hangi belgeleri kontrol etmeliyim?**  
+**S: İkinci el BMW 320d alırken hangi belgeleri kontrol etmeliyim?**
 C: İkinci el araç alırken ruhsat, trafik sigortası, bakım kayıtları ve ekspertiz raporunu kontrol etmek önemlidir.
 
 ## Sonuç
 
 BMW 320d, performansı ve konforu ile dikkat çeken bir araçtır. 2025 yılı itibarıyla fiyat analizi ve alım sürecinde dikkat edilmesi gereken noktaları göz önünde bulundurarak, bilinçli bir seçim yapabilirsiniz. Unutmayın, fiyatlar değişebilir, bu nedenle her zaman güncel fiyat bilgisi almak önemlidir.
 
-Daha fazla bilgi için, şu sayfalara göz atabilirsiniz: 
+Daha fazla bilgi için, şu sayfalara göz atabilirsiniz:
 - app/valuation
 - /pricing

@@ -6,7 +6,7 @@ async function generateSitemap() {
   const staticPages = [
     { url: 'https://ederapp.com/', priority: '1.0', changefreq: 'daily' },
     { url: 'https://ederapp.com/blog', priority: '0.8', changefreq: 'daily' },
-    { url: 'https://ederapp.com/pricing', priority: '0.7', changefreq: 'weekly' },
+    { url: 'https://ederapp.com/valuation', priority: '0.9', changefreq: 'weekly' },
     { url: 'https://ederapp.com/app/valuation', priority: '0.9', changefreq: 'weekly' },
   ];
 

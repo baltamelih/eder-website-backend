@@ -1,36 +1,60 @@
-// src/services/valuationApi.js
 let API = (import.meta.env.VITE_API_BASE || "").trim();
 
-// API URL temizleme (api.js ile aynı mantık)
 API = API.replace(/\/+$/, "");
 API = API.replace(/^https?:\/\/https?:\/\//, "https://");
 
-async function httpGet(path, params = {}) {
-  const url = new URL(`${API}${path}`);
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && String(v).length > 0) url.searchParams.set(k, v);
-  });
-
-  const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`GET ${path} failed (${res.status}): ${text}`);
+async function parseResponse(res, method, path) {
+  const text = await res.text().catch(() => "");
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = { raw: text };
   }
-  return res.json();
+
+  if (!res.ok) {
+    const msg =
+      (typeof data?.message === "string" && data.message) ||
+      (typeof data?.error === "string" && data.error) ||
+      `${method} ${path} başarısız (${res.status})`;
+
+    const error = new Error(msg);
+    error.status = res.status;
+    error.data = data;
+    throw error;
+  }
+
+  return data;
 }
 
-async function httpPost(path, body = {}) {
+async function httpGet(path, params = {}) {
+  const url = new URL(`${API}${path}`, window.location.origin);
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && String(v).length > 0) {
+      url.searchParams.set(k, v);
+    }
+  });
+
+  const res = await fetch(url.toString(), {
+    headers: { Accept: "application/json" },
+  });
+  return parseResponse(res, "GET", path);
+}
+
+async function httpPost(path, body = {}, { turnstileToken = "" } = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  if (turnstileToken) headers["X-Turnstile-Token"] = turnstileToken;
+
   const res = await fetch(`${API}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    headers,
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`POST ${path} failed (${res.status}): ${text}`);
-  }
-  return res.json();
+  return parseResponse(res, "POST", path);
 }
 
 export const valuationApi = {
@@ -38,5 +62,6 @@ export const valuationApi = {
   getModels: (brand_id, q) => httpGet("/api/models", { brand_id, q }),
   getYears: (brand_id, model_id) => httpGet("/api/years", { brand_id, model_id }),
   getTrims: (brand_id, model_id, year) => httpGet("/api/trims", { brand_id, model_id, year }),
-  predict: (payload) => httpPost("/api/predict", payload),
+  predict: (payload, turnstileToken) =>
+    httpPost("/api/predict", payload, { turnstileToken }),
 };

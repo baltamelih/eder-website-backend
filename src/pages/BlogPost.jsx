@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Button, Result } from "antd";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import matter from "gray-matter";
@@ -69,8 +70,9 @@ export default function BlogPost() {
         if (!alive) return;
         setPost(null);
       } finally {
-        if (!alive) return;
-        setLoading(false);
+        if (alive) {
+          setLoading(false);
+        }
       }
     }
 
@@ -123,13 +125,27 @@ export default function BlogPost() {
         status="404"
         title="Blog yazısı bulunamadı"
         subTitle="Aradığınız blog yazısı mevcut değil."
-        extra={<Button type="primary" onClick={() => navigate('/blog')}>Blog'a Dön</Button>}
+        extra={
+          <Link to="/blog">
+            <Button type="primary">Blog'a Dön</Button>
+          </Link>
+        }
       />
     );
   }
 
   return (
-    <div style={{ padding: "28px 0" }}>
+    <>
+      <MetaTags
+        title={title}
+        description={description}
+        canonical={canonical}
+        ogImage={ogImage}
+        ogType="article"
+        publishedTime={datePublished}
+        tags={tags}
+      />
+      <div style={{ padding: "28px 0" }}>
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 16px" }}>
         <div style={{ marginBottom: 14 }}>
           <Link
@@ -326,7 +342,7 @@ export default function BlogPost() {
             ← Tüm yazılar
           </Link>
           <Link
-            to="app/valuation"
+            to="/valuation"
             style={{ color: "#111", fontWeight: 800, textDecoration: "none" }}
           >
             Araç değerle →
@@ -337,5 +353,6 @@ export default function BlogPost() {
         {/* <pre style={{ marginTop: 18, fontSize: 12, opacity: 0.7 }}>{canonical} | {ogImage}</pre> */}
       </div>
     </div>
+    </>
   );
 }

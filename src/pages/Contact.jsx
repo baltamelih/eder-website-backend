@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import {
   Mail,
   MapPin,
-  Clock,
   Send,
   MessageCircle,
   ShieldCheck,
@@ -25,20 +24,19 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
-  async function onFinish(values) {
+  function onFinish(values) {
     setLoading(true);
-    try {
-      // ✅ Şimdilik demo: backend yoksa bile çalışır
-      // İstersen bunu /api/support/contact gibi bir endpoint'e bağlarız.
-      await new Promise((r) => setTimeout(r, 650));
 
-      message.success("Mesajınız alındı! En kısa sürede dönüş yapacağız.");
-      form.resetFields();
-    } catch (e) {
-      message.error(e?.message || "Mesaj gönderilemedi");
-    } finally {
-      setLoading(false);
-    }
+    const subject = encodeURIComponent(`[EDER] ${values.subject}`);
+    const body = encodeURIComponent(
+      `Ad Soyad: ${values.name}\nE-posta: ${values.email}\n\n${values.message}`
+    );
+
+    window.location.href =
+      `mailto:destek@ederapp.com?subject=${subject}&body=${body}`;
+
+    message.info("E-posta uygulamanız açılıyor. Mesajı göndermeyi oradan tamamlayın.");
+    setLoading(false);
   }
 
   return (
@@ -150,7 +148,7 @@ export default function Contact() {
               }}
             >
               <MessageCircle size={16} />
-              Hızlı geri dönüş
+              E-posta üzerinden destek
             </span>
           </motion.div>
         </motion.div>
@@ -192,10 +190,10 @@ export default function Contact() {
                 />
 
                 <InfoRow
-                  icon={<Clock size={18} />}
-                  title="Çalışma Saatleri"
-                  value={<span style={{ fontWeight: 700 }}>09:00 – 18:00</span>}
-                  hint="Hafta içi"
+                  icon={<ShieldCheck size={18} />}
+                  title="Destek Kanalı"
+                  value={<span style={{ fontWeight: 700 }}>E-posta</span>}
+                  hint="Talebin kapsamına göre yanıtlanır"
                 />
               </div>
 
@@ -212,7 +210,7 @@ export default function Contact() {
                   Not
                 </Text>
                 <div style={{ marginTop: 6, color: "rgba(15,23,42,0.75)", fontWeight: 600 }}>
-                  En erken 2 iş günü ile 14 iş günü içerisinde geri dönüş sağlanacaktır.
+                  Yanıt süresi talebin kapsamına ve inceleme ihtiyacına göre değişebilir.
                 </div>
               </div>
             </Card>
@@ -283,7 +281,7 @@ export default function Contact() {
                 >
                   <Input
                     size="large"
-                    placeholder="Örn: Premium ödeme sorunu / Değerleme hatası"
+                    placeholder="Örn: Değerleme hatası / Hesap sorunu"
                     style={{ borderRadius: 14, height: 48 }}
                   />
                 </Form.Item>
@@ -326,7 +324,7 @@ export default function Contact() {
 
                 <div style={{ marginTop: 12, textAlign: "center" }}>
                   <Text type="secondary" style={{ fontSize: 12 }}>
-                    Gönderdiğiniz mesaj destek ekibimize iletilir. Gizlilik için{" "}
+                    Form, e-posta uygulamanızda hazır bir taslak oluşturur. Gizlilik için{" "}
                     <a href="/privacy">Gizlilik Politikası</a>.
                   </Text>
                 </div>

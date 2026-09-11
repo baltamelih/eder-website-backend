@@ -11,20 +11,20 @@ const fadeUp = {
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { 
-      delay: 0.1 * i, 
-      duration: 0.6, 
-      ease: [0.25, 0.46, 0.45, 0.94] 
+    transition: {
+      delay: 0.1 * i,
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94]
     },
   }),
 };
 
 export default function NotFound() {
   return (
-    <div style={{ 
-      minHeight: "70vh", 
-      display: "flex", 
-      alignItems: "center", 
+    <div style={{
+      minHeight: "70vh",
+      display: "flex",
+      alignItems: "center",
       justifyContent: "center",
       padding: "40px 20px"
     }}>
@@ -71,11 +71,11 @@ export default function NotFound() {
 
         {/* 404 Text */}
         <motion.div variants={fadeUp} custom={1}>
-          <Title 
-            level={1} 
-            style={{ 
-              fontSize: "72px", 
-              fontWeight: "900", 
+          <Title
+            level={1}
+            style={{
+              fontSize: "72px",
+              fontWeight: "900",
               color: "#ff7a18",
               margin: "0 0 16px",
               lineHeight: "1"
@@ -87,10 +87,10 @@ export default function NotFound() {
 
         {/* Title */}
         <motion.div variants={fadeUp} custom={2}>
-          <Title 
-            level={2} 
-            style={{ 
-              color: "#0f172a", 
+          <Title
+            level={2}
+            style={{
+              color: "#0f172a",
               marginBottom: "16px",
               fontWeight: "700"
             }}
@@ -101,9 +101,9 @@ export default function NotFound() {
 
         {/* Description */}
         <motion.div variants={fadeUp} custom={3}>
-          <Paragraph 
-            style={{ 
-              color: "rgba(15,23,42,0.62)", 
+          <Paragraph
+            style={{
+              color: "rgba(15,23,42,0.62)",
               fontSize: "16px",
               lineHeight: "1.6",
               marginBottom: "40px"
@@ -116,12 +116,12 @@ export default function NotFound() {
         </motion.div>
 
         {/* Actions */}
-        <motion.div 
-          variants={fadeUp} 
+        <motion.div
+          variants={fadeUp}
           custom={4}
-          style={{ 
-            display: "flex", 
-            gap: "16px", 
+          style={{
+            display: "flex",
+            gap: "16px",
             justifyContent: "center",
             flexWrap: "wrap"
           }}
@@ -131,8 +131,8 @@ export default function NotFound() {
             whileTap={{ scale: 0.95 }}
           >
             <Link to="/">
-              <Button 
-                type="primary" 
+              <Button
+                type="primary"
                 size="large"
                 icon={<Home size={18} />}
                 style={{
@@ -156,7 +156,7 @@ export default function NotFound() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button 
+            <Button
               size="large"
               icon={<ArrowLeft size={18} />}
               onClick={() => window.history.back()}
@@ -178,7 +178,7 @@ export default function NotFound() {
 
         {/* Help Text */}
         <motion.div variants={fadeUp} custom={5}>
-          <div style={{ 
+          <div style={{
             marginTop: "40px",
             padding: "20px",
             borderRadius: "12px",
@@ -191,10 +191,10 @@ export default function NotFound() {
                 Yardıma mı ihtiyacınız var?
               </span>
             </div>
-            <Paragraph style={{ 
-              margin: 0, 
-              color: "rgba(15,23,42,0.7)", 
-              fontSize: "14px" 
+            <Paragraph style={{
+              margin: 0,
+              color: "rgba(15,23,42,0.7)",
+              fontSize: "14px"
             }}>
               Sorun devam ederse <Link to="/support" style={{ color: "#ff7a18", fontWeight: "600" }}>destek</Link> sayfamızdan bize ulaşabilirsiniz.
             </Paragraph>

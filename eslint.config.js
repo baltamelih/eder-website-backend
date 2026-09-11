@@ -23,7 +23,26 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^(?:[A-Z_]|motion$)',
+          argsIgnorePattern: '^_',
+          caughtErrors: 'none',
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/app/routes.jsx', 'src/services/AuthContext.jsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    files: ['src/lib/sync_md_to_sanity.js', 'src/scripts/generate-sitemap.js'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 ])

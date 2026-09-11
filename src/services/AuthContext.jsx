@@ -1,5 +1,12 @@
 // services/AuthContext.jsx
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { apiFetch } from "./api";
 import { getAuthToken, clearAuthTokens } from "./auth";
 
@@ -13,13 +20,13 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // app boot loading
-  const [ready, setReady] = useState(false);    // auth init complete
+  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
 
   const isAuthed = !!user;
   const adsDisabled = !!user?.is_ads_free || !!user?.is_premium;
 
-  async function refreshMe() {
+  const refreshMe = useCallback(async () => {
     setLoading(true);
 
     const token = getAuthToken();
@@ -41,34 +48,39 @@ export function AuthProvider({ children }) {
       setReady(true);
       setLoading(false);
     }
-  }
+  }, []);
 
-  async function loginUser(email, password) {
-    const { login } = await import("./auth");
-    const data = await login(email, password);
-    await refreshMe();
-    return data;
-  }
+  const loginUser = useCallback(
+    async (email, password) => {
+      const { login } = await import("./auth");
+      const data = await login(email, password);
+      await refreshMe();
+      return data;
+    },
+    [refreshMe]
+  );
 
-  async function registerUser(userData) {
-    const { register } = await import("./auth");
-    const data = await register(userData);
-    await refreshMe();
-    return data;
-  }
+  const registerUser = useCallback(
+    async (userData) => {
+      const { register } = await import("./auth");
+      const data = await register(userData);
+      await refreshMe();
+      return data;
+    },
+    [refreshMe]
+  );
 
-  async function logoutUser() {
+  const logoutUser = useCallback(async () => {
     const { logout } = await import("./auth");
     await logout();
     setUser(null);
     setReady(true);
     setLoading(false);
-  }
+  }, []);
 
   useEffect(() => {
     refreshMe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refreshMe]);
 
   const value = useMemo(
     () => ({
@@ -82,7 +94,17 @@ export function AuthProvider({ children }) {
       register: registerUser,
       logout: logoutUser,
     }),
-    [user, isAuthed, loading, ready, adsDisabled]
+    [
+      user,
+      isAuthed,
+      loading,
+      ready,
+      adsDisabled,
+      refreshMe,
+      loginUser,
+      registerUser,
+      logoutUser,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

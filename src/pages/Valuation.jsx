@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Card, Col, Divider, Input, Row, Select, Space, Steps, Tag, Typography, Switch, message } from "antd";
+import { Button, Card, Col, Divider, Input, Row, Select, Space, Steps, Typography, Switch, message } from "antd";
 import { motion } from "framer-motion";
 import {
   Calculator,
@@ -7,8 +7,6 @@ import {
   Calendar,
   Gauge,
   TrendingUp,
-  Crown,
-  Sparkles,
   Target,
   CheckCircle,
   ArrowLeft,
@@ -16,11 +14,13 @@ import {
   Paintbrush,
   Wrench,
 } from "lucide-react";
-import { useSubscription } from "../services/SubscriptionContext";
 import FreeOnly from "../components/FreeOnly";
 import AdSlot from "../components/AdSlot";
+import TurnstileWidget from "../components/TurnstileWidget";
+import { MetaTags } from "../components/MetaTags";
 import { valuationApi } from "../services/valuationApi";
 import carDamageImage from "../assets/car_damage.png";
+import "./Valuation.css";
 
 const SLOT_VALUATION = import.meta.env.VITE_ADS_SLOT_VALUATION;
 const { Title, Paragraph, Text } = Typography;
@@ -39,8 +39,6 @@ const DAMAGE_STATES = ["none", "changed", "painted", "localPainted"];
 const damageStateLabel = (s) =>
   s === "none" ? "Temiz" : s === "changed" ? "Değişen" : s === "painted" ? "Boyalı" : "Lokal Boyalı";
 
-const damageStateColor = (s) =>
-  s === "none" ? "default" : s === "changed" ? "volcano" : s === "painted" ? "geekblue" : "gold";
 
 // Flutter’daki DamageSpot listesi (id + x,y)
 
@@ -49,7 +47,7 @@ function clamp01(n) {
   return Math.max(0, Math.min(1, n));
 }
 
-function StepHeader({ isPremium, step, total, title, subtitle }) {
+function StepHeader({ step, total, title, subtitle }) {
   const percent = clamp01(step / total) * 100;
 
   return (
@@ -75,25 +73,6 @@ function StepHeader({ isPremium, step, total, title, subtitle }) {
           <div style={{ flex: 1 }}>
             <Title level={2} style={{ margin: 0, color: "#0f172a" }}>
               Araç Değerleme
-              {isPremium ? (
-                <Tag color="orange" style={{ marginLeft: 12, borderRadius: 8, fontWeight: 700 }}>
-                  <Crown size={14} style={{ marginRight: 4 }} />
-                  Premium
-                </Tag>
-              ) : (
-                <Tag
-                  style={{
-                    marginLeft: 12,
-                    borderRadius: 8,
-                    fontWeight: 700,
-                    background: "rgba(15,23,42,0.08)",
-                    color: "rgba(15,23,42,0.7)",
-                    border: "1px solid rgba(15,23,42,0.1)",
-                  }}
-                >
-                  Free
-                </Tag>
-              )}
             </Title>
             <Paragraph style={{ margin: 0, color: "rgba(15,23,42,0.62)", fontSize: 16 }}>{subtitle}</Paragraph>
           </div>
@@ -155,23 +134,23 @@ const SPOTS = [
   // Ön tampon ve ön kısım
   { id: "front_bumper", x: 50, y: 85 },
   { id: "hood", x: 50, y: 65 },
-  
+
   // Sol taraf (üstten bakış) - x koordinatları sağda
   { id: "left_front_fender", x: 75, y: 72 },
   { id: "left_front_door", x: 75, y: 55 },
   { id: "left_rear_door", x: 75, y: 38 },
   { id: "left_rear_fender", x: 75, y: 22 },
-  
+
   // Sağ taraf (üstten bakış) - x koordinatları solda
   { id: "right_front_fender", x: 25, y: 72 },
   { id: "right_front_door", x: 25, y: 55 },
   { id: "right_rear_door", x: 25, y: 38 },
   { id: "right_rear_fender", x: 25, y: 22 },
-  
+
   // Arka kısım
   { id: "rear_bumper", x: 50, y: 15 },
   { id: "trunk", x: 50, y: 28 },
-  
+
   // Tavan
   { id: "roof", x: 50, y: 45 }
 ];
@@ -181,12 +160,12 @@ const spotLabels = {
   front_bumper: "Ön Tampon",
   hood: "Kaput",
   left_front_fender: "Sol Ön Çamurluk",
-  left_front_door: "Sol Ön Kapı", 
+  left_front_door: "Sol Ön Kapı",
   left_rear_door: "Sol Arka Kapı",
   left_rear_fender: "Sol Arka Çamurluk",
   right_front_fender: "Sağ Ön Çamurluk",
   right_front_door: "Sağ Ön Kapı",
-  right_rear_door: "Sağ Arka Kapı", 
+  right_rear_door: "Sağ Arka Kapı",
   right_rear_fender: "Sağ Arka Çamurluk",
   rear_bumper: "Arka Tampon",
   trunk: "Bagaj",
@@ -423,8 +402,6 @@ function countDamage(damageMap) {
 }
 
 export default function Valuation() {
-  const { isPremium } = useSubscription();
-
   const [step, setStep] = useState(0);
   const totalSteps = 4;
 
@@ -475,6 +452,9 @@ export default function Valuation() {
   const [loadingTrims, setLoadingTrims] = useState(false);
 
   const [busy, setBusy] = useState(false);
+  const [requestNotice, setRequestNotice] = useState(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileEpoch, setTurnstileEpoch] = useState(0);
 
   const brandSearchTimer = useRef(null);
   const modelSearchTimer = useRef(null);
@@ -560,7 +540,6 @@ export default function Valuation() {
   // initial brands load
   useEffect(() => {
     fetchBrands("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // handlers
@@ -660,12 +639,12 @@ export default function Valuation() {
   // Değer aralığı hesaplama fonksiyonu
   const calculatePriceRange = (basePrice, hasHeavyDamage = false) => {
     let price = Number(basePrice);
-    
+
     // Ağır hasar varsa %15 indirim uygula
     if (hasHeavyDamage) {
       price = price * 0.85; // %15 indirim
     }
-    
+
     let margin;
     if (price <= 1000000) {
       margin = 20000; // 0-1M: ±20k
@@ -674,10 +653,10 @@ export default function Valuation() {
     } else {
       margin = 75000; // 2M+: ±75k
     }
-    
+
     const minPrice = Math.round((price - margin) / 1000) * 1000; // 1000'e yuvarla
     const maxPrice = Math.round((price + margin) / 1000) * 1000;
-    
+
     return {
       base: Math.round(price / 1000) * 1000,
       min: Math.max(50000, minPrice), // En az 50k
@@ -687,13 +666,19 @@ export default function Valuation() {
 
   // REAL predict call
   const computeValuation = async () => {
+    if (!turnstileToken) {
+      message.warning("Lütfen güvenlik doğrulamasını tamamlayın.");
+      return;
+    }
+
+    setRequestNotice(null);
     setBusy(true);
     try {
       const kmNum = Number(String(formData.km).replace(/\D/g, "")) || 0;
-      
+
       // Hasar sayılarını hesapla
       const damageCount = countDamage(formData.damageMap);
-      
+
       // Ağır hasar kontrolü
       const hasHeavyDamage = formData.hasChassisRepair || formData.hasPodyeRepair || formData.hasPillarRepair;
 
@@ -719,11 +704,7 @@ export default function Valuation() {
         RefAvgPrice: formData.trimStats?.avg_price || null,
       };
 
-      console.log("Predict payload:", payload);
-
-      const data = await valuationApi.predict(payload);
-      console.log("Predict response:", data);
-
+      const data = await valuationApi.predict(payload, turnstileToken);
       // Tek değer al (farklı formatları destekle)
       let rawPrice;
       if (typeof data === 'number') {
@@ -745,16 +726,36 @@ export default function Valuation() {
         totalPaintedParts: damageCount.painted,
         totalLocalPaintedParts: damageCount.localPainted,
         result: {
-          title: `${p.brand || ""} ${p.model || ""}${p.trim ? ` ${p.trim}` : ""} • ${p.year} • ${kmNum} km`,
-          base_price: `${priceRange.min.toLocaleString('tr-TR')} - ${priceRange.max.toLocaleString('tr-TR')} TL`,
+          title: `${p.brand || ""} ${p.model || ""}${p.trim ? ` ${p.trim}` : ""} • ${p.year} • ${kmNum.toLocaleString("tr-TR")} km`,
+          range_label: `${priceRange.min.toLocaleString("tr-TR")} - ${priceRange.max.toLocaleString("tr-TR")} TL`,
+          midpoint_label: `${priceRange.base.toLocaleString("tr-TR")} TL`,
           heavy_damage_applied: hasHeavyDamage,
-          raw_price: rawPrice, // Debug için
         },
       }));
     } catch (e) {
-      message.error(e.message || "Tahmin sırasında hata oluştu.");
+      if (e?.status === 429) {
+        const retry = Number(e?.data?.retry_after_seconds || 0);
+        const hours = retry > 0 ? Math.max(1, Math.ceil(retry / 3600)) : 24;
+        const text = `24 saatlik değerleme limitine ulaştınız. Yaklaşık ${hours} saat sonra tekrar deneyebilirsiniz.`;
+        setRequestNotice({ type: "warning", title: "Günlük limit doldu", text });
+        message.warning(text);
+      } else if (e?.status === 403 && e?.data?.error === "human_verification_failed") {
+        const text = "Güvenlik doğrulamasının süresi doldu veya doğrulama geçersiz. Tekrar doğrulayıp yeniden deneyin.";
+        setRequestNotice({ type: "warning", title: "Doğrulama yenilenmeli", text });
+        message.warning(text);
+      } else if (e?.status === 503) {
+        const text = "Değerleme servisi şu anda hazır değil. Bilgileriniz kaybolmadı; kısa bir süre sonra tekrar deneyebilirsiniz.";
+        setRequestNotice({ type: "error", title: "Servis geçici olarak kullanılamıyor", text });
+        message.error(text);
+      } else {
+        const text = e?.message || "Tahmin sırasında beklenmeyen bir hata oluştu.";
+        setRequestNotice({ type: "error", title: "Değerleme tamamlanamadı", text });
+        message.error(text);
+      }
     } finally {
       setBusy(false);
+      setTurnstileToken("");
+      setTurnstileEpoch((x) => x + 1);
     }
   };
 
@@ -851,7 +852,7 @@ export default function Valuation() {
               ) : null}
             </Col>
 
-            
+
 
             <Col xs={24} md={12}>
               <Text style={{ fontWeight: 700, color: "#0f172a" }}>
@@ -870,7 +871,7 @@ export default function Valuation() {
             </Col>
           </Row>
 
-          
+
         </Card>
       );
     }
@@ -898,7 +899,7 @@ export default function Valuation() {
           <ChipGroup label="Renk" value={formData.color} options={colors} onChange={(v) => setFormData((p) => ({ ...p, color: v, result: null }))} />
           <ChipGroup label="Çekiş" value={formData.traction} options={tractions} onChange={(v) => setFormData((p) => ({ ...p, traction: v, result: null }))} />
 
-          
+
         </Card>
       );
     }
@@ -996,7 +997,7 @@ export default function Valuation() {
                 />
               </div>
 
-              
+
             </div>
           </Card>
 
@@ -1021,7 +1022,7 @@ export default function Valuation() {
                 }}>D</div>
                 <Text style={{ fontSize: 13, fontWeight: 600 }}>Değişen</Text>
               </div>
-              
+
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <div style={{
                   width: 24,
@@ -1038,7 +1039,7 @@ export default function Valuation() {
                 }}>B</div>
                 <Text style={{ fontSize: 13, fontWeight: 600 }}>Boyalı</Text>
               </div>
-              
+
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <div style={{
                   width: 24,
@@ -1055,7 +1056,7 @@ export default function Valuation() {
                 }}>LB</div>
                 <Text style={{ fontSize: 13, fontWeight: 600 }}>Lokal Boyalı</Text>
               </div>
-              
+
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <div style={{
                   width: 24,
@@ -1072,11 +1073,11 @@ export default function Valuation() {
                 <Text style={{ fontSize: 13, fontWeight: 600 }}>Temiz</Text>
               </div>
             </div>
-            
-            <div style={{ 
-              marginTop: 16, 
-              padding: 16, 
-              background: "linear-gradient(135deg, rgba(59,130,246,0.06) 0%, rgba(147,51,234,0.04) 100%)", 
+
+            <div style={{
+              marginTop: 16,
+              padding: 16,
+              background: "linear-gradient(135deg, rgba(59,130,246,0.06) 0%, rgba(147,51,234,0.04) 100%)",
               borderRadius: 12,
               border: "1px solid rgba(59,130,246,0.12)",
               position: "relative",
@@ -1093,7 +1094,7 @@ export default function Valuation() {
                 borderRadius: "50%",
                 zIndex: 0
               }} />
-              
+
               <div style={{ position: "relative", zIndex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                   <div style={{
@@ -1111,7 +1112,7 @@ export default function Valuation() {
                     Nasıl Kullanılır?
                   </Text>
                 </div>
-                
+
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#3b82f6" }} />
@@ -1209,12 +1210,43 @@ export default function Valuation() {
 
           <Divider style={{ margin: "16px 0" }} />
 
+          {requestNotice ? (
+            <div
+              className={`valuation-notice valuation-notice--${requestNotice.type}`}
+              role="status"
+            >
+              <strong>{requestNotice.title}</strong>
+              <span>{requestNotice.text}</span>
+            </div>
+          ) : null}
+
+          <div className="valuation-security">
+            <div className="valuation-security__copy">
+              <strong>Güvenli değerleme</strong>
+              <span>İsteği göndermeden önce güvenlik doğrulamasını tamamlayın.</span>
+            </div>
+          </div>
+
+          <TurnstileWidget
+            key={turnstileEpoch}
+            onToken={setTurnstileToken}
+            onUnavailable={(msg) => {
+              if (!msg) return;
+              setRequestNotice({
+                type: "warning",
+                title: "Güvenlik doğrulaması",
+                text: msg,
+              });
+            }}
+          />
+
           <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
             <Button
               type="primary"
               block
               size="large"
               loading={busy}
+              disabled={!turnstileToken}
               onClick={computeValuation}
               icon={<Target size={18} />}
               style={{
@@ -1234,138 +1266,87 @@ export default function Valuation() {
 
         <Divider style={{ margin: "18px 0" }} />
 
-        <Card
-          style={{
-            borderRadius: 16,
-            border: "1px solid rgba(15,23,42,0.08)",
-            background: "linear-gradient(135deg, rgba(255,122,24,0.08) 0%, rgba(255,177,74,0.05) 100%)",
-          }}
-        >
+        <div className={`valuation-result ${r ? "valuation-result--ready" : ""}`}>
           {!r ? (
-            <div style={{ textAlign: "center", padding: "28px 12px", color: "rgba(15,23,42,0.6)" }}>
-              <Calculator size={40} style={{ opacity: 0.35 }} />
-              <div style={{ marginTop: 10, fontWeight: 800 }}>Sonuç burada görünecek</div>
-              <div style={{ marginTop: 6 }}>Hesaplama için yukarıdaki butona bas.</div>
+            <div className="valuation-result__empty">
+              <Calculator size={38} aria-hidden />
+              <strong>Değer aralığın burada görünecek</strong>
+              <span>
+                Araç özetini kontrol et, güvenlik doğrulamasını tamamla ve
+                değerlemeyi başlat.
+              </span>
             </div>
           ) : (
-            <div>
-              <div style={{ fontWeight: 900, fontSize: 16, color: "#0f172a" }}>{r.title}</div>
+            <motion.div
+              className="valuation-result__ready"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="valuation-result__eyebrow">
+                Tahmini piyasa değer aralığı
+              </div>
+              <h3>{r.range_label}</h3>
+              <p className="valuation-result__vehicle">{r.title}</p>
 
-              <div
-                style={{
-                  padding: 18,
-                  borderRadius: 14,
-                  background: "rgba(255,255,255,0.8)",
-                  border: "1px solid rgba(255,122,24,0.16)",
-                  marginTop: 12,
-                }}
-              >
-                <div style={{ color: "rgba(15,23,42,0.65)", fontWeight: 800 }}>Tahmin</div>
+              <div className="valuation-result__midpoint">
+                <span>Aralık merkezi</span>
+                <strong>{r.midpoint_label}</strong>
+              </div>
 
-                <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-                  <div>
-                    <div style={{ fontWeight: 800, color: "rgba(15,23,42,0.65)", fontSize: 13 }}>Baz Fiyat</div>
-                    <div style={{ fontSize: 22, fontWeight: 950, color: "#ff7a18" }}>{r.base_price}</div>
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 800, color: "rgba(15,23,42,0.65)", fontSize: 13 }}>Tramer Dahil</div>
-                    <div style={{ fontSize: 22, fontWeight: 950, color: "#ff7a18" }}>{r.price_with_tramer}</div>
-                  </div>
+              {r.heavy_damage_applied ? (
+                <div className="valuation-result__damage-note">
+                  Ağır hasar bilgisi hesaplamaya dahil edildi.
                 </div>
-              </div>
+              ) : null}
 
-              <Divider style={{ margin: "14px 0" }} />
-
-              <div
-                style={{
-                  padding: 14,
-                  borderRadius: 12,
-                  background: "rgba(15,23,42,0.04)",
-                  border: "1px solid rgba(15,23,42,0.08)",
-                }}
-              >
-                <Text style={{ color: "rgba(15,23,42,0.7)", fontSize: 13, lineHeight: 1.6 }}>
-                  <strong>Not:</strong> Bu değer bilgilendirme amaçlıdır. Kesin fiyat araç kondisyonu, bakım geçmişi ve yerel piyasa
-                  koşullarına göre değişebilir.
-                </Text>
-              </div>
-
-              
-            </div>
+              <p className="valuation-result__disclaimer">
+                Bu değer bilgilendirme amaçlı bir tahmindir. Aracın fiziksel
+                kondisyonu, bakım geçmişi, bölgesel talep ve güncel piyasa
+                koşulları nihai satış fiyatını değiştirebilir.
+              </p>
+            </motion.div>
           )}
-        </Card>
+        </div>
 
-        
 
-        {!isPremium && (
-          <Card
-            style={{
-              borderRadius: 20,
-              marginTop: 18,
-              background: "linear-gradient(135deg, #ff7a18 0%, #ffb14a 100%)",
-              border: "none",
-              color: "white",
-            }}
-          >
-            <div style={{ textAlign: "center" }}>
-              <Crown size={30} style={{ marginBottom: 14, opacity: 0.92 }} />
-              <Title level={4} style={{ color: "white", marginBottom: 12 }}>
-                Premium Özellikleri
-              </Title>
 
-              <Space direction="vertical" size={8} style={{ width: "100%", marginBottom: 18 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,0.92)" }}>
-                  <Sparkles size={16} />
-                  <span>Reklamsız deneyim</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,0.92)" }}>
-                  <TrendingUp size={16} />
-                  <span>Detaylı piyasa analizi</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,0.92)" }}>
-                  <CheckCircle size={16} />
-                  <span>Geçmiş değerlemeler</span>
-                </div>
-              </Space>
-
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  type="default"
-                  size="large"
-                  block
-                  style={{
-                    height: 48,
-                    borderRadius: 12,
-                    fontWeight: 900,
-                    background: "white",
-                    color: "#ff7a18",
-                    border: "none",
-                  }}
-                >
-                  Premium'a Geç
-                </Button>
-              </motion.div>
-            </div>
-          </Card>
-        )}
       </Card>
     );
   };
 
   return (
-    <div className="container" style={{ paddingTop: 28, paddingBottom: 64 }}>
-      <StepHeader isPremium={isPremium} step={step + 1} total={totalSteps} title={stepTitle} subtitle={stepSubtitle} />
+    <main className="valuation-page">
+      <MetaTags
+        title="Ücretsiz Araç Değerleme"
+        description="Marka, model, yıl, kilometre, teknik özellik ve kondisyon bilgileriyle aracınız için tahmini piyasa değer aralığı oluşturun."
+        canonical="https://ederapp.com/valuation"
+        ogType="website"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "EDER Araç Değerleme",
+          url: "https://ederapp.com/valuation",
+          applicationCategory: "AutomotiveApplication",
+          operatingSystem: "Web",
+        }}
+      />
 
-      <Row gutter={[24, 24]} style={{ marginTop: 18 }}>
-        <Col xs={24} lg={14}>
+      <div className="valuation-shell">
+        <div className="valuation-intro">
+          <span>Ücretsiz araç değerleme</span>
+          <strong>Aracın kaç EDER?</strong>
+          <p>
+            Bilgileri adım adım tamamla. Sonuç, tek bir kesin fiyat yerine
+            tahmini piyasa değer aralığı olarak sunulur.
+          </p>
+        </div>
+
+        <StepHeader step={step + 1} total={totalSteps} title={stepTitle} subtitle={stepSubtitle} />
+
+      <Row gutter={[24, 24]} className="valuation-grid">
+        <Col xs={24} lg={15}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={1}>
-            <Card
-              style={{
-                borderRadius: 20,
-                border: "1px solid rgba(15,23,42,0.08)",
-                boxShadow: "0 8px 32px rgba(15,23,42,0.06)",
-              }}
-            >
+            <Card className="valuation-workspace">
               <Steps current={step} responsive items={[{ title: "Temel" }, { title: "Teknik" }, { title: "Hasar" }, { title: "Sonuç" }]} />
 
               <Divider style={{ margin: "16px 0" }} />
@@ -1393,6 +1374,7 @@ export default function Valuation() {
                 <Button
                   type="primary"
                   onClick={goNext}
+                  disabled={step === totalSteps - 1}
                   size="large"
                   icon={<ArrowRight size={16} />}
                   style={{
@@ -1405,7 +1387,7 @@ export default function Valuation() {
                     boxShadow: "0 10px 24px rgba(255,122,24,0.22)",
                   }}
                 >
-                  {step === totalSteps - 1 ? "Bitir" : "Devam"}
+                  {step === totalSteps - 1 ? "Bilgiler tamamlandı" : "Devam"}
                 </Button>
               </div>
             </Card>
@@ -1413,15 +1395,9 @@ export default function Valuation() {
         </Col>
 
         {/* Sağ kolon: web'de hızlı özet paneli */}
-        <Col xs={24} lg={10}>
+        <Col xs={24} lg={9}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={2}>
-            <Card
-              style={{
-                borderRadius: 20,
-                border: "1px solid rgba(15,23,42,0.08)",
-                boxShadow: "0 8px 32px rgba(15,23,42,0.06)",
-              }}
-            >
+            <Card className="valuation-summary">
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                 <TrendingUp size={18} style={{ color: "#ff7a18" }} />
                 <Text style={{ fontSize: 18, fontWeight: 900, color: "#0f172a" }}>Hızlı Özet</Text>
@@ -1461,13 +1437,14 @@ export default function Valuation() {
             </Card>
 
             <FreeOnly>
-              <Card style={{ marginTop: 16, borderRadius: 20, border: "1px solid rgba(15,23,42,0.08)" }}>
+              <Card className="valuation-ad-card">
                 <AdSlot enabled slot={SLOT_VALUATION} style={{ minHeight: 250 }} />
               </Card>
             </FreeOnly>
           </motion.div>
         </Col>
       </Row>
-    </div>
+      </div>
+    </main>
   );
 }

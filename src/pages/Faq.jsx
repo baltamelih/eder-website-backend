@@ -21,7 +21,7 @@ const FAQ_DATA = [
     items: [
       {
         q: "EDER nedir ve nasıl çalışır?",
-        a: "EDER, Türkiye'nin en gelişmiş araç değerleme platformudur. Yapay zeka destekli algoritmalarımız, binlerce araç verisini analiz ederek aracınızın güncel piyasa değerini hesaplar. Marka, model, yıl, kilometre, donanım seviyesi ve hasar durumu gibi faktörleri değerlendirerek size en doğru tahmini sunarız.",
+        a: "EDER, araç özellikleri ve piyasa verilerini birlikte değerlendirerek tahmini piyasa değer aralığı sunan bir araç değerleme platformudur. Marka, model, yıl, kilometre, donanım ve kondisyon gibi girdiler değerleme sürecinde birlikte ele alınır.",
       },
       {
         q: "Değerleme sonucu kesin fiyat mıdır?",
@@ -29,11 +29,11 @@ const FAQ_DATA = [
       },
       {
         q: "Hangi araç türleri için değerleme yapabiliyorum?",
-        a: "Şu anda binlerce otomobil modeli için değerleme hizmeti sunuyoruz. Desteklenen marka ve modeller sürekli genişlemektedir. Aradığınız aracı bulamıyorsanız, destek ekibimize yazın - talebinizi öncelikli olarak değerlendiririz.",
+        a: "Desteklenen marka ve modeller değerleme formundaki güncel katalogda gösterilir. Aradığınız aracı göremiyorsanız destek ekibimize bildirebilirsiniz.",
       },
       {
         q: "EDER'i ücretsiz kullanabilir miyim?",
-        a: "Evet! Temel değerleme özelliklerimizi ücretsiz kullanabilirsiniz. Premium üyelikle daha detaylı analizler, reklamsız deneyim, geçmiş takibi ve gelişmiş raporlama özelliklerine erişim sağlayabilirsiniz.",
+        a: "Evet. Araç değerleme akışını ücretsiz kullanabilirsiniz. Kötüye kullanımı önlemek için güvenlik doğrulaması ve günlük kullanım sınırı uygulanabilir.",
       },
     ],
   },
@@ -76,27 +76,6 @@ const FAQ_DATA = [
       {
         q: "Modifikasyon ve tuning değerlemeyi etkiler mi?",
         a: "Evet, orijinal olmayan parçalar ve modifikasyonlar genellikle aracın değerini olumsuz etkiler. Ancak bazı kaliteli ve profesyonel modifikasyonlar değeri artırabilir. Bu durumları 'Ek Notlar' bölümünde belirtebilirsiniz.",
-      },
-    ],
-  },
-  {
-    category: "Premium Üyelik",
-    items: [
-      {
-        q: "Premium üyelik hangi avantajları sağlar?",
-        a: "Premium üyelikle reklamsız deneyim, detaylı piyasa analizi raporları, değerleme geçmişi takibi, fiyat değişim grafikleri, karşılaştırmalı analizler ve öncelikli müşteri desteği hizmetlerinden yararlanabilirsiniz.",
-      },
-      {
-        q: "Premium üyelik ücretleri nedir?",
-        a: "Aylık 29₺, 6 aylık 149₺ (17% indirim) ve yıllık 249₺ (30% indirim) seçeneklerimiz bulunmaktadır. Tüm planlar 7 gün ücretsiz deneme süresi ile gelir.",
-      },
-      {
-        q: "Ödeme yaptım ama Premium aktif olmadı.",
-        a: "Önce uygulamayı tamamen kapatıp yeniden açmayı deneyin. Sorun devam ederse, ödeme makbuzunuz ve hesap bilgilerinizle destek ekibimize yazın. Sorununuzu 24 saat içinde çözeceğiz.",
-      },
-      {
-        q: "Premium üyeliğimi nasıl iptal edebilirim?",
-        a: "Ödeme yönteminize göre iptal süreci değişir. Kredi kartı ödemeleri için hesap ayarlarından, mobil uygulama satın alımları için App Store/Google Play'den iptal edebilirsiniz. Detaylı rehber destek sayfamızda mevcuttur.",
       },
     ],
   },
@@ -203,10 +182,10 @@ export default function Faq() {
               size="large"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Soru ara... (örn: premium, şifre, değerleme, hesap)"
+              placeholder="Soru ara... (örn: şifre, değerleme, hesap)"
               prefix={<Search size={20} />}
-              style={{ 
-                borderRadius: 16, 
+              style={{
+                borderRadius: 16,
                 height: 56,
                 fontSize: 16,
                 border: "2px solid rgba(255,122,24,0.1)",
@@ -215,9 +194,9 @@ export default function Faq() {
               allowClear
             />
             <div style={{ marginTop: 12, display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-              <Tag style={{ 
-                borderRadius: 999, 
-                padding: "6px 14px", 
+              <Tag style={{
+                borderRadius: 999,
+                padding: "6px 14px",
                 fontWeight: 700,
                 background: "rgba(34,197,94,0.1)",
                 border: "1px solid rgba(34,197,94,0.2)",
@@ -225,15 +204,15 @@ export default function Faq() {
               }}>
                 {totalCount} sonuç bulundu
               </Tag>
-              <Tag style={{ 
-                borderRadius: 999, 
-                padding: "6px 14px", 
-                fontWeight: 700, 
+              <Tag style={{
+                borderRadius: 999,
+                padding: "6px 14px",
+                fontWeight: 700,
                 background: "rgba(255,122,24,0.1)",
                 border: "1px solid rgba(255,122,24,0.2)",
-                color: "rgba(255,122,24,0.95)" 
+                color: "rgba(255,122,24,0.95)"
               }}>
-                💡 Popüler: "premium", "değerleme", "hesap"
+                💡 Popüler: "değerleme", "hesap", "şifre"
               </Tag>
             </div>
           </motion.div>
@@ -244,7 +223,7 @@ export default function Faq() {
         <Row gutter={[16, 16]}>
           <Col xs={24} md={16}>
             {/* FAQ Groups */}
-            {filtered.map((group, idx) => (
+            {filtered.map((group) => (
               <Card
                 key={group.category}
                 style={{
@@ -308,7 +287,7 @@ export default function Faq() {
                   Aradığınızı bulamadınız mı?
                 </Title>
                 <Paragraph type="secondary" style={{ marginBottom: 24, fontSize: 16 }}>
-                  Sorunuzun cevabı burada yoksa, destek ekibimiz size yardımcı olmaktan mutluluk duyar. 
+                  Sorunuzun cevabı burada yoksa, destek ekibimiz size yardımcı olmaktan mutluluk duyar.
                   Genellikle 2 saat içinde yanıtlıyoruz.
                 </Paragraph>
                 <Link to="/support">
@@ -406,7 +385,7 @@ export default function Faq() {
                   ⚡ Hızlı Çözüm İpucu
                 </Text>
                 <div style={{ marginTop: 8, color: "rgba(15,23,42,0.75)", fontWeight: 600, fontSize: 13, lineHeight: 1.5 }}>
-                  Destek talebinizde <strong>"Premium"</strong>, <strong>"Ödeme"</strong>, <strong>"Değerleme"</strong> 
+                  Destek talebinizde <strong>"Değerleme"</strong>, <strong>"Hesap"</strong>, <strong>"Teknik"</strong>
                   veya <strong>"Hesap"</strong> kategorilerinden birini belirterek daha hızlı yanıt alabilirsiniz.
                 </div>
               </div>

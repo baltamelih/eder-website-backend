@@ -95,57 +95,53 @@ export async function apiFetch(path, options = {}) {
     return res;
   };
 
-  try {
-    const res = await doFetch();
+  const res = await doFetch();
 
-    // 401 → refresh dene (auth endpointlerinde deneme, refresh endpointinde deneme)
-    if (
-      res.status === 401 &&
-      token &&
-      !isAuthPath(path) &&
-      path !== "/api/auth/refresh"
-    ) {
-      if (isRefreshing) {
-        // refresh sürüyor → sıraya gir
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        }).then(async (newToken) => {
-          const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
-          const retryRes = await doFetch(retryHeaders);
-          return handleResponse(retryRes, path);
-        });
-      }
-
-      isRefreshing = true;
-
-      try {
-        const { refreshAccessToken } = await import("./auth");
-        const newToken = await refreshAccessToken();
-        processQueue(null, newToken);
-
-        // orijinal isteği retry
+  // 401 → refresh dene (auth endpointlerinde deneme, refresh endpointinde deneme)
+  if (
+    res.status === 401 &&
+    token &&
+    !isAuthPath(path) &&
+    path !== "/api/auth/refresh"
+  ) {
+    if (isRefreshing) {
+      // refresh sürüyor → sıraya gir
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      }).then(async (newToken) => {
         const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
         const retryRes = await doFetch(retryHeaders);
         return handleResponse(retryRes, path);
-      } catch (refreshError) {
-        processQueue(refreshError, null);
-        clearAuthTokens();
-
-        if (typeof window !== "undefined") {
-          // redirect loop önlemek için sadece login sayfasında değilsek yönlendir
-          if (window.location.pathname !== "/login") {
-            window.location.href = "/login";
-          }
-        }
-        throw refreshError;
-      } finally {
-        isRefreshing = false;
-      }
+      });
     }
 
-    // ✅ auth login gibi yerlerde 401 vs: refresh yok, handleResponse kendi mesajını verir
-    return handleResponse(res, path);
-  } catch (e) {
-    throw e;
+    isRefreshing = true;
+
+    try {
+      const { refreshAccessToken } = await import("./auth");
+      const newToken = await refreshAccessToken();
+      processQueue(null, newToken);
+
+      // orijinal isteği retry
+      const retryHeaders = { ...headers, Authorization: `Bearer ${newToken}` };
+      const retryRes = await doFetch(retryHeaders);
+      return handleResponse(retryRes, path);
+    } catch (refreshError) {
+      processQueue(refreshError, null);
+      clearAuthTokens();
+
+      if (typeof window !== "undefined") {
+        // redirect loop önlemek için sadece login sayfasında değilsek yönlendir
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
+      }
+      throw refreshError;
+    } finally {
+      isRefreshing = false;
+    }
   }
+
+  // ✅ auth login gibi yerlerde 401 vs: refresh yok, handleResponse kendi mesajını verir
+  return handleResponse(res, path);
 }

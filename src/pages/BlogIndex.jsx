@@ -68,7 +68,7 @@ export default function BlogIndex() {
 
   return (
     <div style={{ padding: "28px 0" }}>
-      
+
         <title>EDER Blog | Araç Değerleme ve Piyasa Analizi</title>
         <meta
           name="description"
@@ -79,7 +79,7 @@ export default function BlogIndex() {
         <meta property="og:title" content="EDER Blog" />
         <meta property="og:description" content="Araç değerleme ve piyasa analizi içerikleri." />
         <meta property="og:url" content={canonical} />
-      
+
 
       <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 16px" }}>
         <div

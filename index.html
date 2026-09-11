@@ -1,21 +1,101 @@
 <!doctype html>
 <html lang="tr">
   <head>
-  <meta charset="UTF-8" />
-  <link rel="canonical" href="https://ederapp.com/" />
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Türkiye'nin en güvenilir araç değerleme platformu. Yapay zeka destekli algoritma ile aracınızın gerçek değerini öğrenin." />
-  <meta name="keywords" content="araç değerleme, otomobil fiyat, ikinci el araç, EDER" />
-  <title>EDER - Araç Değerleme Platformu</title>
-</head>
-
+    <meta charset="UTF-8" />
+    <link rel="canonical" href="https://ederapp.com/" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="EDER ile aracınızın marka, model, yıl, kilometre ve kondisyon bilgilerini kullanarak tahmini piyasa değer aralığını öğrenin."
+    />
+    <meta
+      name="keywords"
+      content="araç değerleme, otomobil fiyat, ikinci el araç, piyasa değeri, EDER"
+    />
+    <meta name="theme-color" content="#f7f4ef" />
+    <meta property="og:site_name" content="EDER" />
+    <meta property="og:type" content="website" />
+    <title>EDER | Araç Değerleme</title>
+  </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.__EDER_BOOT_DIAGNOSTICS__ = [];
+
+      (function () {
+        var pushDiagnostic = function (message) {
+          var text = String(message || "unknown_boot_error");
+          window.__EDER_BOOT_DIAGNOSTICS__.push(text);
+
+          var probe = document.getElementById("eder-boot-diagnostics");
+          if (probe) {
+            probe.textContent = window.__EDER_BOOT_DIAGNOSTICS__.join("\n");
+          }
+        };
+
+        window.addEventListener(
+          "error",
+          function (event) {
+            var target = event && event.target;
+            var resource =
+              target && (target.src || target.href)
+                ? "resource_error: " + (target.src || target.href)
+                : null;
+
+            pushDiagnostic(
+              resource ||
+                (event && event.message) ||
+                "window_error_without_message"
+            );
+          },
+          true
+        );
+
+        window.addEventListener("unhandledrejection", function (event) {
+          var reason = event && event.reason;
+          pushDiagnostic(
+            "unhandled_rejection: " +
+              (reason && reason.message ? reason.message : String(reason))
+          );
+        });
+
+        window.setTimeout(function () {
+          var root = document.getElementById("root");
+
+          if (!root || root.childElementCount > 0) {
+            return;
+          }
+
+          document.documentElement.dataset.ederBootFallback = "visible";
+
+          var entryState =
+            document.documentElement.dataset.ederEntry || "not_executed";
+          var diagnostics =
+            window.__EDER_BOOT_DIAGNOSTICS__.join(" | ") ||
+            "no_browser_error_captured";
+
+          root.innerHTML =
+            '<main id="eder-runtime-fallback" data-entry-state="' +
+            entryState +
+            '" data-boot-diagnostics="' +
+            diagnostics.replace(/"/g, "&quot;") +
+            '" style="min-height:100vh;display:grid;place-items:center;padding:32px 20px;background:#f7f4ef;color:#111827;font-family:Inter,system-ui,sans-serif">' +
+            '<section style="width:min(620px,100%);padding:32px;border:1px solid #e7e1d8;border-radius:24px;background:#fff">' +
+            '<div style="margin-bottom:12px;color:#d94d00;font-size:13px;font-weight:900;letter-spacing:.08em">EDER / BOOT</div>' +
+            '<h1 style="margin:0 0 12px;font-size:30px">Uygulama başlatılamadı.</h1>' +
+            '<p style="margin:0;line-height:1.7;color:#475569">Release durduruldu. Tarayıcı çalışma zamanı kaydı incelenecek.</p>' +
+            "</section></main>";
+        }, 6500);
+      })();
+    </script>
+    <pre id="eder-boot-diagnostics" hidden></pre>
     <script type="module" src="/src/main.jsx"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2330940841524775"
-     crossorigin="anonymous"></script>
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2330940841524775"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
-

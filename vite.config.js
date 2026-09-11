@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react({
@@ -11,25 +10,17 @@ export default defineConfig({
     }),
   ],
 
-  // ✅ Buffer polyfill için gerekli
   resolve: {
     alias: {
       buffer: "buffer",
     },
   },
+
   optimizeDeps: {
     include: ["buffer"],
   },
 
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          router: ["react-router-dom"],
-          ui: ["antd", "framer-motion"],
-        },
-      },
-    },
+    chunkSizeWarningLimit: 700,
   },
 });

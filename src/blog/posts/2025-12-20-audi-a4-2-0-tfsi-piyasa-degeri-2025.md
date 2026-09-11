@@ -13,7 +13,7 @@ Audi A4, özellikle 2.0 TFSI motor seçeneğiyle, Türkiye'de lüks sedan segmen
 
 ## Audi A4 2.0 TFSI Nedir?
 
-Audi A4 2.0 TFSI, Audi'nin dinamik sürüş özellikleri ve lüks tasarımı ile dikkat çeken bir sedan modelidir. TFSI motor teknolojisi, hem performansı hem de yakıt verimliliğini optimize eder. 
+Audi A4 2.0 TFSI, Audi'nin dinamik sürüş özellikleri ve lüks tasarımı ile dikkat çeken bir sedan modelidir. TFSI motor teknolojisi, hem performansı hem de yakıt verimliliğini optimize eder.
 
 ### Özellikleri
 
@@ -67,13 +67,13 @@ Bu unsurlar, Audi A4 2.0 TFSI'nın genel durumu ve fiyatı hakkında bilgi sahib
 
 ## Sık Sorulan Sorular
 
-**S: Audi A4 2.0 TFSI'nın en iyi modeli hangisidir?**  
+**S: Audi A4 2.0 TFSI'nın en iyi modeli hangisidir?**
 C: İhtiyaçlarınıza göre değişir ancak genellikle 2018 ve 2019 modelleri hem donanım hem de performans açısından öne çıkmaktadır.
 
-**S: Audi A4 2.0 TFSI'nın yakıt tüketimi nedir?**  
+**S: Audi A4 2.0 TFSI'nın yakıt tüketimi nedir?**
 C: Ortalama olarak 5.5-6.0 L/100 km civarında bir yakıt tüketimi bulunmaktadır.
 
-**S: İkinci el Audi A4 alırken neleri kontrol etmeliyim?**  
+**S: İkinci el Audi A4 alırken neleri kontrol etmeliyim?**
 C: Kilometre, bakım kayıtları, kaza durumu ve donanım seviyesi gibi unsurları kontrol etmelisiniz.
 
 ### Sonuç

@@ -7,7 +7,7 @@ export function useNavigation() {
     home: () => navigate("/"),
     login: () => navigate("/login"),
     register: () => navigate("/register"),
-    pricing: () => navigate("/pricing"),
+    pricing: () => navigate("/valuation"),
     dashboard: () => navigate("/app/dashboard"),
     valuation: () => navigate("/app/valuation"),
     settings: () => navigate("/app/settings"),
