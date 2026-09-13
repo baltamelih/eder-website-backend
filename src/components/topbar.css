@@ -222,3 +222,181 @@
     font-size: 17px;
   }
 }
+
+
+/* ==========================================================================
+   EDER 03C.3 — PREMIUM PUBLIC NAVIGATION
+   ========================================================================== */
+
+.tb {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+  min-height: 68px;
+  background: rgba(247, 244, 238, 0.94);
+  border-bottom: 1px solid rgba(10, 10, 12, 0.08);
+  box-shadow: 0 10px 30px rgba(15, 15, 18, 0.035);
+  backdrop-filter: blur(18px) saturate(1.08);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.tb-inner {
+  width: min(1720px, calc(100% - 48px));
+  min-height: 68px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.4vw, 38px);
+}
+
+.tb-brand-link {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #111214;
+  text-decoration: none;
+  flex: 0 0 auto;
+}
+
+.tb-logo {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  object-fit: contain;
+}
+
+.tb-wordmark {
+  color: #111214;
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+}
+
+.tb-desktop-nav {
+  min-width: 0;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tb-public-link {
+  min-height: 40px;
+  padding: 0 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: rgba(17, 18, 20, 0.68);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 760;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.tb-public-link:hover {
+  color: #111214;
+  background: rgba(17, 18, 20, 0.055);
+}
+
+.tb-public-link.is-active {
+  color: #111214;
+  background: rgba(17, 18, 20, 0.075);
+}
+
+.tb-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.tb .tb-login,
+.tb .tb-new-valuation {
+  min-height: 42px;
+  padding-inline: 16px;
+  border-radius: 12px !important;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: none !important;
+}
+
+.tb .tb-login {
+  color: #111214;
+  background: rgba(255, 255, 255, 0.66);
+  border-color: rgba(17, 18, 20, 0.12);
+}
+
+.tb .tb-new-valuation {
+  color: #fff;
+  background: #111214;
+  border-color: #111214;
+}
+
+.tb-burger {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(17, 18, 20, 0.11);
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #111214;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 24px rgba(17, 18, 20, 0.045);
+}
+
+.tb-burger svg {
+  width: 19px;
+  height: 19px;
+}
+
+.tb-show-mobile {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .tb {
+    min-height: 64px;
+  }
+
+  .tb-inner {
+    width: calc(100% - 32px);
+    min-height: 64px;
+  }
+
+  .tb-wordmark {
+    font-size: 18px;
+  }
+
+  .tb-logo {
+    width: 23px;
+    height: 23px;
+    flex-basis: 23px;
+  }
+
+  .tb-hide-mobile,
+  .tb-desktop-nav {
+    display: none !important;
+  }
+
+  .tb-show-mobile {
+    margin-left: auto;
+    display: inline-flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tb-inner {
+    width: calc(100% - 28px);
+  }
+}
