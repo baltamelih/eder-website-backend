@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   Check,
   ChevronDown,
   Gauge,
-  ScanSearch,
   ShieldCheck,
   Sparkles,
   TrendingUp,
@@ -18,111 +17,222 @@ import "./Home.css";
 const HOME_AD_SLOT = import.meta.env.VITE_ADS_SLOT_HOME;
 const ease = [0.22, 1, 0.36, 1];
 
-const reveal = {
-  hidden: { opacity: 0, y: 26 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease },
-  },
-};
-
-const chapters = [
+const journey = [
   {
     step: "01",
     eyebrow: "ARACI TANIMLA",
     title: "Doğru araçla başla.",
     text:
-      "Marka, model, yıl, versiyon ve kilometre bilgilerini zincir halinde seç. Değerleme yanlış araç grubuna değil, doğru kombinasyona bağlansın.",
+      "Marka, model, yıl, versiyon ve kilometre bilgisini zincir halinde seç. EDER, yanlış sınıfa değil aracın gerçek kombinasyonuna yaklaşsın.",
     points: ["Marka + model", "Model yılı", "Versiyon", "Kilometre"],
   },
   {
     step: "02",
     eyebrow: "KONDİSYONU ANLAT",
-    title: "Temiz araçla işlem görmüş aracı ayır.",
+    title: "Kondisyonu soyut bırakma.",
     text:
-      "Boya, değişen ve ağır hasar bilgisini parça bazında ekle. Kondisyon etkisini formun sonundaki küçük bir dipnot olmaktan çıkar.",
-    points: ["Boya bilgisi", "Değişen parça", "Ağır hasar", "Parça bazlı seçim"],
+      "Boya, değişen ve ağır hasar bilgisini parça bazında işaretle. Temiz araçla işlem görmüş araç aynı sonuç yüzeyine düşmesin.",
+    points: ["Parça bazlı boya", "Değişen", "Ağır hasar", "Görsel harita"],
   },
   {
     step: "03",
     eyebrow: "PİYASAYI OKU",
-    title: "Tek rakama değil, aralığa bak.",
+    title: "Tek rakama değil, konuma bak.",
     text:
-      "EDER sonucu kesin satış fiyatı değildir. Sana karar verirken kullanabileceğin tahmini piyasa değer aralığını ve orta noktayı gösterir.",
-    points: ["Alt bant", "Üst bant", "Orta nokta", "Araç özeti"],
+      "Sonucu kesin satış fiyatı gibi sunmak yerine alt, orta ve üst bantla birlikte göster. Böylece karar verirken bağlamı kaybetme.",
+    points: ["Alt bant", "Orta nokta", "Üst bant", "Araç özeti"],
   },
 ];
 
-function StoryChapter({ chapter, index, reducedMotion }) {
-  const image =
-    index === 1
-      ? "/media/eder/home/inspection.jpg"
-      : index === 2
-        ? "/media/eder/home/night-road.jpg"
-        : null;
+function VehicleIdentityScene() {
+  return (
+    <div className="journey-stage journey-stage--identity">
+      <div className="journey-stage__eyebrow">EDER / VEHICLE IDENTITY</div>
+
+      <div className="identity-grid">
+        <div>
+          <span>01</span>
+          <small>MARKA</small>
+          <strong>Seçildi</strong>
+        </div>
+        <div>
+          <span>02</span>
+          <small>MODEL</small>
+          <strong>Seçildi</strong>
+        </div>
+        <div>
+          <span>03</span>
+          <small>YIL</small>
+          <strong>Seçildi</strong>
+        </div>
+        <div>
+          <span>04</span>
+          <small>VERSİYON</small>
+          <strong>Seçildi</strong>
+        </div>
+      </div>
+
+      <div className="identity-car" aria-hidden>
+        <svg viewBox="0 0 760 300">
+          <path
+            d="M80 205 C134 198 168 164 220 118 C248 93 282 82 333 81 L464 81 C512 83 551 98 588 133 L626 171 L678 188 C698 195 710 207 710 224 L710 232 L650 232 C644 199 618 177 585 177 C551 177 524 199 518 232 L288 232 C282 199 255 177 221 177 C188 177 161 199 155 232 L69 232 L69 218 C69 211 73 207 80 205 Z"
+            fill="none"
+            stroke="#ff6b33"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M228 118 L316 137 L533 137 C511 106 482 90 446 86 L340 86 C299 87 261 96 228 118 Z"
+            fill="rgba(255,107,51,0.09)"
+            stroke="rgba(255,107,51,0.34)"
+            strokeWidth="1.5"
+          />
+          <circle cx="221" cy="232" r="33" fill="#0f1114" stroke="#59606a" strokeWidth="6" />
+          <circle cx="585" cy="232" r="33" fill="#0f1114" stroke="#59606a" strokeWidth="6" />
+          <circle cx="221" cy="232" r="9" fill="#e8e4dc" />
+          <circle cx="585" cy="232" r="9" fill="#e8e4dc" />
+        </svg>
+      </div>
+
+      <div className="identity-footer">
+        <span>Doğru kombinasyon</span>
+        <i />
+        <span>Değerleme girdisi</span>
+      </div>
+    </div>
+  );
+}
+
+function ConditionScene() {
+  const markers = [
+    { x: "31%", y: "37%", label: "Kaput" },
+    { x: "55%", y: "31%", label: "Tavan" },
+    { x: "68%", y: "49%", label: "Arka çamurluk" },
+    { x: "42%", y: "61%", label: "Ön kapı" },
+  ];
 
   return (
-    <motion.article
-      className={`home-chapter home-chapter--${index + 1}`}
-      initial={reducedMotion ? false : { opacity: 0, y: 36 }}
-      whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: 0.72, ease }}
-    >
-      <div className="home-chapter__rail">
-        <span>{chapter.step}</span>
-        <i />
-        <small>{chapter.eyebrow}</small>
+    <div className="journey-stage journey-stage--condition">
+      <div className="journey-stage__eyebrow">EDER / CONDITION MAP</div>
+
+      <div className="condition-board">
+        <svg className="condition-car" viewBox="0 0 720 360" aria-label="Araç kondisyon haritası">
+          <path
+            d="M112 197 C157 189 193 161 237 122 C266 96 304 84 355 84 L442 84 C487 85 525 98 561 127 L599 158 L650 174 C675 182 691 200 691 219 L691 239 L631 239 C624 204 597 182 563 182 C527 182 499 206 494 239 L286 239 C280 204 253 182 218 182 C183 182 155 205 149 239 L91 239 L91 218 C91 207 98 201 112 197 Z"
+            fill="rgba(255,255,255,0.02)"
+            stroke="rgba(255,255,255,0.62)"
+            strokeWidth="2.4"
+          />
+          <path
+            d="M245 122 L329 140 L520 140 C498 111 471 96 437 92 L354 92 C312 93 276 102 245 122 Z"
+            fill="rgba(255,90,31,0.05)"
+            stroke="rgba(255,255,255,0.18)"
+            strokeWidth="1.2"
+          />
+          <circle cx="218" cy="239" r="34" fill="#0b0c0e" stroke="#545b64" strokeWidth="6" />
+          <circle cx="563" cy="239" r="34" fill="#0b0c0e" stroke="#545b64" strokeWidth="6" />
+          <circle cx="218" cy="239" r="9" fill="#f2eee7" />
+          <circle cx="563" cy="239" r="9" fill="#f2eee7" />
+        </svg>
+
+        {markers.map((marker, index) => (
+          <div
+            key={marker.label}
+            className={`condition-marker condition-marker--${index + 1}`}
+            style={{ left: marker.x, top: marker.y }}
+          >
+            <i />
+            <span>{marker.label}</span>
+          </div>
+        ))}
       </div>
 
-      <div className="home-chapter__copy">
-        <h3>{chapter.title}</h3>
-        <p>{chapter.text}</p>
+      <div className="condition-legend">
+        <div><i className="is-clean" /><span>Orijinal</span></div>
+        <div><i className="is-painted" /><span>Boyalı</span></div>
+        <div><i className="is-changed" /><span>Değişen</span></div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="home-chapter__points">
-          {chapter.points.map((point) => (
-            <span key={point}>
-              <Check size={14} aria-hidden />
-              {point}
-            </span>
-          ))}
+function MarketScene({ reducedMotion }) {
+  return (
+    <div className="journey-stage journey-stage--market">
+      <div className="journey-stage__eyebrow">EDER / MARKET POSITION</div>
+
+      <div className="market-readout">
+        <span>Tahmini piyasa aralığı</span>
+        <strong>Karar için bağlam</strong>
+      </div>
+
+      <div className="market-scale">
+        <div className="market-scale__labels">
+          <span>ALT</span>
+          <span>ORTA</span>
+          <span>ÜST</span>
+        </div>
+
+        <div className="market-scale__track">
+          <div className="market-scale__range" />
+          <motion.div
+            className="market-scale__marker"
+            initial={reducedMotion ? false : { left: "22%" }}
+            whileInView={reducedMotion ? undefined : { left: "63%" }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.1, ease }}
+          >
+            <span>EDER</span>
+          </motion.div>
         </div>
       </div>
 
-      {image ? (
-        <div className="home-chapter__media">
-          <img src={image} alt="" loading="lazy" />
-          <div className="home-chapter__media-label">
-            <span>{index === 1 ? "CONDITION / INPUT" : "MARKET / CONTEXT"}</span>
-            <strong>{index === 1 ? "Kondisyon verisi" : "Piyasa bağlamı"}</strong>
-          </div>
-        </div>
-      ) : (
-        <div className="home-chapter__instrument">
-          <div className="home-config-grid">
-            <span>MARKA</span>
-            <strong>01</strong>
-            <span>MODEL</span>
-            <strong>02</strong>
-            <span>YIL</span>
-            <strong>03</strong>
-            <span>VERSİYON</span>
-            <strong>04</strong>
-          </div>
-          <div className="home-config-line" aria-hidden>
-            <i />
-            <i />
-            <i />
-          </div>
-        </div>
-      )}
-    </motion.article>
+      <div className="market-curve" aria-hidden>
+        <svg viewBox="0 0 900 250" preserveAspectRatio="none">
+          <motion.path
+            d="M0 187 C90 180 128 151 202 157 C292 166 327 104 417 111 C503 117 548 75 634 80 C722 86 777 47 900 38"
+            fill="none"
+            stroke="#ff5a1f"
+            strokeWidth="4"
+            initial={reducedMotion ? false : { pathLength: 0 }}
+            whileInView={reducedMotion ? undefined : { pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.25, ease }}
+          />
+        </svg>
+      </div>
+
+      <div className="market-footer">
+        <span>Kesin satış fiyatı değildir.</span>
+        <span>Kimlik + kondisyon + piyasa bağlamı</span>
+      </div>
+    </div>
+  );
+}
+
+function JourneyVisual({ step, reducedMotion }) {
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={step}
+        className="journey-visual__motion"
+        initial={reducedMotion ? false : { opacity: 0, y: 18, scale: 0.985 }}
+        animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+        exit={reducedMotion ? undefined : { opacity: 0, y: -12, scale: 0.99 }}
+        transition={{ duration: 0.45, ease }}
+      >
+        {step === 0 && <VehicleIdentityScene />}
+        {step === 1 && <ConditionScene />}
+        {step === 2 && <MarketScene reducedMotion={reducedMotion} />}
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
 export default function Home() {
   const reducedMotion = useReducedMotion();
+  const [activeStep, setActiveStep] = useState(0);
 
   return (
     <main className="eder-home">
@@ -151,7 +261,6 @@ export default function Home() {
           fetchPriority="high"
         />
         <div className="home-cinema__shade" />
-
         <div className="home-cinema__grid" aria-hidden>
           <i />
           <i />
@@ -160,7 +269,12 @@ export default function Home() {
         </div>
 
         <div className="eder-home-shell home-cinema__content">
-          <motion.div initial="hidden" animate="show" variants={reveal}>
+          <motion.div
+            className="home-cinema__copy"
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.72, ease }}
+          >
             <div className="home-cinema__eyebrow">
               <span>EDER</span>
               <i />
@@ -173,8 +287,8 @@ export default function Home() {
             </h1>
 
             <p>
-              Tahmin etmekten fazlası. Araç kimliği, kilometre ve kondisyon
-              bilgisini tek akışta birleştir; tahmini piyasa değer aralığını gör.
+              Araç kimliği, kilometre ve kondisyon bilgisini tek akışta birleştir.
+              Sonucu tek rakam yerine tahmini piyasa değer aralığı olarak gör.
             </p>
 
             <div className="home-cinema__actions">
@@ -182,8 +296,8 @@ export default function Home() {
                 Aracın kaç EDER?
                 <ArrowRight size={18} aria-hidden />
               </Link>
-              <a href="#eder-deneyimi" className="home-action home-action--ghost">
-                Nasıl çalışıyor?
+              <a href="#eder-yolculugu" className="home-action home-action--ghost">
+                Deneyimi keşfet
               </a>
             </div>
           </motion.div>
@@ -204,7 +318,7 @@ export default function Home() {
             </div>
             <div>
               <span>GÜVENLİK</span>
-              <strong>Turnstile doğrulamalı</strong>
+              <strong>Turnstile</strong>
             </div>
           </motion.aside>
         </div>
@@ -238,20 +352,22 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-manifesto" id="eder-deneyimi">
+      <section className="home-manifesto">
         <div className="eder-home-shell">
           <div className="home-manifesto__eyebrow">EDER / VALUE EXPERIENCE</div>
+
           <div className="home-manifesto__grid">
-            <h2>Bir fiyat söylemek kolay. O fiyatın bağlamını göstermek değerli.</h2>
+            <h2>Değerleme bir form değil, karar vermeye hazırlayan bir akış olmalı.</h2>
             <div>
               <p>
-                EDER, kullanıcıyı uzun bir formun içine bırakmak yerine
-                değerleme yolculuğunu aşamalara böler. Her adım sonucu biraz
-                daha anlamlı hale getirir.
+                Bu yüzden EDER ekranları tek tek alanları doldurtmak yerine kullanıcıyı
+                aracın kimliğinden kondisyonuna, oradan piyasa bağlamına taşıyan bir
+                deneyim olarak kurgulanır.
               </p>
+
               <div className="home-manifesto__proof">
                 <span><ShieldCheck size={15} aria-hidden />Güvenlik doğrulamalı</span>
-                <span><Gauge size={15} aria-hidden />Progressive flow</span>
+                <span><Gauge size={15} aria-hidden />Aşamalı ilerleme</span>
                 <span><TrendingUp size={15} aria-hidden />Aralık odaklı sonuç</span>
               </div>
             </div>
@@ -259,98 +375,118 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-story">
-        <div className="eder-home-shell">
-          <div className="home-story__header">
-            <span>DEĞERLEME YOLCULUĞU</span>
-            <h2>Üç bölüm. Tek karar ekranı.</h2>
-          </div>
+      <section className="home-journey" id="eder-yolculugu">
+        <div className="home-journey__intro">
+          <span>DEĞERLEME YOLCULUĞU</span>
+          <h2>Kaydırdıkça aracın hikâyesi tamamlanır.</h2>
+        </div>
 
-          <div className="home-story__chapters">
-            {chapters.map((chapter, index) => (
-              <StoryChapter
-                key={chapter.step}
-                chapter={chapter}
-                index={index}
-                reducedMotion={reducedMotion}
-              />
+        <div className="home-journey__grid">
+          <div className="home-journey__steps">
+            {journey.map((item, index) => (
+              <motion.article
+                key={item.step}
+                className={`journey-step ${activeStep === index ? "is-active" : ""}`}
+                onViewportEnter={() => setActiveStep(index)}
+                viewport={{ amount: 0.55 }}
+              >
+                <div className="journey-step__meta">
+                  <span>{item.step}</span>
+                  <i />
+                  <small>{item.eyebrow}</small>
+                </div>
+
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+
+                <div className="journey-step__points">
+                  {item.points.map((point) => (
+                    <span key={point}>
+                      <Check size={14} aria-hidden />
+                      {point}
+                    </span>
+                  ))}
+                </div>
+              </motion.article>
             ))}
           </div>
-        </div>
-      </section>
 
-      <section className="home-condition">
-        <div className="home-condition__grid">
-          <div className="home-condition__media">
-            <img
-              src="/media/eder/home/inspection.jpg"
-              alt="Araç kontrolünü temsil eden mekanik inceleme"
-              loading="lazy"
-            />
-            <div className="home-condition__tag">
-              <ScanSearch size={16} aria-hidden />
-              KONDİSYON / PARÇA BAZLI
+          <div className="home-journey__visual">
+            <div className="home-journey__sticky">
+              <JourneyVisual step={activeStep} reducedMotion={reducedMotion} />
             </div>
           </div>
-
-          <motion.div
-            className="home-condition__copy"
-            initial={reducedMotion ? false : { opacity: 0, y: 30 }}
-            whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.28 }}
-            transition={{ duration: 0.7, ease }}
-          >
-            <span className="home-section-kicker">KONDİSYON BİR DETAY DEĞİL</span>
-            <h2>Aracın hikâyesi sonucu değiştirir.</h2>
-            <p>
-              Boya ve değişen bilgisini parça bazında ekleyebilirsin. Böylece
-              temiz araçla işlem görmüş aracı aynı kutuya koymamış olursun.
-            </p>
-
-            <div className="home-condition__rows">
-              <div><span>01</span><strong>Boya</strong><small>Parça bazlı durum</small></div>
-              <div><span>02</span><strong>Değişen</strong><small>Kondisyon etkisi</small></div>
-              <div><span>03</span><strong>Ağır hasar</strong><small>Ek değerleme sinyali</small></div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
-      <section className="home-market">
+      <section className="home-market-cinema">
         <img
-          className="home-market__image"
+          className="home-market-cinema__image"
           src="/media/eder/home/night-road.jpg"
           alt=""
           loading="lazy"
         />
-        <div className="home-market__shade" />
+        <div className="home-market-cinema__shade" />
 
-        <div className="eder-home-shell home-market__content">
-          <span className="home-section-kicker">PİYASA HAREKETLİDİR</span>
-          <h2>Sonuç bir etiket değil, karar verirken kullanacağın aralık.</h2>
-
-          <div className="home-market__curve" aria-hidden>
-            <svg viewBox="0 0 900 230" preserveAspectRatio="none">
-              <motion.path
-                d="M0 177 C102 172 137 131 225 139 C312 147 351 82 446 96 C540 111 584 53 680 71 C766 87 802 45 900 36"
-                fill="none"
-                stroke="#ff5a1f"
-                strokeWidth="4"
-                initial={reducedMotion ? false : { pathLength: 0 }}
-                whileInView={reducedMotion ? undefined : { pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.35, ease }}
-              />
-            </svg>
+        <div className="home-market-cinema__content">
+          <div>
+            <span className="home-section-kicker">PİYASA HAREKETLİDİR</span>
+            <h2>EDER sonucu etiket değil, karar ekranıdır.</h2>
           </div>
 
-          <div className="home-market__legend">
-            <span>ALT BANT</span>
-            <i />
-            <strong>EDER ARALIĞI</strong>
-            <i />
-            <span>ÜST BANT</span>
+          <div className="home-market-cinema__instrument">
+            <div className="market-cinema__head">
+              <span>MARKET POSITION</span>
+              <strong>EDER</strong>
+            </div>
+
+            <div className="market-cinema__bands">
+              <span>ALT</span>
+              <i />
+              <span>ORTA</span>
+              <i />
+              <span>ÜST</span>
+            </div>
+
+            <div className="market-cinema__track">
+              <i />
+              <strong>EDER</strong>
+            </div>
+
+            <p>
+              Sonuçlar tahminidir; kondisyon ve piyasa koşulları nihai satış fiyatını değiştirebilir.
+            </p>
           </div>
+        </div>
+      </section>
+
+      <section className="home-trust">
+        <div className="home-trust__intro">
+          <span>ÜRÜN PRENSİPLERİ</span>
+          <h2>Gösterişli bir sayıdan daha fazlası.</h2>
+        </div>
+
+        <div className="home-trust__grid">
+          <article>
+            <span>01</span>
+            <strong>Doğrulanabilir akış</strong>
+            <p>Marka, model, yıl ve versiyon zinciri adım adım ilerler.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <strong>Kondisyon görünür</strong>
+            <p>Parça bilgisi sonuç ekranına giden yolun gerçek bir parçasıdır.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <strong>Tek rakam dayatmaz</strong>
+            <p>Karar verirken kullanabileceğin değer aralığını öne çıkarır.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <strong>Güvenlik koruması</strong>
+            <p>Public valuation akışı Turnstile ile korunur.</p>
+          </article>
         </div>
       </section>
 
@@ -367,7 +503,7 @@ export default function Home() {
               <Sparkles size={14} aria-hidden />
               HAZIRSAN BAŞLAYALIM
             </span>
-            <h2>Aracının kaç EDER olduğunu birkaç adımda gör.</h2>
+            <h2>Aracının piyasadaki yerini birkaç adımda gör.</h2>
           </div>
 
           <Link to="/valuation" className="home-action home-action--light">
