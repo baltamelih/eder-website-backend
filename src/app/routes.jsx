@@ -7,6 +7,7 @@ import AppLayout from "./AppLayout";
 import ProtectedRoute from "../components/ProtectedRoute";
 import PublicRoute from "../components/PublicRoute";
 import ScrollToTop from "../components/ScrollToTop";
+import Valuation from "../pages/Valuation";
 
 const Home = lazy(() => import("../pages/Home"));
 const Login = lazy(() => import("../pages/Login"));
@@ -22,7 +23,7 @@ const BlogIndex = lazy(() => import("../pages/BlogIndex"));
 const BlogPost = lazy(() => import("../pages/BlogPost"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("../pages/ResetPassword"));
-const Valuation = lazy(() => import("../pages/Valuation"));
+
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Account = lazy(() => import("../pages/Account"));
