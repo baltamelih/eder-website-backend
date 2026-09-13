@@ -440,3 +440,106 @@
   outline: 2px solid rgba(255, 107, 51, 0.46);
   outline-offset: 2px;
 }
+
+
+/* ==========================================================================
+   EDER 03C.5 — NAVIGATION REFINEMENT
+   ========================================================================== */
+
+.tb-desktop-nav {
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(17, 18, 20, 0.048);
+  border: 1px solid rgba(17, 18, 20, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.44);
+  gap: 4px;
+}
+
+.tb-public-link {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  color: rgba(17, 18, 20, 0.68);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.tb-public-link::after,
+.tb-public-link::before,
+.tb-public-link.is-active::after,
+.tb-public-link.is-active::before {
+  content: none !important;
+  display: none !important;
+}
+
+.tb-public-link:hover {
+  color: #111214;
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.tb-public-link.is-active {
+  color: #111214;
+  background: #ffffff;
+  box-shadow:
+    inset 0 0 0 1px rgba(17, 18, 20, 0.05),
+    0 10px 22px rgba(17, 18, 20, 0.07);
+}
+
+.tb-actions {
+  gap: 10px;
+}
+
+.tb .tb-login,
+.tb .tb-new-valuation {
+  min-height: 46px;
+  padding-inline: 18px;
+  border-radius: 15px !important;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.tb .tb-login {
+  color: #111214;
+  background: #ffffff;
+  border: 1px solid rgba(17, 18, 20, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 10px 22px rgba(17, 18, 20, 0.05);
+}
+
+.tb .tb-login:hover {
+  color: #111214;
+  background: #fff7f3;
+  border-color: rgba(255, 107, 51, 0.22);
+}
+
+.tb .tb-new-valuation {
+  color: #ffffff;
+  background: linear-gradient(180deg, #141518 0%, #08090b 100%);
+  border: 1px solid rgba(8, 9, 11, 0.88);
+  box-shadow:
+    0 16px 32px rgba(8, 9, 11, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.tb .tb-new-valuation:hover {
+  color: #ffffff;
+  background: linear-gradient(180deg, #1a1c20 0%, #0b0d10 100%);
+  border-color: rgba(255, 107, 51, 0.18);
+}
+
+.tb .tb-new-valuation svg,
+.tb .tb-login svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+@media (max-width: 900px) {
+  .tb-show-mobile .tb-burger {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+}
