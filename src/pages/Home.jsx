@@ -215,6 +215,29 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="home-spec-band" aria-label="EDER değerleme yapısı">
+        <div>
+          <span>01</span>
+          <strong>Araç kimliği</strong>
+          <small>Marka · model · yıl · versiyon</small>
+        </div>
+        <div>
+          <span>02</span>
+          <strong>Kilometre</strong>
+          <small>Kullanım bağlamı</small>
+        </div>
+        <div>
+          <span>03</span>
+          <strong>Kondisyon</strong>
+          <small>Boya · değişen · hasar</small>
+        </div>
+        <div>
+          <span>04</span>
+          <strong>EDER aralığı</strong>
+          <small>Alt · orta · üst bant</small>
+        </div>
+      </section>
+
       <section className="home-manifesto" id="eder-deneyimi">
         <div className="eder-home-shell">
           <div className="home-manifesto__eyebrow">EDER / VALUE EXPERIENCE</div>
@@ -257,7 +280,7 @@ export default function Home() {
       </section>
 
       <section className="home-condition">
-        <div className="eder-home-shell home-condition__grid">
+        <div className="home-condition__grid">
           <div className="home-condition__media">
             <img
               src="/media/eder/home/inspection.jpg"
@@ -338,7 +361,7 @@ export default function Home() {
       </section>
 
       <section className="home-final">
-        <div className="eder-home-shell home-final__grid">
+        <div className="home-final__grid">
           <div>
             <span className="home-section-kicker">
               <Sparkles size={14} aria-hidden />
