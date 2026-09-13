@@ -453,10 +453,10 @@ export default function Valuation() {
   }, [step]);
 
   const stepSubtitle = useMemo(() => {
-    if (step === 0) return "Marka, model, yıl ve kilometre ile doğru segmentte konumlandırıyoruz.";
-    if (step === 1) return "Teknik özellikler araç profilini netleştirir.";
-    if (step === 2) return "Kondisyon ve hasar detaylarını işaretle.";
-    return "Bilgileri kontrol et ve sonucu oluştur.";
+    if (step === 0) return "Araç profilini oluştur.";
+    if (step === 1) return "Teknik detayları tamamla.";
+    if (step === 2) return "Kondisyonu işaretle.";
+    return "Sonucu oluştur.";
   }, [step]);
 
   // -------- backend fetchers --------
@@ -1288,29 +1288,30 @@ export default function Valuation() {
       />
 
       <div className="valuation-shell">
-        <div className="valuation-intro">
-          <span>Yeni değerleme</span>
-          <strong>Aracını şimdi değerle.</strong>
-          <p>
-            Marka, model, kilometre ve kondisyon bilgilerini gir.
-            Tahmini piyasa değer aralığını birkaç adımda oluştur.
-          </p>
+        <div className="valuation-top">
+          <div className="valuation-intro">
+            <span>Yeni değerleme</span>
+            <strong>Aracını değerle.</strong>
+            <p>Tahmini piyasa aralığını birkaç adımda hemen oluştur.</p>
 
-          <div className="valuation-intro__actions">
-            <a className="valuation-intro__cta" href="#valuation-form">
-              Değerlemeye başla
-              <ArrowDownRight size={16} aria-hidden />
-            </a>
+            <div className="valuation-intro__actions">
+              <a className="valuation-intro__cta" href="#valuation-form">
+                Başla
+                <ArrowDownRight size={16} aria-hidden />
+              </a>
 
-            <div className="valuation-intro__meta" aria-label="Değerleme özellikleri">
-              <span>4 adım</span>
-              <span>Canlı özet</span>
-              <span>Güvenli doğrulama</span>
+              <div className="valuation-intro__meta" aria-label="Değerleme özellikleri">
+                <span>4 adım</span>
+                <span>Canlı özet</span>
+                <span>Güvenli doğrulama</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <StepHeader step={step + 1} total={totalSteps} title={stepTitle} subtitle={stepSubtitle} />
+          <div className="valuation-progress-wrap">
+            <StepHeader step={step + 1} total={totalSteps} title={stepTitle} subtitle={stepSubtitle} />
+          </div>
+        </div>
 
       <Row gutter={[24, 24]} className="valuation-grid">
         <Col xs={24} lg={16}>
@@ -1414,8 +1415,8 @@ export default function Valuation() {
                 <strong>{stepTitle}</strong>
                 <p>
                   {step === totalSteps - 1
-                    ? "Doğrulamayı tamamla ve piyasa aralığını oluştur."
-                    : "Alanları doldurdukça araç profili burada netleşir."}
+                    ? "Doğrulamayı tamamla."
+                    : "Profil burada güncellenir."}
                 </p>
               </div>
             </Card>
