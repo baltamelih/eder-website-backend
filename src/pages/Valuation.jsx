@@ -13,6 +13,9 @@ import {
   ArrowRight,
   Paintbrush,
   Wrench,
+  ShieldCheck,
+  Clock3,
+  Sparkles,
 } from "lucide-react";
 import FreeOnly from "../components/FreeOnly";
 import AdSlot from "../components/AdSlot";
@@ -51,77 +54,59 @@ function StepHeader({ step, total, title, subtitle }) {
   const percent = clamp01(step / total) * 100;
 
   return (
-    <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.08 } } }}>
-      <motion.div variants={fadeUp} custom={0}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 16,
-              background: "linear-gradient(135deg, #ff7a18 0%, #ffb14a 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              boxShadow: "0 8px 24px rgba(255,122,24,0.28)",
-            }}
-          >
-            <Calculator size={24} />
-          </div>
-
-          <div style={{ flex: 1 }}>
-            <Title level={2} style={{ margin: 0, color: "#0f172a" }}>
-              Araç Değerleme
-            </Title>
-            <Paragraph style={{ margin: 0, color: "rgba(15,23,42,0.62)", fontSize: 16 }}>{subtitle}</Paragraph>
-          </div>
+    <motion.section
+      className="valuation-progress"
+      initial="hidden"
+      animate="show"
+      variants={{ show: { transition: { staggerChildren: 0.08 } } }}
+      aria-label="Değerleme ilerlemesi"
+    >
+      <motion.div className="valuation-progress__top" variants={fadeUp} custom={0}>
+        <div className="valuation-progress__mark" aria-hidden>
+          <Calculator size={21} />
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 12 }}>
-          <Text style={{ color: "rgba(15,23,42,0.6)", fontWeight: 700 }}>
-            Adım {step} / {total} • {title}
-          </Text>
-          <Text style={{ color: "rgba(15,23,42,0.5)" }}>{Math.round(percent)}%</Text>
+        <div className="valuation-progress__copy">
+          <span>EDER DEĞERLEME AKIŞI</span>
+          <strong>{title}</strong>
+          <p>{subtitle}</p>
         </div>
 
-        <div style={{ marginTop: 10, height: 8, borderRadius: 999, overflow: "hidden", background: "rgba(255,122,24,0.15)" }}>
-          <div
-            style={{
-              width: `${percent}%`,
-              height: "100%",
-              background: "linear-gradient(135deg, #ff7a18 0%, #ffb14a 100%)",
-              borderRadius: 999,
-            }}
-          />
+        <div className="valuation-progress__counter">
+          <span>ADIM</span>
+          <strong>{String(step).padStart(2, "0")}</strong>
+          <em>/ {String(total).padStart(2, "0")}</em>
         </div>
       </motion.div>
-    </motion.div>
+
+      <motion.div className="valuation-progress__rail" variants={fadeUp} custom={1}>
+        <div
+          className="valuation-progress__fill"
+          style={{ width: `${percent}%` }}
+          aria-hidden
+        />
+      </motion.div>
+    </motion.section>
   );
 }
 
 function ChipGroup({ label, value, options, onChange }) {
   return (
-    <div style={{ marginBottom: 14 }}>
-      <Text style={{ fontWeight: 700, color: "#0f172a" }}>{label}</Text>
-      <div style={{ marginTop: 10, display: "flex", gap: 10, flexWrap: "wrap" }}>
+    <div className="valuation-chip-group">
+      <Text className="valuation-field-label">{label}</Text>
+      <div className="valuation-chip-list" role="group" aria-label={label}>
         {options.map((opt) => {
           const selected = opt === value;
           return (
-            <Button
+            <button
               key={opt}
-              size="middle"
+              type="button"
+              className={`valuation-chip ${selected ? "is-selected" : ""}`}
+              aria-pressed={selected}
               onClick={() => onChange(opt)}
-              style={{
-                borderRadius: 999,
-                fontWeight: 700,
-                border: selected ? "1px solid rgba(255,122,24,0.6)" : "1px solid rgba(15,23,42,0.12)",
-                background: selected ? "rgba(255,122,24,0.12)" : "white",
-                color: selected ? "#ff7a18" : "rgba(15,23,42,0.72)",
-              }}
             >
               {opt}
-            </Button>
+            </button>
           );
         })}
       </div>
@@ -474,9 +459,9 @@ export default function Valuation() {
 
   const stepSubtitle = useMemo(() => {
     if (step === 0) return "Marka, model, yıl ve kilometre ile doğru segmentte konumlandırıyoruz.";
-    if (step === 1) return "Yakıt, vites, kasa, renk ve çekiş bilgisi ile değerlemeni hassaslaştırıyoruz.";
-    if (step === 2) return "Parça bazlı tıklayarak hasar durumunu işaretle.";
-    return "Güncel piyasa aralığını hesaplayalım.";
+    if (step === 1) return "Yakıt, vites, kasa, renk ve çekiş bilgileri aracın piyasa karakterini netleştirir.";
+    if (step === 2) return "Parça bazlı kondisyon bilgisini işaretle; ağır onarım detaylarını ayrıca belirt.";
+    return "Bilgileri son kez kontrol et, güvenlik doğrulamasını tamamla ve piyasa aralığını oluştur.";
   }, [step]);
 
   // -------- backend fetchers --------
@@ -620,7 +605,7 @@ export default function Valuation() {
   const goNext = async () => {
     if (step === 0) {
       if (!formData.brandId || !formData.modelId || !formData.year || !String(formData.km || "").trim()) {
-        message.error("Lütfen Marka / Model / Yıl / Km alanlarını doldur.");
+        message.error("Marka, model, yıl ve kilometre alanlarını tamamlayın.");
         return;
       }
     }
@@ -762,17 +747,11 @@ export default function Valuation() {
   const renderStepCard = () => {
     if (step === 0) {
       return (
-        <Card
-          style={{
-            borderRadius: 20,
-            border: "1px solid rgba(15,23,42,0.08)",
-            boxShadow: "0 8px 32px rgba(15,23,42,0.06)",
-          }}
-        >
-          <div style={{ marginBottom: 18 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+        <Card className="valuation-step-card">
+          <div className="valuation-step-heading">
+            <div className="valuation-step-heading__title">
               <Car size={18} style={{ color: "#ff7a18" }} />
-              <Text style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>Temel Bilgiler</Text>
+              <Text className="valuation-step-title">Temel Bilgiler</Text>
             </div>
             <Text style={{ color: "rgba(15,23,42,0.62)" }}>Doğru değerleme için tüm alanları eksiksiz doldurun.</Text>
           </div>
@@ -878,19 +857,13 @@ export default function Valuation() {
 
     if (step === 1) {
       return (
-        <Card
-          style={{
-            borderRadius: 20,
-            border: "1px solid rgba(15,23,42,0.08)",
-            boxShadow: "0 8px 32px rgba(15,23,42,0.06)",
-          }}
-        >
-          <div style={{ marginBottom: 18 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+        <Card className="valuation-step-card">
+          <div className="valuation-step-heading">
+            <div className="valuation-step-heading__title">
               <Wrench size={18} style={{ color: "#ff7a18" }} />
-              <Text style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>Teknik Bilgiler</Text>
+              <Text className="valuation-step-title">Teknik Bilgiler</Text>
             </div>
-            <Text style={{ color: "rgba(15,23,42,0.62)" }}>Mobildeki gibi chip seçimi mantığı ile ilerler.</Text>
+            <Text className="valuation-step-description">Araç karakterini etkileyen teknik özellikleri seçin.</Text>
           </div>
 
           <ChipGroup label="Yakıt Tipi" value={formData.fuelType} options={fuelTypes} onChange={(v) => setFormData((p) => ({ ...p, fuelType: v, result: null }))} />
@@ -908,20 +881,14 @@ export default function Valuation() {
       const counts = countDamage(formData.damageMap);
 
       return (
-        <Card
-          style={{
-            borderRadius: 20,
-            border: "1px solid rgba(15,23,42,0.08)",
-            boxShadow: "0 8px 32px rgba(15,23,42,0.06)",
-          }}
-        >
-          <div style={{ marginBottom: 18 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+        <Card className="valuation-step-card">
+          <div className="valuation-step-heading">
+            <div className="valuation-step-heading__title">
               <Paintbrush size={18} style={{ color: "#ff7a18" }} />
-              <Text style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>Hasar Bilgileri</Text>
+              <Text className="valuation-step-title">Hasar Bilgileri</Text>
             </div>
-            <Text style={{ color: "rgba(15,23,42,0.62)" }}>
-              Noktalara tıkla → <b>Değişen</b> → <b>Boyalı</b> → <b>Lokal Boyalı</b> → Temiz
+            <Text className="valuation-step-description">
+              Noktalara tıklayarak <b>Değişen</b>, <b>Boyalı</b>, <b>Lokal Boyalı</b> ve <b>Temiz</b> durumları arasında geçiş yapın.
             </Text>
           </div>
 
@@ -1145,19 +1112,13 @@ export default function Valuation() {
     const counts = countDamage(formData.damageMap);
 
     return (
-      <Card
-        style={{
-          borderRadius: 20,
-          border: "1px solid rgba(15,23,42,0.08)",
-          boxShadow: "0 8px 32px rgba(15,23,42,0.06)",
-        }}
-      >
-        <div style={{ marginBottom: 18 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+      <Card className="valuation-step-card">
+        <div className="valuation-step-heading">
+          <div className="valuation-step-heading__title">
             <TrendingUp size={18} style={{ color: "#ff7a18" }} />
-            <Text style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>Özet & Sonuç</Text>
+            <Text className="valuation-step-title">Özet & Sonuç</Text>
           </div>
-          <Text style={{ color: "rgba(15,23,42,0.62)" }}>Tüm bilgileri toparlayıp hesaplama yap.</Text>
+          <Text className="valuation-step-description">Araç profilini son kez kontrol edin ve değerlemeyi başlatın.</Text>
         </div>
 
         <Card style={{ borderRadius: 16, border: "1px solid rgba(15,23,42,0.08)" }}>
@@ -1223,7 +1184,7 @@ export default function Valuation() {
           <div className="valuation-security">
             <div className="valuation-security__copy">
               <strong>Güvenli değerleme</strong>
-              <span>İsteği göndermeden önce güvenlik doğrulamasını tamamlayın.</span>
+              <span>Tek kullanımlık insan doğrulamasıyla isteğinizi koruyoruz.</span>
             </div>
           </div>
 
@@ -1259,14 +1220,14 @@ export default function Valuation() {
                 boxShadow: "0 10px 26px rgba(255,122,24,0.28)",
               }}
             >
-              {busy ? "Hesaplanıyor..." : "Değeri Hesapla"}
+              {busy ? "Piyasa aralığı hesaplanıyor..." : "Piyasa aralığını oluştur"}
             </Button>
           </motion.div>
         </Card>
 
         <Divider style={{ margin: "18px 0" }} />
 
-        <div className={`valuation-result ${r ? "valuation-result--ready" : ""}`}>
+        <div className={`valuation-result ${r ? "valuation-result--ready" : ""}`} aria-live="polite">
           {!r ? (
             <div className="valuation-result__empty">
               <Calculator size={38} aria-hidden />
@@ -1339,6 +1300,12 @@ export default function Valuation() {
             Bilgileri adım adım tamamla. Sonuç, tek bir kesin fiyat yerine
             tahmini piyasa değer aralığı olarak sunulur.
           </p>
+
+          <div className="valuation-intro__trust" aria-label="Değerleme özellikleri">
+            <span><Clock3 size={15} aria-hidden /> Yaklaşık 2 dakika</span>
+            <span><ShieldCheck size={15} aria-hidden /> Güvenli doğrulama</span>
+            <span><Sparkles size={15} aria-hidden /> Ücretsiz değerleme</span>
+          </div>
         </div>
 
         <StepHeader step={step + 1} total={totalSteps} title={stepTitle} subtitle={stepSubtitle} />
@@ -1347,7 +1314,7 @@ export default function Valuation() {
         <Col xs={24} lg={15}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={1}>
             <Card className="valuation-workspace">
-              <Steps current={step} responsive items={[{ title: "Temel" }, { title: "Teknik" }, { title: "Hasar" }, { title: "Sonuç" }]} />
+              <Steps className="valuation-steps" current={step} responsive items={[{ title: "Araç" }, { title: "Teknik" }, { title: "Kondisyon" }, { title: "Sonuç" }]} />
 
               <Divider style={{ margin: "16px 0" }} />
 
@@ -1355,8 +1322,9 @@ export default function Valuation() {
 
               <Divider style={{ margin: "18px 0" }} />
 
-              <div style={{ display: "flex", gap: 12 }}>
+              <div className="valuation-actions">
                 <Button
+                  className="valuation-action valuation-action--back"
                   onClick={goBack}
                   disabled={step === 0}
                   size="large"
@@ -1372,6 +1340,7 @@ export default function Valuation() {
                 </Button>
 
                 <Button
+                  className="valuation-action valuation-action--next"
                   type="primary"
                   onClick={goNext}
                   disabled={step === totalSteps - 1}
@@ -1398,9 +1367,12 @@ export default function Valuation() {
         <Col xs={24} lg={9}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={2}>
             <Card className="valuation-summary">
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                <TrendingUp size={18} style={{ color: "#ff7a18" }} />
-                <Text style={{ fontSize: 18, fontWeight: 900, color: "#0f172a" }}>Hızlı Özet</Text>
+              <div className="valuation-summary__heading">
+                <span className="valuation-summary__icon"><TrendingUp size={18} aria-hidden /></span>
+                <div>
+                  <span>CANLI PROFİL</span>
+                  <strong>Değerleme özeti</strong>
+                </div>
               </div>
 
               <Space direction="vertical" size={10} style={{ width: "100%" }}>
