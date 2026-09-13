@@ -13,7 +13,6 @@ import {
   ArrowRight,
   Paintbrush,
   Wrench,
-  ArrowDownRight,
 } from "lucide-react";
 import TurnstileWidget from "../components/TurnstileWidget";
 import { MetaTags } from "../components/MetaTags";
@@ -64,7 +63,7 @@ function StepHeader({ step, total, title, subtitle }) {
         <div className="valuation-progress__copy">
           <span>EDER DEĞERLEME AKIŞI</span>
           <strong>{title}</strong>
-          <p>{subtitle}</p>
+          {subtitle ? <p>{subtitle}</p> : null}
         </div>
 
         <div className="valuation-progress__counter">
@@ -452,13 +451,6 @@ export default function Valuation() {
     return "Özet & Sonuç";
   }, [step]);
 
-  const stepSubtitle = useMemo(() => {
-    if (step === 0) return "Araç profilini oluştur.";
-    if (step === 1) return "Teknik detayları tamamla.";
-    if (step === 2) return "Kondisyonu işaretle.";
-    return "Sonucu oluştur.";
-  }, [step]);
-
   // -------- backend fetchers --------
   const fetchBrands = async (q = "") => {
     setLoadingBrands(true);
@@ -748,7 +740,7 @@ export default function Valuation() {
               <Car size={18} style={{ color: "#ff7a18" }} />
               <Text className="valuation-step-title">Temel Bilgiler</Text>
             </div>
-            <Text style={{ color: "rgba(15,23,42,0.62)" }}>Doğru değerleme için tüm alanları eksiksiz doldurun.</Text>
+            
           </div>
 
           <Row gutter={[16, 16]}>
@@ -858,7 +850,7 @@ export default function Valuation() {
               <Wrench size={18} style={{ color: "#ff7a18" }} />
               <Text className="valuation-step-title">Teknik Bilgiler</Text>
             </div>
-            <Text className="valuation-step-description">Araç karakterini etkileyen teknik özellikleri seçin.</Text>
+            
           </div>
 
           <ChipGroup label="Yakıt Tipi" value={formData.fuelType} options={fuelTypes} onChange={(v) => setFormData((p) => ({ ...p, fuelType: v, result: null }))} />
@@ -882,9 +874,7 @@ export default function Valuation() {
               <Paintbrush size={18} style={{ color: "#ff7a18" }} />
               <Text className="valuation-step-title">Hasar Bilgileri</Text>
             </div>
-            <Text className="valuation-step-description">
-              Noktalara tıklayarak <b>Değişen</b>, <b>Boyalı</b>, <b>Lokal Boyalı</b> ve <b>Temiz</b> durumları arasında geçiş yapın.
-            </Text>
+            
           </div>
 
           <DamageMap
@@ -1113,7 +1103,7 @@ export default function Valuation() {
             <TrendingUp size={18} style={{ color: "#ff7a18" }} />
             <Text className="valuation-step-title">Özet & Sonuç</Text>
           </div>
-          <Text className="valuation-step-description">Araç profilini son kez kontrol edin ve değerlemeyi başlatın.</Text>
+          
         </div>
 
         <Card style={{ borderRadius: 16, border: "1px solid rgba(15,23,42,0.08)" }}>
@@ -1292,32 +1282,33 @@ export default function Valuation() {
           <div className="valuation-intro">
             <span>Yeni değerleme</span>
             <strong>Aracını değerle.</strong>
-            <p>Tahmini piyasa aralığını birkaç adımda hemen oluştur.</p>
-
-            <div className="valuation-intro__actions">
-              <a className="valuation-intro__cta" href="#valuation-form">
-                Başla
-                <ArrowDownRight size={16} aria-hidden />
-              </a>
-
-              <div className="valuation-intro__meta" aria-label="Değerleme özellikleri">
-                <span>4 adım</span>
-                <span>Canlı özet</span>
-                <span>Güvenli doğrulama</span>
-              </div>
-            </div>
           </div>
 
           <div className="valuation-progress-wrap">
-            <StepHeader step={step + 1} total={totalSteps} title={stepTitle} subtitle={stepSubtitle} />
+            <StepHeader step={step + 1} total={totalSteps} title={stepTitle} subtitle={null} />
           </div>
         </div>
 
       <Row gutter={[24, 24]} className="valuation-grid">
-        <Col xs={24} lg={16}>
+        <Col xs={24} lg={15}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={1}>
             <Card id="valuation-form" className="valuation-workspace">
-              <Steps className="valuation-steps" current={step} responsive items={[{ title: "Araç" }, { title: "Teknik" }, { title: "Kondisyon" }, { title: "Sonuç" }]} />
+              <div className="valuation-steps-shell">
+                <div
+                  className="valuation-step-motion"
+                  style={{ left: `calc(${(step / Math.max(totalSteps - 1, 1)) * 100}% - 16px)` }}
+                  aria-hidden
+                >
+                  <Car size={14} />
+                </div>
+
+                <Steps
+                  className="valuation-steps"
+                  current={step}
+                  responsive
+                  items={[{ title: "Araç" }, { title: "Teknik" }, { title: "Kondisyon" }, { title: "Sonuç" }]}
+                />
+              </div>
 
               <Divider style={{ margin: "16px 0" }} />
 
@@ -1325,22 +1316,23 @@ export default function Valuation() {
 
               <Divider style={{ margin: "18px 0" }} />
 
-              <div className="valuation-actions">
-                <Button
-                  className="valuation-action valuation-action--back"
-                  onClick={goBack}
-                  disabled={step === 0}
-                  size="large"
-                  icon={<ArrowLeft size={16} />}
-                  style={{
-                    borderRadius: 14,
-                    height: 48,
-                    fontWeight: 900,
-                    border: "1px solid rgba(15,23,42,0.12)",
-                  }}
-                >
-                  Geri
-                </Button>
+              <div className={`valuation-actions ${step === 0 ? "is-first-step" : ""}`}>
+                {step > 0 ? (
+                  <Button
+                    className="valuation-action valuation-action--back"
+                    onClick={goBack}
+                    size="large"
+                    icon={<ArrowLeft size={16} />}
+                    style={{
+                      borderRadius: 14,
+                      height: 48,
+                      fontWeight: 900,
+                      border: "1px solid rgba(15,23,42,0.12)",
+                    }}
+                  >
+                    Geri
+                  </Button>
+                ) : null}
 
                 <Button
                   className="valuation-action valuation-action--next"
@@ -1367,7 +1359,7 @@ export default function Valuation() {
         </Col>
 
         {/* Sağ kolon: tek ve güçlü canlı özet paneli */}
-        <Col xs={24} lg={8}>
+        <Col xs={24} lg={9}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={2}>
             <Card className="valuation-summary">
               <div className="valuation-summary__heading">
@@ -1413,11 +1405,6 @@ export default function Valuation() {
               <div className="valuation-summary__footer">
                 <span>MEVCUT ADIM</span>
                 <strong>{stepTitle}</strong>
-                <p>
-                  {step === totalSteps - 1
-                    ? "Doğrulamayı tamamla."
-                    : "Profil burada güncellenir."}
-                </p>
               </div>
             </Card>
           </motion.div>

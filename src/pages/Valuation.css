@@ -1882,3 +1882,477 @@
     font-size: 21px;
   }
 }
+
+/* ==========================================================================
+   EDER 03D.4 V1 — FIRST SCREEN REFINEMENT + MOTION POLISH
+   LESS COPY / SOFTER BACKGROUND / BIGGER SUMMARY / MOVING CAR STEP CUE
+   ========================================================================== */
+
+.valuation-page {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 127, 61, 0.12), transparent 24%),
+    radial-gradient(circle at 88% 14%, rgba(31, 41, 55, 0.06), transparent 24%),
+    linear-gradient(180deg, #f7f3ec 0%, #efe8dd 100%);
+}
+
+.valuation-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 1;
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.78), transparent 18%),
+    radial-gradient(circle at 82% 12%, rgba(255, 255, 255, 0.44), transparent 20%),
+    radial-gradient(circle at 72% 65%, rgba(255, 121, 24, 0.05), transparent 24%);
+  mask-image: none;
+}
+
+.valuation-top {
+  grid-template-columns: minmax(0, 0.82fr) minmax(520px, 1.08fr);
+  gap: 22px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.valuation-intro {
+  max-width: 520px;
+  gap: 6px;
+}
+
+.valuation-intro > strong {
+  max-width: 480px;
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 0.92;
+}
+
+.valuation-intro__actions {
+  margin-top: 10px;
+}
+
+.valuation-intro__cta {
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 15px;
+}
+
+.valuation-progress {
+  min-height: 118px;
+  padding: 18px 20px;
+  border-radius: 26px;
+}
+
+.valuation-progress__top {
+  align-items: center;
+}
+
+.valuation-progress__mark {
+  width: 48px;
+  height: 48px;
+}
+
+.valuation-progress__copy > strong {
+  font-size: clamp(30px, 2.4vw, 42px);
+}
+
+.valuation-progress__copy > p {
+  display: none;
+}
+
+.valuation-progress__counter > strong {
+  font-size: 34px;
+}
+
+.valuation-grid {
+  margin-top: 6px;
+}
+
+.valuation-workspace.ant-card {
+  border-radius: 30px;
+}
+
+.valuation-workspace.ant-card > .ant-card-body {
+  padding: 16px 18px 18px;
+}
+
+.valuation-steps-shell {
+  position: relative;
+  padding-top: 8px;
+}
+
+.valuation-step-motion {
+  position: absolute;
+  top: -2px;
+  z-index: 3;
+  width: 32px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: #ff6b33;
+  transition: left 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.valuation-step-motion svg {
+  filter: drop-shadow(0 4px 10px rgba(255, 107, 51, 0.24));
+}
+
+.valuation-step-motion::before {
+  content: "";
+  position: absolute;
+  inset: 4px 1px 0 1px;
+  z-index: -1;
+  border-radius: 999px;
+  background: rgba(255, 107, 51, 0.10);
+  filter: blur(7px);
+}
+
+.valuation-step-card > .ant-card-body {
+  padding: 15px !important;
+}
+
+.valuation-step-heading {
+  margin-bottom: 12px;
+}
+
+.valuation-step-title.ant-typography {
+  font-size: 17px;
+}
+
+.valuation-step-description.ant-typography,
+.valuation-step-heading > .ant-typography:not(.valuation-step-title) {
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.valuation-actions {
+  margin-top: 0;
+  gap: 10px;
+}
+
+.valuation-actions.is-first-step .valuation-action--next.ant-btn {
+  width: 100%;
+}
+
+.valuation-action.ant-btn {
+  min-height: 44px;
+}
+
+.valuation-summary.ant-card {
+  top: 86px;
+  border-radius: 30px;
+}
+
+.valuation-summary > .ant-card-body {
+  padding: 24px 24px 22px;
+}
+
+.valuation-summary__heading {
+  margin-bottom: 18px;
+}
+
+.valuation-summary__heading > div > strong {
+  font-size: 18px;
+}
+
+.valuation-summary .ant-space-item > div {
+  min-height: 46px;
+  padding: 10px 0;
+}
+
+.valuation-summary .ant-space-item > div > .ant-typography:last-child {
+  max-width: 54%;
+  font-size: 15px;
+}
+
+.valuation-summary__footer {
+  gap: 5px;
+}
+
+.valuation-summary__footer > strong {
+  font-size: 22px;
+}
+
+@media (max-width: 1260px) {
+  .valuation-top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .valuation-progress {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 991px) {
+  .valuation-summary.ant-card {
+    top: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .valuation-intro {
+    max-width: 100%;
+  }
+
+  .valuation-intro > strong {
+    font-size: clamp(34px, 11.5vw, 50px);
+  }
+
+  .valuation-progress {
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .valuation-progress__copy > strong {
+    font-size: 24px;
+  }
+
+  .valuation-step-motion {
+    display: none;
+  }
+
+  .valuation-summary > .ant-card-body {
+    padding: 18px 16px;
+  }
+}
+
+/* ==========================================================================
+   EDER 03D.4 V1.1 — RECOVERY + FIRST VIEWPORT FINALIZATION
+   ========================================================================== */
+
+.valuation-page {
+  padding-top: clamp(20px, 2.2vw, 30px);
+  background:
+    radial-gradient(ellipse at 12% 12%, rgba(255, 115, 48, 0.14), transparent 27%),
+    radial-gradient(ellipse at 86% 8%, rgba(37, 43, 51, 0.075), transparent 26%),
+    radial-gradient(ellipse at 58% 78%, rgba(255, 255, 255, 0.54), transparent 32%),
+    linear-gradient(145deg, #f7f2e9 0%, #f2ece2 48%, #ebe4d8 100%);
+}
+
+.valuation-page::before {
+  background: none !important;
+  background-image: none !important;
+  opacity: 0 !important;
+}
+
+.valuation-top {
+  grid-template-columns: minmax(0, 0.72fr) minmax(560px, 1.28fr);
+  gap: 26px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.valuation-intro {
+  min-height: 116px;
+  max-width: 480px;
+  justify-content: center;
+  gap: 7px;
+}
+
+.valuation-intro > strong {
+  max-width: 460px;
+  font-size: clamp(42px, 5vw, 66px);
+}
+
+.valuation-intro > p,
+.valuation-intro__actions,
+.valuation-intro__meta {
+  display: none !important;
+}
+
+.valuation-progress {
+  min-height: 132px;
+  padding: 22px 24px;
+  border-radius: 28px;
+}
+
+.valuation-progress__mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 17px;
+}
+
+.valuation-progress__copy > strong {
+  font-size: clamp(32px, 2.7vw, 44px);
+}
+
+.valuation-progress__copy > p {
+  display: none !important;
+}
+
+.valuation-progress__rail {
+  margin-top: 18px;
+}
+
+.valuation-grid {
+  margin-top: 4px;
+}
+
+.valuation-workspace.ant-card > .ant-card-body {
+  padding: 14px 16px 16px;
+}
+
+.valuation-steps-shell {
+  padding-top: 5px;
+}
+
+.valuation-step-motion {
+  top: -5px;
+  width: 34px;
+  height: 26px;
+  color: #ff6b33;
+  transition: left 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.valuation-step-motion svg {
+  width: 16px;
+  height: 16px;
+  filter: drop-shadow(0 5px 10px rgba(255, 107, 51, 0.32));
+}
+
+.valuation-step-card > .ant-card-body {
+  padding: 14px !important;
+}
+
+.valuation-step-heading {
+  margin-bottom: 10px;
+}
+
+.valuation-step-heading > .ant-typography:not(.valuation-step-title),
+.valuation-step-description {
+  display: none !important;
+}
+
+.valuation-page .ant-divider {
+  margin: 10px 0 !important;
+}
+
+.valuation-page .ant-select-selector,
+.valuation-page .ant-input,
+.valuation-page .ant-input-affix-wrapper {
+  min-height: 44px !important;
+}
+
+.valuation-actions {
+  margin-top: 0;
+}
+
+.valuation-actions.is-first-step {
+  display: block;
+}
+
+.valuation-actions.is-first-step .valuation-action--next.ant-btn {
+  width: 100%;
+  min-height: 46px;
+}
+
+.valuation-summary.ant-card {
+  top: 84px;
+  min-height: 372px;
+  border-radius: 30px;
+}
+
+.valuation-summary > .ant-card-body {
+  padding: 26px;
+}
+
+.valuation-summary__heading {
+  margin-bottom: 20px;
+}
+
+.valuation-summary__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+}
+
+.valuation-summary__heading > div > span {
+  font-size: 10px;
+}
+
+.valuation-summary__heading > div > strong {
+  font-size: 21px;
+}
+
+.valuation-summary .ant-space-item > div {
+  min-height: 50px;
+  padding: 11px 0;
+}
+
+.valuation-summary .ant-space-item > div > .ant-typography:first-child {
+  font-size: 13px;
+}
+
+.valuation-summary .ant-space-item > div > .ant-typography:last-child {
+  max-width: 58%;
+  font-size: 15px;
+}
+
+.valuation-summary__footer {
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+.valuation-summary__footer > strong {
+  font-size: 23px;
+}
+
+@media (min-width: 1270px) and (min-height: 820px) {
+  .valuation-step-card .ant-row {
+    row-gap: 10px !important;
+  }
+
+  .valuation-page {
+    padding-bottom: 72px;
+  }
+}
+
+@media (max-width: 1260px) {
+  .valuation-top {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .valuation-intro {
+    min-height: 0;
+  }
+
+  .valuation-progress {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 991px) {
+  .valuation-summary.ant-card {
+    min-height: 0;
+    top: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .valuation-page {
+    padding-top: 18px;
+  }
+
+  .valuation-intro {
+    min-height: 0;
+  }
+
+  .valuation-intro > strong {
+    font-size: clamp(34px, 11.5vw, 50px);
+  }
+
+  .valuation-progress {
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .valuation-step-motion {
+    display: none;
+  }
+
+  .valuation-summary > .ant-card-body {
+    padding: 18px 16px;
+  }
+}
