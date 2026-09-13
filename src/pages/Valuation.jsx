@@ -13,19 +13,14 @@ import {
   ArrowRight,
   Paintbrush,
   Wrench,
-  ShieldCheck,
-  Clock3,
-  Sparkles,
+  ArrowDownRight,
 } from "lucide-react";
-import FreeOnly from "../components/FreeOnly";
-import AdSlot from "../components/AdSlot";
 import TurnstileWidget from "../components/TurnstileWidget";
 import { MetaTags } from "../components/MetaTags";
 import { valuationApi } from "../services/valuationApi";
 import carDamageImage from "../assets/car_damage.png";
 import "./Valuation.css";
 
-const SLOT_VALUATION = import.meta.env.VITE_ADS_SLOT_VALUATION;
 const { Title, Paragraph, Text } = Typography;
 
 const fadeUp = {
@@ -459,9 +454,9 @@ export default function Valuation() {
 
   const stepSubtitle = useMemo(() => {
     if (step === 0) return "Marka, model, yıl ve kilometre ile doğru segmentte konumlandırıyoruz.";
-    if (step === 1) return "Yakıt, vites, kasa, renk ve çekiş bilgileri aracın piyasa karakterini netleştirir.";
-    if (step === 2) return "Parça bazlı kondisyon bilgisini işaretle; ağır onarım detaylarını ayrıca belirt.";
-    return "Bilgileri son kez kontrol et, güvenlik doğrulamasını tamamla ve piyasa aralığını oluştur.";
+    if (step === 1) return "Teknik özellikler araç profilini netleştirir.";
+    if (step === 2) return "Kondisyon ve hasar detaylarını işaretle.";
+    return "Bilgileri kontrol et ve sonucu oluştur.";
   }, [step]);
 
   // -------- backend fetchers --------
@@ -1294,26 +1289,33 @@ export default function Valuation() {
 
       <div className="valuation-shell">
         <div className="valuation-intro">
-          <span>Ücretsiz araç değerleme</span>
-          <strong>Aracın kaç EDER?</strong>
+          <span>Yeni değerleme</span>
+          <strong>Aracını şimdi değerle.</strong>
           <p>
-            Bilgileri adım adım tamamla. Sonuç, tek bir kesin fiyat yerine
-            tahmini piyasa değer aralığı olarak sunulur.
+            Marka, model, kilometre ve kondisyon bilgilerini gir.
+            Tahmini piyasa değer aralığını birkaç adımda oluştur.
           </p>
 
-          <div className="valuation-intro__trust" aria-label="Değerleme özellikleri">
-            <span><Clock3 size={15} aria-hidden /> Yaklaşık 2 dakika</span>
-            <span><ShieldCheck size={15} aria-hidden /> Güvenli doğrulama</span>
-            <span><Sparkles size={15} aria-hidden /> Ücretsiz değerleme</span>
+          <div className="valuation-intro__actions">
+            <a className="valuation-intro__cta" href="#valuation-form">
+              Değerlemeye başla
+              <ArrowDownRight size={16} aria-hidden />
+            </a>
+
+            <div className="valuation-intro__meta" aria-label="Değerleme özellikleri">
+              <span>4 adım</span>
+              <span>Canlı özet</span>
+              <span>Güvenli doğrulama</span>
+            </div>
           </div>
         </div>
 
         <StepHeader step={step + 1} total={totalSteps} title={stepTitle} subtitle={stepSubtitle} />
 
       <Row gutter={[24, 24]} className="valuation-grid">
-        <Col xs={24} lg={15}>
+        <Col xs={24} lg={16}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={1}>
-            <Card className="valuation-workspace">
+            <Card id="valuation-form" className="valuation-workspace">
               <Steps className="valuation-steps" current={step} responsive items={[{ title: "Araç" }, { title: "Teknik" }, { title: "Kondisyon" }, { title: "Sonuç" }]} />
 
               <Divider style={{ margin: "16px 0" }} />
@@ -1363,21 +1365,21 @@ export default function Valuation() {
           </motion.div>
         </Col>
 
-        {/* Sağ kolon: web'de hızlı özet paneli */}
-        <Col xs={24} lg={9}>
+        {/* Sağ kolon: tek ve güçlü canlı özet paneli */}
+        <Col xs={24} lg={8}>
           <motion.div initial="hidden" animate="show" variants={fadeUp} custom={2}>
             <Card className="valuation-summary">
               <div className="valuation-summary__heading">
                 <span className="valuation-summary__icon"><TrendingUp size={18} aria-hidden /></span>
                 <div>
-                  <span>CANLI PROFİL</span>
+                  <span>CANLI ÖZET</span>
                   <strong>Değerleme özeti</strong>
                 </div>
               </div>
 
               <Space direction="vertical" size={10} style={{ width: "100%" }}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <Text type="secondary">Marka/Model</Text>
+                  <Text type="secondary">Marka / Model</Text>
                   <Text style={{ fontWeight: 800 }}>
                     {formData.brand || "-"} / {formData.model || "-"}
                   </Text>
@@ -1403,16 +1405,20 @@ export default function Valuation() {
                     D:{formData.totalChangedParts} B:{formData.totalPaintedParts} L:{formData.totalLocalPaintedParts}
                   </Text>
                 </div>
-
-                <Divider style={{ margin: "10px 0" }} />
               </Space>
-            </Card>
 
-            <FreeOnly>
-              <Card className="valuation-ad-card">
-                <AdSlot enabled slot={SLOT_VALUATION} style={{ minHeight: 250 }} />
-              </Card>
-            </FreeOnly>
+              <Divider style={{ margin: "16px 0" }} />
+
+              <div className="valuation-summary__footer">
+                <span>MEVCUT ADIM</span>
+                <strong>{stepTitle}</strong>
+                <p>
+                  {step === totalSteps - 1
+                    ? "Doğrulamayı tamamla ve piyasa aralığını oluştur."
+                    : "Alanları doldurdukça araç profili burada netleşir."}
+                </p>
+              </div>
+            </Card>
           </motion.div>
         </Col>
       </Row>

@@ -1351,3 +1351,242 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ==========================================================================
+   EDER 03D.2 V1 — PROFESSIONAL REFINEMENT
+   PURPOSE-FIRST HERO / SINGLE SUMMARY PANEL / LESS NOISE
+   ========================================================================== */
+
+.valuation-shell {
+  width: min(1440px, calc(100% - clamp(36px, 6vw, 96px)));
+}
+
+.valuation-intro {
+  max-width: 880px;
+  margin: 0 0 24px;
+  gap: 10px;
+}
+
+.valuation-intro > strong {
+  max-width: 760px;
+  font-size: clamp(54px, 7vw, 96px);
+  line-height: 0.9;
+  letter-spacing: -0.072em;
+}
+
+.valuation-intro > p {
+  max-width: 620px;
+  margin: 0;
+  color: rgba(17, 18, 20, 0.62);
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.65;
+}
+
+.valuation-intro__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.valuation-intro__cta {
+  min-height: 50px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border-radius: 16px;
+  color: #fff;
+  background: #0d0f12;
+  box-shadow: 0 16px 32px rgba(17, 18, 20, 0.14);
+  font-size: 14px;
+  font-weight: 860;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.valuation-intro__cta:hover {
+  color: #fff;
+  background: #181b20;
+  transform: translateY(-1px);
+}
+
+.valuation-intro__cta:focus-visible {
+  outline: 2px solid rgba(255, 107, 51, 0.48);
+  outline-offset: 2px;
+}
+
+.valuation-intro__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: rgba(17, 18, 20, 0.58);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0.01em;
+}
+
+.valuation-intro__meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.valuation-intro__meta > span:not(:last-child)::after {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(17, 18, 20, 0.22);
+}
+
+.valuation-progress {
+  margin-bottom: 8px;
+  padding: clamp(22px, 2.5vw, 32px);
+  border-radius: 28px;
+}
+
+.valuation-progress__copy > strong {
+  font-size: clamp(28px, 2.8vw, 40px);
+}
+
+.valuation-progress__copy > p {
+  max-width: 520px;
+}
+
+.valuation-grid {
+  margin-top: 18px;
+}
+
+.valuation-workspace.ant-card > .ant-card-body {
+  padding: clamp(20px, 2.3vw, 30px);
+}
+
+.valuation-summary.ant-card {
+  top: 96px;
+}
+
+.valuation-summary > .ant-card-body {
+  padding: 24px 24px 22px;
+}
+
+.valuation-summary__footer {
+  display: grid;
+  gap: 6px;
+}
+
+.valuation-summary__footer > span {
+  color: #ff6b33;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.valuation-summary__footer > strong {
+  color: #111214;
+  font-size: 20px;
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.valuation-summary__footer > p {
+  margin: 0;
+  color: rgba(17, 18, 20, 0.62);
+  font-size: 13px;
+  line-height: 1.62;
+}
+
+.valuation-step-heading {
+  margin-bottom: 20px;
+}
+
+.valuation-step-description.ant-typography,
+.valuation-step-heading > .ant-typography:not(.valuation-step-title) {
+  color: rgba(17, 18, 20, 0.56);
+}
+
+.valuation-page .ant-divider {
+  margin: 16px 0 !important;
+}
+
+.valuation-actions {
+  margin-top: 2px;
+}
+
+@media (max-width: 1180px) {
+  .valuation-shell {
+    width: min(1180px, calc(100% - 44px));
+  }
+}
+
+@media (max-width: 991px) {
+  .valuation-summary.ant-card {
+    top: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .valuation-intro {
+    margin-bottom: 18px;
+  }
+
+  .valuation-intro > strong {
+    font-size: clamp(44px, 13.4vw, 64px);
+  }
+
+  .valuation-intro__actions {
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .valuation-intro__cta {
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .valuation-intro__meta {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px 12px;
+  }
+
+  .valuation-progress {
+    padding: 18px 16px;
+    border-radius: 22px;
+  }
+
+  .valuation-progress__copy > strong {
+    font-size: 24px;
+  }
+
+  .valuation-summary > .ant-card-body {
+    padding: 18px 16px 16px;
+  }
+
+  .valuation-summary__footer > strong {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 430px) {
+  .valuation-shell {
+    width: calc(100% - 18px);
+  }
+
+  .valuation-intro__meta {
+    font-size: 11px;
+  }
+
+  .valuation-intro__meta > span {
+    gap: 8px;
+  }
+}
