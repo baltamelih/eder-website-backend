@@ -495,6 +495,103 @@ export default function Home() {
           <AdSlot enabled slot={HOME_AD_SLOT} style={{ minHeight: 120 }} />
         </div>
       </section>
+      <section className="home-proof" aria-labelledby="home-proof-title">
+        <div className="home-proof__shell">
+          <div className="home-proof__intro">
+            <span className="home-proof__kicker">WEB DÜZEYİ GÜVEN</span>
+            <h2 id="home-proof-title">Sadece etkileyici değil, ikna eden bir vitrin.</h2>
+            <p>
+              EDER ana sayfası yalnızca bir tanıtım yüzeyi gibi değil; güven oluşturan,
+              nasıl çalıştığını anlatan ve kullanıcıyı doğru sonraki adıma taşıyan
+              premium bir ürün vitrini gibi davranmalı.
+            </p>
+          </div>
+
+          <div className="home-proof__grid">
+            <article className="home-proof-card">
+              <span>01</span>
+              <strong>Net değer akışı</strong>
+              <p>Araç kimliği, kilometre, kondisyon ve bağlam tek anlatıda bir araya gelir.</p>
+            </article>
+
+            <article className="home-proof-card">
+              <span>02</span>
+              <strong>Güven inşa eden çerçeve</strong>
+              <p>Turnstile koruması, kontrollü akış ve şeffaf dil sayesinde ilk temasta güven verir.</p>
+            </article>
+
+            <article className="home-proof-card">
+              <span>03</span>
+              <strong>Karar odaklı sunum</strong>
+              <p>Kullanıcıya ham veri değil; piyasadaki yerini anlamlandıran okunaklı bir sonuç deneyimi sunar.</p>
+            </article>
+
+            <article className="home-proof-card">
+              <span>04</span>
+              <strong>Hazır dönüşüm yüzeyi</strong>
+              <p>Güçlü CTA’lar, açıklayıcı bölümler ve sık sorulan sorular ile ürün sitesine dönüşür.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-faq" aria-labelledby="home-faq-title">
+        <div className="home-faq__shell">
+          <div className="home-faq__intro">
+            <span className="home-faq__kicker">SIK SORULANLAR</span>
+            <h2 id="home-faq-title">Karar vermeden önce herkesin sorduğu şeyler.</h2>
+            <p>
+              İlk bakışta yanıt beklenen temel soruları görünür tutmak; güven, dönüşüm
+              ve ürün netliği açısından kritik. Bu bölüm EDER’i daha tamamlanmış bir web
+              deneyimine taşır.
+            </p>
+          </div>
+
+          <div className="home-faq__list">
+            <details className="home-faq-item" open>
+              <summary>EDER sonucu tam olarak neyi gösterir?</summary>
+              <p>
+                EDER; araç kimliği, kilometre, kondisyon sinyalleri ve piyasa bağlamını birleştirerek
+                aracın tahmini değer aralığını ve piyasadaki yerini daha okunaklı biçimde sunar.
+              </p>
+            </details>
+
+            <details className="home-faq-item">
+              <summary>Bu sonuç ekspertiz raporunun yerine mi geçer?</summary>
+              <p>
+                Hayır. EDER sonucu; karar hazırlayan dijital bir katmandır. Fiziksel ekspertiz ve
+                detaylı inceleme süreçlerini tamamlayıcı biçimde konumlanır.
+              </p>
+            </details>
+
+            <details className="home-faq-item">
+              <summary>Kullanıcı akışı neden bu kadar adımlı tasarlandı?</summary>
+              <p>
+                Çünkü amaç yalnızca form doldurtmak değil; kullanıcıyı araç kimliğinden kondisyon
+                algısına, oradan da piyasa bağlamına taşıyan daha anlaşılır bir karar akışı oluşturmaktır.
+              </p>
+            </details>
+
+            <details className="home-faq-item">
+              <summary>Güvenlik ve erişim tarafında ne var?</summary>
+              <p>
+                Public valuation akışı kontrollü erişim, Turnstile koruması ve net yönlendirmelerle
+                güvenilir bir ürün yüzeyi olarak kurgulanır.
+              </p>
+            </details>
+
+            <details className="home-faq-item">
+              <summary>Sonraki adımda bu siteye neler eklenebilir?</summary>
+              <p>
+                Referans örnekleri, müşteri hikâyeleri, ürün ekranları, kurumsal iletişim, kullanım
+                senaryoları ve yardımcı alt sayfalar ile site daha da olgunlaştırılabilir.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+
 
       <section className="home-final">
         <div className="home-final__grid">

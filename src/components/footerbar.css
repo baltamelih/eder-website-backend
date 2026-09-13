@@ -452,3 +452,30 @@
     margin-top: 4px;
   }
 }
+
+
+/* ==========================================================================
+   EDER 03C.4 — FOOTER MICRO-POLISH
+   ========================================================================== */
+
+.fb-nav a:focus-visible,
+.fb-bottom > a:focus-visible {
+  outline: 2px solid rgba(255, 107, 51, 0.44);
+  outline-offset: 2px;
+}
+
+.fb-nav > div > span {
+  margin-bottom: 20px;
+}
+
+.fb-bottom > a {
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.fb-bottom > a:hover {
+  transform: translateX(2px);
+}
