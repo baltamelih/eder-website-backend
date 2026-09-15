@@ -1,214 +1,192 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Button, Card, Empty, Skeleton, Tag, Typography, message } from "antd";
 import {
-  Button,
-  Card,
-  Col,
-  List,
-  message,
-  Row,
-  Statistic,
-  Tag,
-  Typography,
-} from "antd";
-import {
-  BarChartOutlined,
   CarOutlined,
+  ClockCircleOutlined,
+  HistoryOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { UserCarsAPI } from "../services/userCars";
 import { useAuth } from "../services/AuthContext";
+import "./dashboard.css";
 
+// EDER_03F3_90_DAY_CAR_POLICY
 const { Title, Text } = Typography;
+
+function formatDate(value) {
+  if (!value) return "-";
+  try {
+    return new Intl.DateTimeFormat("tr-TR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(value));
+  } catch {
+    return "-";
+  }
+}
+
+function vehicleTitle(car) {
+  return [car.BrandName, car.ModelName, car.Year].filter(Boolean).join(" ");
+}
 
 export default function Dashboard() {
   const [cars, setCars] = useState([]);
+  const [policy, setPolicy] = useState(null);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
+    let active = true;
+
     (async () => {
       try {
         const data = await UserCarsAPI.list();
-        setCars(data.cars || []);
+        if (!active) return;
+        setCars(Array.isArray(data?.cars) ? data.cars : []);
+        setPolicy(data?.policy || null);
       } catch (error) {
-        message.error(error.message || "Araçlar yüklenemedi.");
+        if (active) {
+          message.error(error.message || "Araçlar yüklenemedi.");
+        }
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     })();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const valuedCars = cars.filter((car) => car.last_valuation).length;
+  const recentCars = useMemo(() => cars.slice(0, 3), [cars]);
+  const canAdd = policy?.can_add_new_car !== false;
+  const daysRemaining = Number(policy?.days_remaining || 0);
 
   return (
-    <div style={{ padding: "0 0 24px" }}>
-      <div style={{ marginBottom: 24 }}>
-        <Title level={2} style={{ marginTop: 0, marginBottom: 8 }}>
-          Hoş geldin, {user?.full_name || user?.name || "Kullanıcı"}!
-        </Title>
-        <Text type="secondary">
-          Kayıtlı araçlarını görüntüle ve yeni bir EDER değerlemesi başlat.
-        </Text>
-      </div>
-
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12}>
-          <Card style={{ borderRadius: 12, textAlign: "center" }}>
-            <Statistic
-              title="Kayıtlı Araç"
-              value={cars.length}
-              prefix={<CarOutlined style={{ color: "#ff7a18" }} />}
-              valueStyle={{ color: "#ff7a18", fontWeight: 700 }}
-            />
-          </Card>
-        </Col>
-
-        <Col xs={24} sm={12}>
-          <Card style={{ borderRadius: 12, textAlign: "center" }}>
-            <Statistic
-              title="Değerleme Kaydı Olan Araç"
-              value={valuedCars}
-              prefix={<BarChartOutlined style={{ color: "#1890ff" }} />}
-              valueStyle={{ color: "#1890ff", fontWeight: 700 }}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      <Card
-        style={{ borderRadius: 16 }}
-        title={
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 12,
-            }}
-          >
-            <span>Araçlarım ({cars.length})</span>
-            <Link to="/valuation">
-              <Button type="primary" icon={<PlusOutlined />} size="small">
-                Yeni Değerleme
-              </Button>
-            </Link>
-          </div>
-        }
-      >
-        {cars.length === 0 && !loading ? (
-          <div style={{ textAlign: "center", padding: "40px 20px" }}>
-            <CarOutlined
-              style={{
-                fontSize: 48,
-                color: "#d9d9d9",
-                marginBottom: 16,
-              }}
-            />
-            <div style={{ marginBottom: 16 }}>
-              <Text type="secondary" style={{ fontSize: 16 }}>
-                Henüz kayıtlı aracın yok.
-              </Text>
-            </div>
-            <Link to="/valuation">
-              <Button type="primary" icon={<PlusOutlined />}>
-                İlk Değerlemeyi Başlat
-              </Button>
-            </Link>
-          </div>
-        ) : (
-          <List
-            loading={loading}
-            dataSource={cars}
-            renderItem={(car, index) => (
-              <List.Item style={{ padding: "16px 0" }}>
-                <div style={{ width: "100%" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      gap: 12,
-                      flexWrap: "wrap",
-                      marginBottom: 8,
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          fontWeight: 700,
-                          fontSize: 16,
-                          marginBottom: 4,
-                        }}
-                      >
-                        {car.BrandName} {car.ModelName} {car.Year}
-                      </div>
-                      <Text type="secondary">
-                        {car.Trim || "Donanım belirtilmemiş"}
-                      </Text>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 8,
-                        alignItems: "center",
-                      }}
-                    >
-                      <Tag color="blue" style={{ margin: 0 }}>
-                        {(car.Kilometre || 0).toLocaleString("tr-TR")} km
-                      </Tag>
-                      <Tag color="green" style={{ margin: 0 }}>
-                        #{index + 1}
-                      </Tag>
-                    </div>
-                  </div>
-
-                  {car.last_valuation && (
-                    <div
-                      style={{
-                        padding: 12,
-                        background: "#f6f7fb",
-                        borderRadius: 8,
-                        marginTop: 8,
-                      }}
-                    >
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        Son değerleme: {car.last_valuation}
-                      </Text>
-                    </div>
-                  )}
-                </div>
-              </List.Item>
-            )}
-          />
-        )}
-      </Card>
-
-      <Card
-        style={{
-          borderRadius: 16,
-          marginTop: 24,
-          border: "1px solid rgba(255,122,24,0.18)",
-          background: "rgba(255,122,24,0.04)",
-        }}
-      >
-        <div style={{ textAlign: "center" }}>
-          <Title level={4} style={{ marginBottom: 8 }}>
-            Aracının güncel tahmini aralığını gör
+    <div className="eder-dashboard">
+      <section className="eder-dashboard__hero">
+        <div>
+          <span className="eder-dashboard__eyebrow">EDER HESABIN</span>
+          <Title level={2}>
+            Hoş geldin, {user?.full_name || user?.name || "Kullanıcı"}.
           </Title>
-          <Text type="secondary">
-            Değerleme akışı ücretsizdir ve birkaç temel araç bilgisiyle başlar.
+          <Text>
+            Araç kayıtlarını, yeni araç hakkını ve son hareketlerini tek yerden yönet.
           </Text>
-          <div style={{ marginTop: 16 }}>
-            <Link to="/valuation">
-              <Button type="primary" size="large">
-                Değerlemeye Git
-              </Button>
-            </Link>
+        </div>
+
+        <div className={`eder-dashboard__policy${canAdd ? " is-ready" : " is-locked"}`}>
+          <div className="eder-dashboard__policy-icon">
+            {canAdd ? <PlusOutlined /> : <ClockCircleOutlined />}
+          </div>
+          <div>
+            <span>YENİ ARAÇ HAKKI</span>
+            <strong>
+              {canAdd
+                ? "Kullanıma hazır"
+                : `${Math.max(1, daysRemaining)} gün sonra yeniden açılacak`}
+            </strong>
+            <small>
+              {canAdd
+                ? "Yeni bir aracı paneline ekleyebilirsin."
+                : `Sonraki tarih: ${formatDate(policy?.next_add_at)}`}
+            </small>
           </div>
         </div>
-      </Card>
+      </section>
+
+      <section className="eder-dashboard__metrics">
+        <Card>
+          <span>KAYITLI ARAÇ</span>
+          <strong>{loading ? "—" : cars.length}</strong>
+          <small>Hesabındaki araç geçmişi</small>
+        </Card>
+
+        <Card>
+          <span>KURAL</span>
+          <strong>90 gün</strong>
+          <small>Her yeni araç kaydı arasında</small>
+        </Card>
+
+        <Card>
+          <span>SON KAYIT</span>
+          <strong>{cars[0] ? formatDate(cars[0].CreatedAt) : "Henüz yok"}</strong>
+          <small>{cars[0] ? vehicleTitle(cars[0]) : "İlk aracını ekleyebilirsin"}</small>
+        </Card>
+      </section>
+
+      <section className="eder-dashboard__grid">
+        <Card className="eder-dashboard__vehicles">
+          <div className="eder-dashboard__section-head">
+            <div>
+              <span>ARAÇ GEÇMİŞİ</span>
+              <strong>Son kayıtların</strong>
+            </div>
+            <Link to="/app/cars">
+              <Button icon={<HistoryOutlined />}>Tümünü gör</Button>
+            </Link>
+          </div>
+
+          {loading ? (
+            <Skeleton active paragraph={{ rows: 4 }} />
+          ) : recentCars.length === 0 ? (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="Henüz kayıtlı aracın yok."
+            />
+          ) : (
+            <div className="eder-dashboard__vehicle-list">
+              {recentCars.map((car) => (
+                <article key={car.UserCarID} className="eder-dashboard__vehicle">
+                  <div className="eder-dashboard__vehicle-icon">
+                    <CarOutlined />
+                  </div>
+                  <div>
+                    <strong>{vehicleTitle(car)}</strong>
+                    <span>{car.Trim || "Donanım belirtilmemiş"}</span>
+                  </div>
+                  <div className="eder-dashboard__vehicle-meta">
+                    <Tag>{Number(car.Kilometre || 0).toLocaleString("tr-TR")} km</Tag>
+                    <small>{formatDate(car.CreatedAt)}</small>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card className="eder-dashboard__action">
+          <span className="eder-dashboard__eyebrow">SONRAKİ ADIM</span>
+          <Title level={4}>
+            {canAdd ? "Yeni araç değerlemesi oluştur." : "Mevcut aracını takip etmeye devam et."}
+          </Title>
+          <Text>
+            {canAdd
+              ? "Değerleme bittikten sonra aracını paneline kaydedebilirsin."
+              : "90 günlük pencere dolana kadar yeni araç kaydı server tarafında korunur."}
+          </Text>
+
+          <div className="eder-dashboard__action-buttons">
+            {canAdd ? (
+              <Link to="/valuation">
+                <Button type="primary" size="large" icon={<PlusOutlined />}>
+                  Yeni değerleme
+                </Button>
+              </Link>
+            ) : (
+              <Button type="primary" size="large" disabled icon={<ClockCircleOutlined />}>
+                {Math.max(1, daysRemaining)} gün kaldı
+              </Button>
+            )}
+
+            <Link to="/app/cars">
+              <Button size="large">Araçlarım</Button>
+            </Link>
+          </div>
+        </Card>
+      </section>
     </div>
   );
 }

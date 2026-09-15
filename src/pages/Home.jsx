@@ -14,6 +14,9 @@ import AdSlot from "../components/AdSlot";
 import { MetaTags } from "../components/MetaTags";
 import "./Home.css";
 
+import HomeHeroMedia from "../components/HomeHeroMedia";
+import TrustVehicleVisual from "../components/TrustVehicleVisual";
+import VerifiedMarketInsights from "../components/VerifiedMarketInsights"; // EDER_03F6D_VERIFIED_MARKET_INSIGHTS
 const HOME_AD_SLOT = import.meta.env.VITE_ADS_SLOT_HOME;
 const ease = [0.22, 1, 0.36, 1];
 
@@ -48,111 +51,25 @@ function VehicleIdentityScene() {
   return (
     <div className="journey-stage journey-stage--identity">
       <div className="journey-stage__eyebrow">EDER / VEHICLE IDENTITY</div>
-
       <div className="identity-grid">
-        <div>
-          <span>01</span>
-          <small>MARKA</small>
-          <strong>Seçildi</strong>
-        </div>
-        <div>
-          <span>02</span>
-          <small>MODEL</small>
-          <strong>Seçildi</strong>
-        </div>
-        <div>
-          <span>03</span>
-          <small>YIL</small>
-          <strong>Seçildi</strong>
-        </div>
-        <div>
-          <span>04</span>
-          <small>VERSİYON</small>
-          <strong>Seçildi</strong>
-        </div>
+        <div><span>01</span><small>MARKA</small><strong>Seçildi</strong></div>
+        <div><span>02</span><small>MODEL</small><strong>Seçildi</strong></div>
+        <div><span>03</span><small>YIL</small><strong>Seçildi</strong></div>
+        <div><span>04</span><small>VERSİYON</small><strong>Seçildi</strong></div>
       </div>
-
-      <div className="identity-car" aria-hidden>
-        <svg viewBox="0 0 760 300">
-          <path
-            d="M80 205 C134 198 168 164 220 118 C248 93 282 82 333 81 L464 81 C512 83 551 98 588 133 L626 171 L678 188 C698 195 710 207 710 224 L710 232 L650 232 C644 199 618 177 585 177 C551 177 524 199 518 232 L288 232 C282 199 255 177 221 177 C188 177 161 199 155 232 L69 232 L69 218 C69 211 73 207 80 205 Z"
-            fill="none"
-            stroke="#ff6b33"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M228 118 L316 137 L533 137 C511 106 482 90 446 86 L340 86 C299 87 261 96 228 118 Z"
-            fill="rgba(255,107,51,0.09)"
-            stroke="rgba(255,107,51,0.34)"
-            strokeWidth="1.5"
-          />
-          <circle cx="221" cy="232" r="33" fill="#0f1114" stroke="#59606a" strokeWidth="6" />
-          <circle cx="585" cy="232" r="33" fill="#0f1114" stroke="#59606a" strokeWidth="6" />
-          <circle cx="221" cy="232" r="9" fill="#e8e4dc" />
-          <circle cx="585" cy="232" r="9" fill="#e8e4dc" />
-        </svg>
-      </div>
-
-      <div className="identity-footer">
-        <span>Doğru kombinasyon</span>
-        <i />
-        <span>Değerleme girdisi</span>
-      </div>
+      {/* EDER_03F6A_TRUST_VEHICLE_VISUALS */}
+      <TrustVehicleVisual mode="identity" />
+      <div className="identity-footer"><span>Doğru kombinasyon</span><i /><span>Değerleme girdisi</span></div>
     </div>
   );
 }
 
 function ConditionScene() {
-  const markers = [
-    { x: "31%", y: "37%", label: "Kaput" },
-    { x: "55%", y: "31%", label: "Tavan" },
-    { x: "68%", y: "49%", label: "Arka çamurluk" },
-    { x: "42%", y: "61%", label: "Ön kapı" },
-  ];
-
   return (
     <div className="journey-stage journey-stage--condition">
       <div className="journey-stage__eyebrow">EDER / CONDITION MAP</div>
-
-      <div className="condition-board">
-        <svg className="condition-car" viewBox="0 0 720 360" aria-label="Araç kondisyon haritası">
-          <path
-            d="M112 197 C157 189 193 161 237 122 C266 96 304 84 355 84 L442 84 C487 85 525 98 561 127 L599 158 L650 174 C675 182 691 200 691 219 L691 239 L631 239 C624 204 597 182 563 182 C527 182 499 206 494 239 L286 239 C280 204 253 182 218 182 C183 182 155 205 149 239 L91 239 L91 218 C91 207 98 201 112 197 Z"
-            fill="rgba(255,255,255,0.02)"
-            stroke="rgba(255,255,255,0.62)"
-            strokeWidth="2.4"
-          />
-          <path
-            d="M245 122 L329 140 L520 140 C498 111 471 96 437 92 L354 92 C312 93 276 102 245 122 Z"
-            fill="rgba(255,90,31,0.05)"
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="1.2"
-          />
-          <circle cx="218" cy="239" r="34" fill="#0b0c0e" stroke="#545b64" strokeWidth="6" />
-          <circle cx="563" cy="239" r="34" fill="#0b0c0e" stroke="#545b64" strokeWidth="6" />
-          <circle cx="218" cy="239" r="9" fill="#f2eee7" />
-          <circle cx="563" cy="239" r="9" fill="#f2eee7" />
-        </svg>
-
-        {markers.map((marker, index) => (
-          <div
-            key={marker.label}
-            className={`condition-marker condition-marker--${index + 1}`}
-            style={{ left: marker.x, top: marker.y }}
-          >
-            <i />
-            <span>{marker.label}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="condition-legend">
-        <div><i className="is-clean" /><span>Orijinal</span></div>
-        <div><i className="is-painted" /><span>Boyalı</span></div>
-        <div><i className="is-changed" /><span>Değişen</span></div>
-      </div>
+      {/* EDER_03F6A_TRUST_VEHICLE_VISUALS */}
+      <TrustVehicleVisual mode="condition" />
     </div>
   );
 }
@@ -254,12 +171,8 @@ export default function Home() {
       />
 
       <section className="home-cinema">
-        <img
-          className="home-cinema__image"
-          src="/media/eder/home/hero-studio.jpg"
-          alt=""
-          fetchPriority="high"
-        />
+        {/* EDER_03F4_CINEMATIC_HERO_3D_PROGRESS */}
+        <HomeHeroMedia reducedMotion={reducedMotion} />
         <div className="home-cinema__shade" />
         <div className="home-cinema__grid" aria-hidden>
           <i />
@@ -318,7 +231,7 @@ export default function Home() {
             </div>
             <div>
               <span>GÜVENLİK</span>
-              <strong>Turnstile</strong>
+              <strong>Güvenli doğrulama</strong>
             </div>
           </motion.aside>
         </div>
@@ -485,7 +398,7 @@ export default function Home() {
           <article>
             <span>04</span>
             <strong>Güvenlik koruması</strong>
-            <p>Public valuation akışı Turnstile ile korunur.</p>
+            <p>Değerleme akışı güvenli doğrulamayla korunur.</p>
           </article>
         </div>
       </section>
@@ -517,7 +430,7 @@ export default function Home() {
             <article className="home-proof-card">
               <span>02</span>
               <strong>Güven inşa eden çerçeve</strong>
-              <p>Turnstile koruması, kontrollü akış ve şeffaf dil sayesinde ilk temasta güven verir.</p>
+              <p>güvenli doğrulama, kontrollü akış ve şeffaf dil sayesinde ilk temasta güven verir.</p>
             </article>
 
             <article className="home-proof-card">
@@ -535,63 +448,46 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-faq" aria-labelledby="home-faq-title">
-        <div className="home-faq__shell">
-          <div className="home-faq__intro">
-            <span className="home-faq__kicker">SIK SORULANLAR</span>
-            <h2 id="home-faq-title">Karar vermeden önce herkesin sorduğu şeyler.</h2>
-            <p>
-              İlk bakışta yanıt beklenen temel soruları görünür tutmak; güven, dönüşüm
-              ve ürün netliği açısından kritik. Bu bölüm EDER’i daha tamamlanmış bir web
-              deneyimine taşır.
-            </p>
+      {/* EDER_03F6A_V2_5_CONSUMER_COPY_SANITIZED */}
+      <section className="home-trust-proof" aria-labelledby="home-trust-proof-title">
+        <div className="home-trust-proof__shell">
+          <div className="home-trust-proof__intro">
+            <span>DEĞERLEMEYİ NASIL OKUMALI?</span>
+            <h2 id="home-trust-proof-title">Tek rakam değil, aracının durumunu açıklayan bir değer aralığı.</h2>
+            <p>EDER; araç kimliği, kilometre ve kondisyon bilgisini birlikte değerlendirerek sonucu anlaşılır bir aralık halinde sunar.</p>
           </div>
-
-          <div className="home-faq__list">
-            <details className="home-faq-item" open>
-              <summary>EDER sonucu tam olarak neyi gösterir?</summary>
-              <p>
-                EDER; araç kimliği, kilometre, kondisyon sinyalleri ve piyasa bağlamını birleştirerek
-                aracın tahmini değer aralığını ve piyasadaki yerini daha okunaklı biçimde sunar.
-              </p>
-            </details>
-
-            <details className="home-faq-item">
-              <summary>Bu sonuç ekspertiz raporunun yerine mi geçer?</summary>
-              <p>
-                Hayır. EDER sonucu; karar hazırlayan dijital bir katmandır. Fiziksel ekspertiz ve
-                detaylı inceleme süreçlerini tamamlayıcı biçimde konumlanır.
-              </p>
-            </details>
-
-            <details className="home-faq-item">
-              <summary>Kullanıcı akışı neden bu kadar adımlı tasarlandı?</summary>
-              <p>
-                Çünkü amaç yalnızca form doldurtmak değil; kullanıcıyı araç kimliğinden kondisyon
-                algısına, oradan da piyasa bağlamına taşıyan daha anlaşılır bir karar akışı oluşturmaktır.
-              </p>
-            </details>
-
-            <details className="home-faq-item">
-              <summary>Güvenlik ve erişim tarafında ne var?</summary>
-              <p>
-                Public valuation akışı kontrollü erişim, Turnstile koruması ve net yönlendirmelerle
-                güvenilir bir ürün yüzeyi olarak kurgulanır.
-              </p>
-            </details>
-
-            <details className="home-faq-item">
-              <summary>Sonraki adımda bu siteye neler eklenebilir?</summary>
-              <p>
-                Referans örnekleri, müşteri hikâyeleri, ürün ekranları, kurumsal iletişim, kullanım
-                senaryoları ve yardımcı alt sayfalar ile site daha da olgunlaştırılabilir.
-              </p>
-            </details>
+          <div className="home-trust-proof__flow">
+            <article><span>01</span><strong>Doğru araç</strong><small>Marka, model, yıl ve versiyon aynı kombinasyonda değerlendirilir.</small></article>
+            <article><span>02</span><strong>Gerçek kondisyon</strong><small>Boya, lokal boya, değişen parça ve ağır hasar bilgileri sonuca dahil edilir.</small></article>
+            <article><span>03</span><strong>Anlaşılır sonuç</strong><small>Tek bir kesin fiyat yerine karar vermeyi kolaylaştıran tahmini değer aralığı gösterilir.</small></article>
+          </div>
+          <div className="home-trust-proof__notice">
+            <strong>Sonucu şeffaf oku.</strong>
+            <p>Şehir, talep, ilan kalitesi, pazarlık ve aracın gerçek fiziksel durumu nihai satış fiyatını değiştirebilir. EDER sonucu bir satış garantisi değil, karar desteğidir.</p>
           </div>
         </div>
       </section>
 
+      {/* EDER_03F6D_VERIFIED_MARKET_INSIGHTS_MOUNT */}
+      <VerifiedMarketInsights />
 
+      <section className="home-faq" aria-labelledby="home-faq-title">
+        <div className="home-faq__shell">
+          <div className="home-faq__intro">
+            <span className="home-faq__kicker">SIK SORULANLAR</span>
+            <h2 id="home-faq-title">Aracını değerlemeden önce bilmek isteyeceğin şeyler.</h2>
+            <p>Teknik ayrıntılar yerine araç sahibi olarak işine yarayacak kısa ve net cevaplar.</p>
+          </div>
+          <div className="home-faq__list">
+            <details className="home-faq-item" open><summary>EDER bana tek bir fiyat mı verir?</summary><p>Hayır. Tek bir kesin rakam yerine tahmini değer aralığı ve farklı satış hedefleri gösterir.</p></details>
+            <details className="home-faq-item"><summary>Hasar, boya ve değişen parçalar sonucu etkiler mi?</summary><p>Evet. Değişen, boyalı, lokal boyalı parça ve ağır hasar bilgileri hesaplamaya dahil edilir.</p></details>
+            <details className="home-faq-item"><summary>Gösterilen fiyat kesin satış fiyatı mıdır?</summary><p>Hayır. İlan kalitesi, şehir, talep, pazarlık ve aracın gerçek fiziksel durumu satış fiyatını değiştirebilir.</p></details>
+            <details className="home-faq-item"><summary>Değerleme ne kadar sürer?</summary><p>Temel araç bilgileri ve kondisyonu girdikten sonra sonuç birkaç adım içinde oluşturulur.</p></details>
+            <details className="home-faq-item"><summary>Sonucu neye göre yorumlamalıyım?</summary><p>Değer aralığını aracının kondisyonu, bulunduğun şehir ve satış hızına ilişkin beklentinle birlikte değerlendir.</p></details>
+            <details className="home-faq-item"><summary>Sonuç neden piyasadaki bazı ilanlardan farklı olabilir?</summary><p>İlan fiyatı ile gerçekleşen satış fiyatı aynı değildir. Donanım, kilometre, kondisyon, bölgesel talep ve pazarlık payı ilanlar arasında fark oluşturabilir.</p></details>
+          </div>
+        </div>
+      </section>
 
       <section className="home-final">
         <div className="home-final__grid">

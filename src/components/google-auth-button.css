@@ -1,0 +1,74 @@
+/* EDER_03F2B_V1_3_EXACT_GOOGLE_AUTH */
+.eder-google-auth {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.eder-google-auth__head {
+  display: grid;
+  gap: 3px;
+}
+
+.eder-google-auth__head span {
+  color: #f26322;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+.eder-google-auth__head strong {
+  color: #171717;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: -0.015em;
+}
+
+.eder-google-auth__button-shell {
+  display: grid;
+  min-height: 46px;
+  place-items: center;
+  width: 100%;
+}
+
+.eder-google-auth__button-shell > div {
+  max-width: 100% !important;
+}
+
+.eder-google-auth__button-shell.is-loading {
+  border: 1px solid rgba(17, 17, 17, 0.09);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(17, 17, 17, 0.46);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.eder-google-auth__error {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(183, 56, 32, 0.16);
+  border-radius: 11px;
+  background: rgba(183, 56, 32, 0.05);
+  color: #a93a27;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.eder-google-auth__divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.eder-google-auth__divider span {
+  height: 1px;
+  background: rgba(17, 17, 17, 0.09);
+}
+
+.eder-google-auth__divider small {
+  color: rgba(17, 17, 17, 0.42);
+  font-size: 11px;
+  font-weight: 700;
+}

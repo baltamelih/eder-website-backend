@@ -1,0 +1,38 @@
+/* EDER_03F4_CINEMATIC_HERO_3D_PROGRESS */
+.home-cinema-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.home-cinema__video {
+  object-fit: cover;
+  object-position: center 58%;
+  filter: saturate(0.86) contrast(1.08) brightness(0.72);
+}
+
+.home-cinema-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 74% 42%, rgba(255, 115, 56, 0.12), transparent 28%),
+    linear-gradient(90deg, rgba(7, 8, 10, 0.42), rgba(7, 8, 10, 0.04) 58%, rgba(7, 8, 10, 0.18));
+  mix-blend-mode: screen;
+  opacity: 0.44;
+}
+
+.home-cinema-media__fallback-probe {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 979px) {
+  .home-cinema-media::after {
+    opacity: 0.22;
+  }
+}

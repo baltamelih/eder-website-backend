@@ -17,10 +17,20 @@ import {
 import TurnstileWidget from "../components/TurnstileWidget";
 import { MetaTags } from "../components/MetaTags";
 import { valuationApi } from "../services/valuationApi";
+import { UserCarsAPI } from "../services/userCars";
+import ValuationFeedbackPanel from "../components/ValuationFeedbackPanel";
 import carDamageImage from "../assets/car_damage.png";
 import "./Valuation.css";
 
+import ValuationProgressCar3D from "../components/ValuationProgressCar3D";
 const { Title, Paragraph, Text } = Typography;
+
+// EDER_03F1_V2_PRODUCT_FLOW_RECOVERY
+const formatTL = (value) => {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "-";
+  return `${Math.round(number).toLocaleString("tr-TR")} TL`;
+};
 
 const fadeUp = {
   hidden: { opacity: 0, y: 14 },
@@ -73,12 +83,18 @@ function StepHeader({ step, total, title, subtitle }) {
         </div>
       </motion.div>
 
-      <motion.div className="valuation-progress__rail" variants={fadeUp} custom={1}>
+      <motion.div
+        className="valuation-progress__rail valuation-progress__rail--3d"
+        variants={fadeUp}
+        custom={1}
+      >
         <div
           className="valuation-progress__fill"
           style={{ width: `${percent}%` }}
           aria-hidden
         />
+        {/* EDER_03F4_CINEMATIC_HERO_3D_PROGRESS */}
+        <ValuationProgressCar3D progress={percent / 100} />
       </motion.div>
     </motion.section>
   );
@@ -434,9 +450,16 @@ export default function Valuation() {
   const [requestNotice, setRequestNotice] = useState(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileEpoch, setTurnstileEpoch] = useState(0);
+  const [savingCar, setSavingCar] = useState(false);
+  const [carSaved, setCarSaved] = useState(false);
+  const resultRef = useRef(null);
 
   const brandSearchTimer = useRef(null);
   const modelSearchTimer = useRef(null);
+
+  useEffect(() => {
+    if (!formData.result) setCarSaved(false);
+  }, [formData.result]);
 
   const fuelTypes = ["Benzin", "Dizel", "LPG & Benzin", "Benzin & LPG", "Hybrid", "Elektrik"];
   const transmissions = ["Düz", "Yarı Otomatik", "Otomatik"];
@@ -702,8 +725,29 @@ export default function Valuation() {
           range_label: `${priceRange.min.toLocaleString("tr-TR")} - ${priceRange.max.toLocaleString("tr-TR")} TL`,
           midpoint_label: `${priceRange.base.toLocaleString("tr-TR")} TL`,
           heavy_damage_applied: hasHeavyDamage,
+          predicted_price: Number(rawPrice),
+          model_base_price: Number(data?.base_price ?? rawPrice),
+          range_min: priceRange.min,
+          range_mid: priceRange.base,
+          range_max: priceRange.max,
+          sale_targets: {
+            today: priceRange.min,
+            day15: priceRange.base,
+            day30: priceRange.max,
+          },
+          model_reference: p.trimStats
+            ? {
+                sample_count: Number(p.trimStats.sample_count || 0),
+                avg_price: p.trimStats.avg_price ?? null,
+                min_price: p.trimStats.min_price ?? null,
+                max_price: p.trimStats.max_price ?? null,
+              }
+            : null,
         },
       }));
+      window.setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 160);
     } catch (e) {
       if (e?.status === 429) {
         const retry = Number(e?.data?.retry_after_seconds || 0);
@@ -731,6 +775,58 @@ export default function Valuation() {
     }
   };
 
+  const saveCurrentCarToPanel = async () => {
+    if (!formData.result) {
+      message.info("Önce piyasa aralığını oluşturun.");
+      return;
+    }
+
+    const counts = countDamage(formData.damageMap);
+    const payload = {
+      BrandID: formData.brandId,
+      BrandName: formData.brand || "",
+      ModelID: formData.modelId,
+      ModelName: formData.model || "",
+      Year: Number(formData.year),
+      Trim: formData.trim || "",
+      Kilometre: Number(String(formData.km || "").replace(/\D/g, "")) || 0,
+      FuelType: formData.fuelType,
+      Transmission: formData.transmission,
+      BodyType: formData.bodyType,
+      Color: formData.color,
+      TotalChangedParts: counts.changed,
+      TotalPaintedParts: counts.painted,
+      TotalLocalPaintParts: counts.localPainted,
+    };
+
+    const saveFn = UserCarsAPI?.upsert || UserCarsAPI?.save || UserCarsAPI?.create || UserCarsAPI?.add;
+    if (typeof saveFn !== "function") {
+      message.error("Araç kayıt servisi bulunamadı.");
+      return;
+    }
+
+    setSavingCar(true);
+    try {
+      await saveFn(payload);
+      setCarSaved(true);
+      message.success("Araç panele kaydedildi.");
+      window.setTimeout(() => window.location.assign("/app/dashboard"), 650);
+    } catch (error) {
+      if (error?.status === 401) {
+        message.info("Aracı panele kaydetmek için giriş yapın.");
+        window.setTimeout(() => window.location.assign("/login?next=/valuation"), 450);
+        return;
+      }
+      if (error?.status === 403) {
+        message.warning(error?.data?.message || error?.data?.error || "Araç ekleme hakkınız şu anda kullanılamıyor.");
+        return;
+      }
+      message.error(error?.message || "Araç panele kaydedilemedi.");
+    } finally {
+      setSavingCar(false);
+    }
+  };
+
   const renderStepCard = () => {
     if (step === 0) {
       return (
@@ -750,6 +846,7 @@ export default function Valuation() {
                 showSearch
                 filterOption={false}
                 loading={loadingBrands}
+                notFoundContent={loadingBrands ? "Yükleniyor..." : "Marka bulunamadı"}
                 value={formData.brandId}
                 placeholder="Marka seçin"
                 size="large"
@@ -769,6 +866,7 @@ export default function Valuation() {
                 showSearch
                 filterOption={false}
                 loading={loadingModels}
+                notFoundContent={loadingModels ? "Yükleniyor..." : "Model bulunamadı"}
                 disabled={!formData.brandId}
                 value={formData.modelId}
                 placeholder="Model seçin"
@@ -789,6 +887,7 @@ export default function Valuation() {
               </Text>
               <Select
                 loading={loadingYears}
+                notFoundContent={loadingYears ? "Yükleniyor..." : "Yıl bulunamadı"}
                 disabled={!formData.brandId || !formData.modelId}
                 value={formData.year}
                 placeholder="Yıl seçin"
@@ -802,6 +901,7 @@ export default function Valuation() {
               <Text style={{ fontWeight: 700, color: "#0f172a" }}>Versiyon / Donanım</Text>
               <Select
                 loading={loadingTrims}
+                notFoundContent={loadingTrims ? "Yükleniyor..." : "Versiyon bulunamadı"}
                 disabled={!formData.brandId || !formData.modelId || !formData.year}
                 value={formData.trim}
                 placeholder="Versiyon seçin"
@@ -1212,44 +1312,84 @@ export default function Valuation() {
 
         <Divider style={{ margin: "18px 0" }} />
 
-        <div className={`valuation-result ${r ? "valuation-result--ready" : ""}`} aria-live="polite">
+        <div ref={resultRef} className={`valuation-result ${r ? "valuation-result--ready" : ""}`} aria-live="polite">
           {!r ? (
             <div className="valuation-result__empty">
               <Calculator size={38} aria-hidden />
               <strong>Değer aralığın burada görünecek</strong>
-              <span>
-                Araç özetini kontrol et, güvenlik doğrulamasını tamamla ve
-                değerlemeyi başlat.
-              </span>
+              <span>Araç özetini kontrol et, güvenlik doğrulamasını tamamla ve değerlemeyi başlat.</span>
             </div>
           ) : (
-            <motion.div
-              className="valuation-result__ready"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="valuation-result__eyebrow">
-                Tahmini piyasa değer aralığı
-              </div>
-              <h3>{r.range_label}</h3>
-              <p className="valuation-result__vehicle">{r.title}</p>
-
-              <div className="valuation-result__midpoint">
-                <span>Aralık merkezi</span>
-                <strong>{r.midpoint_label}</strong>
-              </div>
-
-              {r.heavy_damage_applied ? (
-                <div className="valuation-result__damage-note">
-                  Ağır hasar bilgisi hesaplamaya dahil edildi.
+            <motion.div className="valuation-result__ready valuation-result-v2" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
+              <header className="valuation-result-v2__hero">
+                <div className="valuation-result-v2__eyebrow"><CheckCircle size={15} aria-hidden /> EDER TAHMİNİ DEĞER</div>
+                <div className="valuation-result-v2__hero-grid">
+                  <div>
+                    <span className="valuation-result-v2__label">Tahmini piyasa değeri</span>
+                    <h3>{r.midpoint_label}</h3>
+                    <p className="valuation-result-v2__range">{r.range_label}<span> tahmini değer aralığı</span></p>
+                  </div>
+                  <div className="valuation-result-v2__status">
+                    <span>VERİ DURUMU</span>
+                    <strong>{r.model_reference?.sample_count ? "Model referansı mevcut" : "Tahmin modeli"}</strong>
+                    <small>{r.model_reference?.sample_count ? `${r.model_reference.sample_count} kayıtlık trim referansı` : "Doğrulanmış canlı ilan örneklemi bağlı değil"}</small>
+                  </div>
                 </div>
-              ) : null}
+                <p className="valuation-result__vehicle">{r.title}</p>
+              </header>
 
-              <p className="valuation-result__disclaimer">
-                Bu değer bilgilendirme amaçlı bir tahmindir. Aracın fiziksel
-                kondisyonu, bakım geçmişi, bölgesel talep ve güncel piyasa
-                koşulları nihai satış fiyatını değiştirebilir.
-              </p>
+              <section className="valuation-result-v2__sale">
+                <div className="valuation-result-v2__section-heading">
+                  <div><span>SATIŞ HEDEFİ</span><strong>Ne kadar beklersen hangi fiyat bandı?</strong></div>
+                  <p>EDER değer aralığından türetilen fiyatlama senaryolarıdır; satış süresi garantisi değildir.</p>
+                </div>
+                <div className="valuation-result-v2__sale-grid">
+                  <article className="is-fast"><span>Bugün satmayı hedefle</span><strong>{formatTL(r.sale_targets?.today)}</strong><small>Daha agresif fiyat · daha düşük pazarlık alanı</small></article>
+                  <article className="is-primary"><span>15 gün içinde hedefle</span><strong>{formatTL(r.sale_targets?.day15)}</strong><small>Dengeli fiyat · EDER merkez tahmini</small></article>
+                  <article><span>30 gün içinde hedefle</span><strong>{formatTL(r.sale_targets?.day30)}</strong><small>Daha sabırlı ilan · üst banda yakın hedef</small></article>
+                </div>
+              </section>
+
+              {/* EDER_03F6B_PRICE_EXPECTATION_PANEL */}
+              <ValuationFeedbackPanel formData={formData} result={r} />
+
+              <div className="valuation-result-v2__grid">
+                <section className="valuation-result-v2__panel">
+                  <div className="valuation-result-v2__panel-title"><Car size={18} aria-hidden /><div><span>ARAÇ ÖZETİ</span><strong>Hesaba giren temel bilgiler</strong></div></div>
+                  <dl className="valuation-result-v2__facts">
+                    <div><dt>Yıl / KM</dt><dd>{formData.year || "-"} · {formData.km ? `${formData.km} km` : "-"}</dd></div>
+                    <div><dt>Yakıt / Vites</dt><dd>{formData.fuelType || "-"} · {formData.transmission || "-"}</dd></div>
+                    <div><dt>Değişen / Boyalı</dt><dd>{counts.changed} / {counts.painted}</dd></div>
+                    <div><dt>Lokal boya</dt><dd>{counts.localPainted}</dd></div>
+                  </dl>
+                  {r.heavy_damage_applied ? <div className="valuation-result__damage-note">Şasi, podye veya direk bilgisi hesaplamaya dahil edildi.</div> : <div className="valuation-result-v2__clean-note">Ağır yapısal hasar işareti girilmedi.</div>}
+                </section>
+
+                <section className="valuation-result-v2__panel valuation-result-v2__panel--evidence">
+                  <div className="valuation-result-v2__panel-title"><Gauge size={18} aria-hidden /><div><span>PİYASA REFERANSI</span><strong>Mevcut örneklemin kapsamı</strong></div></div>
+                  {r.model_reference?.sample_count ? (
+                    <>
+                      <div className="valuation-result-v2__evidence-metrics">
+                        <div><span>Örnek</span><strong>{r.model_reference.sample_count}</strong></div>
+                        <div><span>Ortalama</span><strong>{formatTL(r.model_reference.avg_price)}</strong></div>
+                        <div><span>Min / Maks</span><strong>{formatTL(r.model_reference.min_price)} / {formatTL(r.model_reference.max_price)}</strong></div>
+                      </div>
+                      <p className="valuation-result-v2__evidence-note">Bu referans seçilen trim için mevcut örneklemden gelir. Güncelliği doğrulanmış canlı ilan akışı olarak yorumlanmamalıdır.</p>
+                    </>
+                  ) : (
+                    <div className="valuation-result-v2__no-evidence"><strong>Yeterli güncel piyasa verisi yok.</strong><span>Sonuç tahmin modelinden üretilmiştir. Doğrulanmış canlı ilan örneklemi mevcut olmadığı için ek piyasa kanıtı göstermiyoruz.</span></div>
+                  )}
+                </section>
+              </div>
+
+              <div className="valuation-result-v2__footer">
+                <div><strong>Sonucun hazır.</strong><span>Aracını paneline kaydedebilir veya bilgileri değiştirip yeniden değerleme oluşturabilirsin.</span></div>
+                <div className="valuation-result-v2__footer-actions">
+                  <Button type="default" onClick={() => { setStep(0); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Bilgileri güncelle</Button>
+                  <Button type="primary" loading={savingCar} disabled={carSaved} onClick={saveCurrentCarToPanel}>{carSaved ? "Panele kaydedildi" : "Aracı panele kaydet"}</Button>
+                </div>
+              </div>
+              <p className="valuation-result__disclaimer">EDER sonucu bilgilendirme amaçlı bir tahmindir; kesin satış fiyatı veya belirtilen süre içinde satış garantisi değildir.</p>
             </motion.div>
           )}
         </div>
@@ -1334,25 +1474,15 @@ export default function Valuation() {
                   </Button>
                 ) : null}
 
-                <Button
-                  className="valuation-action valuation-action--next"
-                  type="primary"
-                  onClick={goNext}
-                  disabled={step === totalSteps - 1}
-                  size="large"
-                  icon={<ArrowRight size={16} />}
-                  style={{
-                    flex: 1,
-                    borderRadius: 14,
-                    height: 48,
-                    fontWeight: 900,
-                    background: "linear-gradient(135deg, #ff7a18 0%, #ffb14a 100%)",
-                    border: "none",
-                    boxShadow: "0 10px 24px rgba(255,122,24,0.22)",
-                  }}
-                >
-                  {step === totalSteps - 1 ? "Bilgiler tamamlandı" : "Devam"}
-                </Button>
+                {step === totalSteps - 1 ? (
+                  <Button className="valuation-action valuation-action--next" type="primary" onClick={saveCurrentCarToPanel} disabled={!formData.result || carSaved} loading={savingCar} size="large" icon={<ArrowRight size={16} />} style={{ flex: 1, borderRadius: 14, height: 48, fontWeight: 900, background: "linear-gradient(135deg, #ff7a18 0%, #ffb14a 100%)", border: "none", boxShadow: "0 10px 24px rgba(255,122,24,0.22)" }}>
+                    {carSaved ? "Panele kaydedildi" : formData.result ? "Aracı panele kaydet" : "Önce piyasa aralığını oluştur"}
+                  </Button>
+                ) : (
+                  <Button className="valuation-action valuation-action--next" type="primary" onClick={goNext} size="large" icon={<ArrowRight size={16} />} style={{ flex: 1, borderRadius: 14, height: 48, fontWeight: 900, background: "linear-gradient(135deg, #ff7a18 0%, #ffb14a 100%)", border: "none", boxShadow: "0 10px 24px rgba(255,122,24,0.22)" }}>
+                    Devam
+                  </Button>
+                )}
               </div>
             </Card>
           </motion.div>

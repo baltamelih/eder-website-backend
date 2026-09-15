@@ -14,6 +14,7 @@ import {
 import { register as registerApi } from "../services/auth";
 import "./auth.css";
 
+import GoogleAuthButton from "../components/GoogleAuthButton";
 const { Title, Text } = Typography;
 
 const fadeUp = {
@@ -50,7 +51,7 @@ export default function Register() {
       });
 
       message.success("Kayıt başarılı. Giriş yapıldı.");
-      nav("/dashboard");
+      nav("/app/dashboard");
     } catch (e) {
       message.error(e.message);
     } finally {
@@ -103,6 +104,9 @@ export default function Register() {
 
           <motion.div variants={fadeUp} custom={2}>
             <Card className="auth-card">
+                            {/* EDER_03F2B_V1_3_EXACT_GOOGLE_AUTH */}
+              <GoogleAuthButton mode="register" />
+
               <Form
                 form={form}
                 layout="vertical"

@@ -1469,3 +1469,299 @@
     padding: 0 18px 20px;
   }
 }
+
+/* EDER_03F5_VEHICLE_VISUAL_AUTH_LOCAL_RECOVERY */
+.identity-car--premium {
+  position: relative;
+  margin-top: 24px;
+  padding: 18px 10px 8px;
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 76%, rgba(255,107,51,0.10), transparent 31%),
+    linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.006));
+  overflow: hidden;
+}
+.identity-car--premium::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 34px 34px;
+  pointer-events: none;
+}
+.identity-car--premium svg { position: relative; z-index: 1; }
+.identity-car__body { filter: drop-shadow(0 18px 20px rgba(0,0,0,0.42)); }
+.identity-car__panel,
+.identity-car__belt,
+.identity-car__handle { fill: none; stroke: rgba(255,255,255,0.17); stroke-width: 1.25; stroke-linecap: round; }
+.identity-car__belt { stroke: rgba(255,107,51,0.28); }
+.identity-car__handle { stroke: rgba(255,255,255,0.46); stroke-width: 2; }
+.identity-car__lamp { fill: none; stroke-width: 3.6; stroke-linecap: round; }
+.identity-car__lamp--front { stroke: #f7f3e9; }
+.identity-car__lamp--rear { stroke: #ff6b33; }
+.identity-wheel > circle:first-child { fill: #060709; stroke: #444a51; stroke-width: 6; }
+.identity-wheel > circle:nth-child(2) { fill: #15191d; stroke: rgba(255,255,255,0.16); stroke-width: 2; }
+.identity-wheel > circle:last-child { fill: #dcd8d0; }
+.identity-car__scan circle { fill: #ff6b33; stroke: #fff; stroke-width: 2; }
+.identity-car__scan line { stroke: rgba(255,107,51,0.56); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.identity-car__scan text { fill: rgba(255,255,255,0.64); font-size: 10px; font-weight: 800; letter-spacing: 0.13em; }
+
+.condition-board--premium {
+  margin-top: 14px;
+  padding: 12px 8px 4px;
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 51% 66%, rgba(255,107,51,0.07), transparent 34%),
+    rgba(255,255,255,0.012);
+}
+.condition-car--premium { filter: drop-shadow(0 18px 25px rgba(0,0,0,0.33)); }
+.condition-panel { stroke-width: 1.6; }
+.condition-panel--clean { fill: rgba(114,147,132,0.10); stroke: rgba(129,169,150,0.62); }
+.condition-panel--painted { fill: rgba(242,161,94,0.16); stroke: rgba(242,161,94,0.88); }
+.condition-panel--local { fill: rgba(255,196,96,0.12); stroke: rgba(255,196,96,0.74); stroke-dasharray: 6 4; }
+.condition-panel--changed { fill: rgba(255,90,31,0.17); stroke: rgba(255,90,31,0.95); }
+.condition-car__glass { fill: rgba(255,255,255,0.035); stroke: rgba(255,255,255,0.16); stroke-width: 1.3; }
+.condition-car__seam,
+.condition-car__handle { fill: none; stroke: rgba(255,255,255,0.18); stroke-width: 1.15; }
+.condition-car__handle { stroke: rgba(255,255,255,0.48); stroke-width: 2; stroke-linecap: round; }
+.condition-wheel > circle:first-child { fill: #07080a; stroke: #4d545d; stroke-width: 6; }
+.condition-wheel > circle:nth-child(2) { fill: #15191d; stroke: rgba(255,255,255,0.14); stroke-width: 2; }
+.condition-wheel > circle:last-child { fill: #e8e4dc; }
+.condition-marker--premium { gap: 7px; z-index: 3; }
+.condition-marker--premium > span {
+  display: grid;
+  gap: 1px;
+  min-width: 82px;
+  padding: 6px 9px;
+  margin-left: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: rgba(8,9,11,0.91);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.24);
+}
+.condition-marker--premium strong { color: #fff; font-size: 9px; font-weight: 820; }
+.condition-marker--premium small { color: currentColor; font-size: 8px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.condition-marker--clean { color: #82a592; }
+.condition-marker--painted { color: #f2a15e; }
+.condition-marker--local { color: #ffc460; }
+.condition-marker--changed { color: #ff5a1f; }
+.condition-marker--premium i { background: currentColor; }
+.condition-legend--premium > div {
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.025);
+}
+.condition-legend .is-local { background: #ffc460; }
+@media (max-width: 760px) {
+  .condition-marker--premium > span { min-width: 68px; padding: 5px 7px; margin-left: 4px; }
+  .condition-marker--premium strong { font-size: 8px; }
+  .condition-marker--premium small { font-size: 7px; }
+}
+
+/* EDER_03F6A_TRUST_VEHICLE_VISUALS */
+.home-trust-proof{padding:clamp(72px,10vw,132px) 24px;background:#111315;color:#fff}.home-trust-proof__shell{max-width:1200px;margin:0 auto;display:grid;gap:30px}.home-trust-proof__intro{max-width:780px}.home-trust-proof__intro>span{color:#ff6b33;font-size:10px;font-weight:950;letter-spacing:.16em}.home-trust-proof__intro h2{max-width:760px;margin:12px 0 14px;color:#fff;font-size:clamp(34px,5vw,64px);line-height:.98;letter-spacing:-.055em}.home-trust-proof__intro p{max-width:720px;margin:0;color:rgba(255,255,255,.58);line-height:1.7}.home-trust-proof__flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.home-trust-proof__flow article{display:grid;gap:7px;min-height:170px;padding:22px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(255,255,255,.035)}.home-trust-proof__flow span{color:#ff6b33;font-size:10px;font-weight:950}.home-trust-proof__flow strong{font-size:18px}.home-trust-proof__flow small{color:rgba(255,255,255,.48);line-height:1.55}.home-trust-proof__notice{padding:18px 20px;border:1px solid rgba(255,107,51,.18);border-radius:16px;background:rgba(255,107,51,.05)}.home-trust-proof__notice p{margin:5px 0 0;color:rgba(255,255,255,.55);line-height:1.55}@media(max-width:760px){.home-trust-proof__flow{grid-template-columns:1fr}}
+
+/* EDER_03F6A_V2_6_TYPOGRAPHY_AMBIENT_MOTION */
+
+/* Turkish diacritics such as ö/ü/ğ must never be clipped by the cinematic title line-box. */
+.home-cinema h1 {
+  line-height: 0.94;
+  padding-top: 0.055em;
+  padding-bottom: 0.035em;
+  overflow: visible;
+}
+
+.home-cinema h1 span {
+  margin-top: 0.08em;
+  padding-top: 0.045em;
+  padding-bottom: 0.025em;
+  line-height: 0.96;
+  overflow: visible;
+}
+
+/* The editorial left column keeps its whitespace, but gains subtle depth and motion. */
+.journey-step {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.journey-step > * {
+  position: relative;
+  z-index: 2;
+}
+
+.journey-step::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: clamp(320px, 35vw, 620px);
+  height: clamp(320px, 35vw, 620px);
+  right: -24%;
+  bottom: -22%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 42% 42%, rgba(255,107,51,0.10) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 33%, rgba(24,24,24,0.08) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(255,107,51,0.055), rgba(255,107,51,0.012) 42%, transparent 68%);
+  background-size: 38px 38px, 54px 54px, auto;
+  filter: blur(0.1px);
+  opacity: 0.66;
+  pointer-events: none;
+  animation: ederJourneyAmbientDrift 11s ease-in-out infinite alternate;
+}
+
+.journey-step::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 7%;
+  right: 12%;
+  bottom: 14%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,107,51,0.18), rgba(30,30,30,0.08), transparent);
+  transform-origin: center;
+  pointer-events: none;
+  animation: ederJourneyScan 8s ease-in-out infinite;
+}
+
+@keyframes ederJourneyAmbientDrift {
+  from { transform: translate3d(-12px, 10px, 0) scale(0.96) rotate(-2deg); }
+  to { transform: translate3d(18px, -18px, 0) scale(1.05) rotate(3deg); }
+}
+
+@keyframes ederJourneyScan {
+  0%, 100% { opacity: 0.18; transform: translateY(26px) scaleX(0.72); }
+  50% { opacity: 0.62; transform: translateY(-34px) scaleX(1); }
+}
+
+@media (max-width: 760px) {
+  .home-cinema h1 {
+    line-height: 0.96;
+    padding-top: 0.07em;
+  }
+
+  .home-cinema h1 span {
+    line-height: 0.98;
+  }
+
+  .journey-step::before {
+    right: -45%;
+    bottom: -16%;
+    opacity: 0.44;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-step::before,
+  .journey-step::after {
+    animation: none;
+  }
+}
+
+/* /EDER_03F6A_V2_6_TYPOGRAPHY_AMBIENT_MOTION */
+
+/* EDER_03F6A_V2_7_TYPOGRAPHY_AMBIENT_MOTION */
+
+/* Turkish diacritics such as ö/ü/ğ must never be clipped by the cinematic title line-box. */
+.home-cinema h1 {
+  line-height: 0.94;
+  padding-top: 0.055em;
+  padding-bottom: 0.035em;
+  overflow: visible;
+}
+
+.home-cinema h1 span {
+  margin-top: 0.08em;
+  padding-top: 0.045em;
+  padding-bottom: 0.025em;
+  line-height: 0.96;
+  overflow: visible;
+}
+
+/* The editorial left column keeps its whitespace, but gains subtle depth and motion. */
+.journey-step {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.journey-step > * {
+  position: relative;
+  z-index: 2;
+}
+
+.journey-step::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: clamp(320px, 35vw, 620px);
+  height: clamp(320px, 35vw, 620px);
+  right: -24%;
+  bottom: -22%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 42% 42%, rgba(255,107,51,0.10) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 33%, rgba(24,24,24,0.08) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(255,107,51,0.055), rgba(255,107,51,0.012) 42%, transparent 68%);
+  background-size: 38px 38px, 54px 54px, auto;
+  filter: blur(0.1px);
+  opacity: 0.66;
+  pointer-events: none;
+  animation: ederJourneyAmbientDrift 11s ease-in-out infinite alternate;
+}
+
+.journey-step::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 7%;
+  right: 12%;
+  bottom: 14%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,107,51,0.18), rgba(30,30,30,0.08), transparent);
+  transform-origin: center;
+  pointer-events: none;
+  animation: ederJourneyScan 8s ease-in-out infinite;
+}
+
+@keyframes ederJourneyAmbientDrift {
+  from { transform: translate3d(-12px, 10px, 0) scale(0.96) rotate(-2deg); }
+  to { transform: translate3d(18px, -18px, 0) scale(1.05) rotate(3deg); }
+}
+
+@keyframes ederJourneyScan {
+  0%, 100% { opacity: 0.18; transform: translateY(26px) scaleX(0.72); }
+  50% { opacity: 0.62; transform: translateY(-34px) scaleX(1); }
+}
+
+@media (max-width: 760px) {
+  .home-cinema h1 {
+    line-height: 0.96;
+    padding-top: 0.07em;
+  }
+
+  .home-cinema h1 span {
+    line-height: 0.98;
+  }
+
+  .journey-step::before {
+    right: -45%;
+    bottom: -16%;
+    opacity: 0.44;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-step::before,
+  .journey-step::after {
+    animation: none;
+  }
+}
+
+/* /EDER_03F6A_V2_7_TYPOGRAPHY_AMBIENT_MOTION */

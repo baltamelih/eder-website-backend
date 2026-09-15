@@ -1,0 +1,38 @@
+.eder-manual-ad {
+  width: min(100%, 1180px);
+  margin: clamp(28px, 4vw, 54px) auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+  clear: both;
+}
+
+.eder-manual-ad__inner {
+  min-height: 120px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.eder-manual-ad--article {
+  width: min(100%, 920px);
+}
+
+.eder-manual-ad--multiplex .eder-manual-ad__inner {
+  min-height: 250px;
+}
+
+.eder-manual-ad[data-ad-status="unfilled"] {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .eder-manual-ad {
+    margin: 26px auto;
+    padding: 0 12px;
+  }
+
+  .eder-manual-ad__inner {
+    min-height: 100px;
+  }
+}

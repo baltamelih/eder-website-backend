@@ -14,6 +14,7 @@ import {
 import { useAuth } from "../services/AuthContext";
 import "./auth.css";
 
+import GoogleAuthButton from "../components/GoogleAuthButton";
 const { Title, Text } = Typography;
 
 const fadeUp = {
@@ -97,6 +98,9 @@ export default function Login() {
 
           <motion.div variants={fadeUp} custom={2}>
             <Card className="auth-card">
+                            {/* EDER_03F2B_V1_3_EXACT_GOOGLE_AUTH */}
+              <GoogleAuthButton mode="login" />
+
               <Form layout="vertical" onFinish={onFinish} className="auth-form">
                 <Form.Item
                   name="email"

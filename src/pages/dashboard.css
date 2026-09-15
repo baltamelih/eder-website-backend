@@ -1,0 +1,252 @@
+/* EDER_03F3_90_DAY_CAR_POLICY */
+.eder-dashboard {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 26px;
+}
+
+.eder-dashboard__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  gap: 18px;
+  align-items: stretch;
+  padding: clamp(22px, 4vw, 38px);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 80% 0%, rgba(255, 118, 56, 0.18), transparent 34%),
+    #111315;
+  color: #fff;
+  overflow: hidden;
+}
+
+.eder-dashboard__hero h2 {
+  margin: 8px 0 8px !important;
+  color: #fff !important;
+  font-size: clamp(28px, 4vw, 46px) !important;
+  letter-spacing: -0.045em;
+}
+
+.eder-dashboard__hero .ant-typography {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.eder-dashboard__eyebrow,
+.eder-dashboard__section-head span,
+.eder-dashboard__metrics span {
+  color: #f4773a;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.15em;
+}
+
+.eder-dashboard__policy {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.eder-dashboard__policy.is-ready {
+  border-color: rgba(91, 221, 159, 0.24);
+}
+
+.eder-dashboard__policy.is-locked {
+  border-color: rgba(255, 181, 84, 0.22);
+}
+
+.eder-dashboard__policy-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ff9768;
+  font-size: 18px;
+}
+
+.eder-dashboard__policy > div:last-child {
+  display: grid;
+  gap: 4px;
+}
+
+.eder-dashboard__policy span {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.eder-dashboard__policy strong {
+  color: #fff;
+  font-size: 15px;
+}
+
+.eder-dashboard__policy small {
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.4;
+}
+
+.eder-dashboard__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.eder-dashboard__metrics .ant-card {
+  border-radius: 20px;
+}
+
+.eder-dashboard__metrics .ant-card-body {
+  display: grid;
+  gap: 6px;
+}
+
+.eder-dashboard__metrics strong {
+  color: #161616;
+  font-size: 24px;
+  letter-spacing: -0.04em;
+}
+
+.eder-dashboard__metrics small {
+  color: rgba(17, 17, 17, 0.48);
+}
+
+.eder-dashboard__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  gap: 14px;
+}
+
+.eder-dashboard__grid .ant-card {
+  border-radius: 22px;
+}
+
+.eder-dashboard__section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.eder-dashboard__section-head > div {
+  display: grid;
+  gap: 3px;
+}
+
+.eder-dashboard__section-head strong {
+  font-size: 17px;
+}
+
+.eder-dashboard__vehicle-list {
+  display: grid;
+  gap: 9px;
+}
+
+.eder-dashboard__vehicle {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(17, 17, 17, 0.07);
+  border-radius: 15px;
+  background: rgba(17, 17, 17, 0.018);
+}
+
+.eder-dashboard__vehicle-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 13px;
+  background: #111315;
+  color: #ff8e5b;
+}
+
+.eder-dashboard__vehicle > div:nth-child(2) {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.eder-dashboard__vehicle > div:nth-child(2) span {
+  color: rgba(17, 17, 17, 0.48);
+  font-size: 11px;
+}
+
+.eder-dashboard__vehicle-meta {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
+.eder-dashboard__vehicle-meta small {
+  color: rgba(17, 17, 17, 0.42);
+}
+
+.eder-dashboard__action .ant-card-body {
+  display: grid;
+  gap: 11px;
+}
+
+.eder-dashboard__action h4 {
+  margin: 0 !important;
+  font-size: 22px !important;
+  letter-spacing: -0.03em;
+}
+
+.eder-dashboard__action .ant-typography {
+  margin: 0;
+  color: rgba(17, 17, 17, 0.52);
+  line-height: 1.55;
+}
+
+.eder-dashboard__action-buttons {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.eder-dashboard__action-buttons .ant-btn,
+.eder-dashboard__action-buttons a {
+  width: 100%;
+}
+
+.eder-dashboard__action-buttons .ant-btn-primary {
+  border: 0;
+  background: linear-gradient(135deg, #ff6b33, #ff9d68);
+  font-weight: 850;
+}
+
+@media (max-width: 860px) {
+  .eder-dashboard__hero,
+  .eder-dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .eder-dashboard__metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .eder-dashboard__hero {
+    padding: 20px 16px;
+    border-radius: 22px;
+  }
+
+  .eder-dashboard__vehicle {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .eder-dashboard__vehicle-meta {
+    grid-column: 2;
+    justify-items: start;
+  }
+}

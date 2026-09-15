@@ -15,6 +15,9 @@ const Register = lazy(() => import("../pages/Register"));
 const Support = lazy(() => import("../pages/Support"));
 const Privacy = lazy(() => import("../pages/Privacy"));
 const Terms = lazy(() => import("../pages/Terms"));
+const CookiePolicy = lazy(() => import("../pages/CookiePolicy"));
+const Kvkk = lazy(() => import("../pages/Kvkk"));
+const About = lazy(() => import("../pages/About"));
 const DeleteAccount = lazy(() => import("../pages/DeleteAccount"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 const Contact = lazy(() => import("../pages/Contact"));
@@ -24,10 +27,12 @@ const BlogPost = lazy(() => import("../pages/BlogPost"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("../pages/ResetPassword"));
 
-
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Account = lazy(() => import("../pages/Account"));
 const Settings = lazy(() => import("../pages/Settings"));
+const Cars = lazy(() => import("../pages/Cars"));
+const FeedbackHistory = lazy(() => import("../pages/FeedbackHistory"));
+const FeedbackReview = lazy(() => import("../pages/FeedbackReview"));
 
 function RouteLoading() {
   return (
@@ -56,10 +61,30 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: withSuspense(<Home />) },
-      { path: "valuation", element: withSuspense(<Valuation />) },
+
+      // Canonical public routes
+      { path: "arac-degerleme", element: withSuspense(<Valuation />) },
       { path: "blog", element: withSuspense(<BlogIndex />) },
       { path: "blog/:slug", element: withSuspense(<BlogPost />) },
-      { path: "pricing", element: <Navigate to="/valuation" replace /> },
+      { path: "hakkimizda", element: withSuspense(<About />) },
+      { path: "sss", element: withSuspense(<Faq />) },
+      { path: "destek", element: withSuspense(<Support />) },
+      { path: "iletisim", element: withSuspense(<Contact />) },
+      { path: "gizlilik-politikasi", element: withSuspense(<Privacy />) },
+      { path: "kvkk-aydinlatma-metni", element: withSuspense(<Kvkk />) },
+      { path: "cerez-politikasi", element: withSuspense(<CookiePolicy />) },
+      { path: "kullanim-kosullari", element: withSuspense(<Terms />) },
+
+      // Backward-compatible aliases. Firebase also returns permanent redirects
+      // for direct requests so indexed legacy URLs converge on one canonical URL.
+      { path: "valuation", element: <Navigate to="/arac-degerleme" replace /> },
+      { path: "pricing", element: <Navigate to="/arac-degerleme" replace /> },
+      { path: "faq", element: <Navigate to="/sss" replace /> },
+      { path: "support", element: <Navigate to="/destek" replace /> },
+      { path: "contact", element: <Navigate to="/iletisim" replace /> },
+      { path: "privacy", element: <Navigate to="/gizlilik-politikasi" replace /> },
+      { path: "terms", element: <Navigate to="/kullanim-kosullari" replace /> },
+
       { path: "forgot-password", element: withSuspense(<ForgotPassword />) },
       { path: "reset-password", element: withSuspense(<ResetPassword />) },
       {
@@ -78,12 +103,7 @@ export const router = createBrowserRouter([
           </PublicRoute>
         ),
       },
-      { path: "support", element: withSuspense(<Support />) },
-      { path: "privacy", element: withSuspense(<Privacy />) },
-      { path: "terms", element: withSuspense(<Terms />) },
       { path: "delete-account", element: withSuspense(<DeleteAccount />) },
-      { path: "contact", element: withSuspense(<Contact />) },
-      { path: "faq", element: withSuspense(<Faq />) },
       { path: "*", element: withSuspense(<NotFound />) },
     ],
   },
@@ -100,10 +120,13 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: withSuspense(<Dashboard />) },
       { path: "dashboard", element: withSuspense(<Dashboard />) },
-      { path: "valuation", element: <Navigate to="/valuation" replace /> },
+      { path: "cars", element: withSuspense(<Cars />) },
+      { path: "feedback", element: withSuspense(<FeedbackHistory />) },
+      { path: "feedback-review", element: withSuspense(<FeedbackReview />) },
+      { path: "valuation", element: <Navigate to="/arac-degerleme" replace /> },
       { path: "account", element: withSuspense(<Account />) },
       { path: "settings", element: withSuspense(<Settings />) },
-      { path: "premium", element: <Navigate to="/valuation" replace /> },
+      { path: "premium", element: <Navigate to="/arac-degerleme" replace /> },
       { path: "*", element: withSuspense(<NotFound />) },
     ],
   },

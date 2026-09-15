@@ -1,0 +1,80 @@
+/* EDER_03F2B_V1_3_EXACT_GOOGLE_AUTH */
+.eder-user-area-bar {
+  display: flex;
+  min-height: 72px;
+  margin: 0 0 18px;
+  padding: 12px 14px 12px 18px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(255, 122, 24, 0.09), transparent 31%),
+    rgba(255, 255, 255, 0.8);
+  box-shadow: 0 14px 40px rgba(29, 20, 13, 0.05);
+  backdrop-filter: blur(16px);
+}
+
+.eder-user-area-bar__context {
+  display: grid;
+  gap: 2px;
+}
+
+.eder-user-area-bar__context span {
+  color: #f26322;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.15em;
+}
+
+.eder-user-area-bar__context strong {
+  color: #171717;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+}
+
+.eder-user-area-bar__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.eder-user-area-bar__link {
+  min-height: 40px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: rgba(17, 17, 17, 0.62);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 850;
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.eder-user-area-bar__link:hover {
+  color: #111;
+  background: rgba(17, 17, 17, 0.045);
+}
+
+.eder-user-area-bar__link.is-active {
+  color: #fff;
+  background: #101112;
+  box-shadow: 0 8px 18px rgba(17, 17, 17, 0.12);
+}
+
+@media (max-width: 760px) {
+  .eder-user-area-bar {
+    display: grid;
+    padding: 14px;
+  }
+
+  .eder-user-area-bar__links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .eder-user-area-bar__link {
+    text-align: center;
+  }
+}

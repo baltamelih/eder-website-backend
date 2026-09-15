@@ -1,9 +1,20 @@
 // services/api.js
-let API = (import.meta.env.VITE_API_BASE || "").trim();
+// EDER_03F5_VEHICLE_VISUAL_AUTH_LOCAL_RECOVERY
+function resolveApiBase() {
+  let api = (import.meta.env.VITE_API_BASE || "").trim();
 
-// API URL temizleme
-API = API.replace(/\/+$/, ""); // sondaki / temizle
-API = API.replace(/^https?:\/\/https?:\/\//, "https://"); // double protocol fix
+  if (!api && typeof window !== "undefined") {
+    const host = window.location.hostname;
+    const isLocal = host === "127.0.0.1" || host === "localhost";
+    if (isLocal) api = "http://127.0.0.1:5000";
+  }
+
+  api = api.replace(/\/+$/, "");
+  api = api.replace(/^https?:\/\/https?:\/\//, "https://");
+  return api;
+}
+
+const API = resolveApiBase();
 
 function isAuthPath(path) {
   return path.startsWith("/api/auth/");
@@ -91,8 +102,23 @@ export async function apiFetch(path, options = {}) {
 
   // fetch helper
   const doFetch = async (overrideHeaders) => {
-    const res = await fetch(url, { ...options, headers: overrideHeaders ?? headers });
-    return res;
+    try {
+      return await fetch(url, { ...options, headers: overrideHeaders ?? headers });
+    } catch (cause) {
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "127.0.0.1" ||
+          window.location.hostname === "localhost");
+
+      const error = new Error(
+        isLocal
+          ? "Yerel API sunucusuna bağlanılamadı. Backend'in http://127.0.0.1:5000 adresinde çalıştığını kontrol et."
+          : "Sunucuya bağlanılamadı. Lütfen birkaç saniye sonra tekrar deneyin."
+      );
+      error.code = "NETWORK_UNREACHABLE";
+      error.cause = cause;
+      throw error;
+    }
   };
 
   const res = await doFetch();

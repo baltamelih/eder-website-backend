@@ -1,0 +1,23 @@
+/* EDER_03F6D_VERIFIED_MARKET_INSIGHTS */
+.verified-market { padding: clamp(56px, 8vw, 104px) 0; background: #0d0f12; color: #f5f7f8; }
+.verified-market__shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: clamp(28px, 4vw, 48px); border: 1px solid rgba(255,255,255,.09); border-radius: 28px; background: radial-gradient(circle at 80% 0%, rgba(255,107,51,.08), transparent 32%), linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.012)); box-shadow: 0 30px 80px rgba(0,0,0,.24); }
+.verified-market__copy { max-width: 760px; }
+.verified-market__eyebrow { display:block; margin-bottom:12px; color:#ff7b43; font-size:11px; font-weight:900; letter-spacing:.15em; }
+.verified-market__copy h2 { margin:0; font-size:clamp(32px,5vw,58px); line-height:1.02; letter-spacing:-.04em; }
+.verified-market__copy p { max-width:720px; margin:18px 0 0; color:rgba(255,255,255,.64); font-size:15px; line-height:1.75; }
+.verified-market__metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:34px; }
+.verified-market__metrics article { min-height:172px; padding:22px; border:1px solid rgba(255,255,255,.08); border-radius:18px; background:rgba(8,10,12,.68); display:flex; flex-direction:column; justify-content:space-between; }
+.verified-market__metrics small { color:rgba(255,255,255,.55); font-size:11px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+.verified-market__metrics strong { margin:12px 0; color:#fff; font-size:clamp(36px,4.5vw,58px); line-height:1; letter-spacing:-.04em; }
+.verified-market__metrics span { color:rgba(255,255,255,.48); font-size:12px; line-height:1.5; }
+.verified-market__state,.verified-market__building { margin-top:34px; padding:24px; border:1px solid rgba(255,255,255,.08); border-radius:18px; background:rgba(8,10,12,.62); color:rgba(255,255,255,.72); }
+.verified-market__building-head { display:flex; justify-content:space-between; gap:18px; align-items:center; }
+.verified-market__building-head strong { color:#fff; font-size:18px; }
+.verified-market__building-head span { color:#ff8a55; font-size:12px; font-weight:900; }
+.verified-market__progress { height:6px; margin:16px 0; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.08); }
+.verified-market__progress i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#ff5a1f,#ff9a62); box-shadow:0 0 18px rgba(255,90,31,.28); }
+.verified-market__building p { margin:0; color:rgba(255,255,255,.5); font-size:12px; line-height:1.65; }
+.verified-market__method { display:flex; gap:14px; align-items:center; margin-top:22px; color:rgba(255,255,255,.38); }
+.verified-market__method span { color:rgba(255,123,67,.8); font-size:9px; font-weight:950; letter-spacing:.14em; }
+.verified-market__method p { margin:0; font-size:10px; line-height:1.5; }
+@media (max-width: 780px) { .verified-market__shell{width:min(100% - 24px,1180px);padding:24px 18px}.verified-market__metrics{grid-template-columns:1fr}.verified-market__metrics article{min-height:145px}.verified-market__method{align-items:flex-start;flex-direction:column;gap:6px} }

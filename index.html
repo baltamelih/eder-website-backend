@@ -6,21 +6,62 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,follow" />
     <meta
       name="description"
-      content="EDER ile aracınızın marka, model, yıl, kilometre ve kondisyon bilgilerini kullanarak tahmini piyasa değer aralığını öğrenin."
-    />
-    <meta
-      name="keywords"
-      content="araç değerleme, otomobil fiyat, ikinci el araç, piyasa değeri, EDER"
+      content="EDER ile araç özellikleri ve piyasa verilerini birlikte değerlendirerek tahmini piyasa değer aralığı oluşturun."
     />
     <meta name="theme-color" content="#f7f4ef" />
+
     <meta property="og:site_name" content="EDER" />
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="EDER | Araç Değerleme" />
+    <meta
+      property="og:description"
+      content="Araç özellikleri ve piyasa verilerini birlikte değerlendirerek tahmini piyasa değer aralığı sunan EDER."
+    />
+    <meta property="og:url" content="https://ederapp.com/" />
+    <meta property="og:image" content="https://ederapp.com/assets/eder-logo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="EDER | Araç Değerleme" />
+    <meta
+      name="twitter:description"
+      content="Araç özellikleri ve piyasa verilerini birlikte değerlendirerek tahmini piyasa değer aralığı sunan EDER."
+    />
+
     <title>EDER | Araç Değerleme</title>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "name": "EDER",
+            "url": "https://ederapp.com/",
+            "email": "destek@ederapp.com"
+          },
+          {
+            "@type": "WebSite",
+            "name": "EDER",
+            "url": "https://ederapp.com/",
+            "inLanguage": "tr-TR"
+          }
+        ]
+      }
+    </script>
+
+    <meta name="google-adsense-account" content="ca-pub-7415512901536849" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7415512901536849"
+      crossorigin="anonymous"
+    ></script>
+    <script type="module" src="/src/ads/bootstrap.jsx"></script>
   </head>
   <body>
     <div id="root"></div>
+
     <script>
       window.__EDER_BOOT_DIAGNOSTICS__ = [];
 
@@ -85,17 +126,14 @@
             '<section style="width:min(620px,100%);padding:32px;border:1px solid #e7e1d8;border-radius:24px;background:#fff">' +
             '<div style="margin-bottom:12px;color:#d94d00;font-size:13px;font-weight:900;letter-spacing:.08em">EDER / BOOT</div>' +
             '<h1 style="margin:0 0 12px;font-size:30px">Uygulama başlatılamadı.</h1>' +
-            '<p style="margin:0;line-height:1.7;color:#475569">Release durduruldu. Tarayıcı çalışma zamanı kaydı incelenecek.</p>' +
+            '<p style="margin:0;line-height:1.7;color:#475569">Beklenmeyen bir çalışma zamanı sorunu oluştu. Lütfen daha sonra tekrar deneyin.</p>' +
             "</section></main>";
         }, 6500);
       })();
     </script>
+
     <pre id="eder-boot-diagnostics" hidden></pre>
     <script type="module" src="/src/main.jsx"></script>
-    <script
-      async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2330940841524775"
-      crossorigin="anonymous"
-    ></script>
+    <div id="eder-ad-runtime" aria-hidden="true"></div>
   </body>
 </html>

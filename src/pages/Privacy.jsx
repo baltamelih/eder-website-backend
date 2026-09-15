@@ -1,148 +1,87 @@
-import { Card, Typography, Divider, Alert } from "antd";
-import { Shield, Eye, Lock, Database, Mail, Calendar } from "lucide-react";
-
-const { Title, Paragraph, Text } = Typography;
+import {
+  TrustLinks,
+  TrustList,
+  TrustNote,
+  TrustPageShell,
+  TrustSection,
+} from "../components/TrustPageShell";
 
 export default function Privacy() {
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 16px" }}>
-      <Card style={{ borderRadius: 16 }}>
-        <Title level={2} style={{ marginTop: 0, color: "#FF7A18" }}>
-          <Shield size={24} style={{ marginRight: 8, verticalAlign: "middle" }} />
-          Gizlilik Politikası
-        </Title>
-
-        <Paragraph style={{ color: "rgba(0,0,0,0.70)", fontSize: 16, marginBottom: 24 }}>
-          Son güncelleme: {new Date().toLocaleDateString('tr-TR')} | KVKK uyumlu
-        </Paragraph>
-
-        <Alert
-          message="Minimum Veri Prensibi"
-          description="EDER olarak sadece hizmet sunumu için gerekli olan minimum veriyi topluyoruz ve saklıyoruz."
-          type="info"
-          showIcon
-          style={{ marginBottom: 24 }}
+    <TrustPageShell
+      eyebrow="GİZLİLİK"
+      title="Verinizin nerede ve neden kullanıldığını açıkça anlatıyoruz."
+      lead="Bu politika, EDER'i kullanırken işlenebilen veri kategorilerini, kullanım amaçlarını ve tercihlerinizi anlaşılır bir çerçevede açıklar."
+    >
+      <TrustSection number="01" title="İşlenebilen veri kategorileri">
+        <TrustList
+          items={[
+            "Hesap oluşturduğunuzda e-posta adresi ve kimlik doğrulama için gerekli hesap kayıtları.",
+            "Değerleme için verdiğiniz marka, model, yıl, kilometre, kondisyon ve benzeri araç bilgileri.",
+            "Hesabınıza kaydettiğiniz araçlar, değerleme geçmişi, fiyat beklentisi ve kullanmayı seçerseniz satış geri bildirimi.",
+            "Güvenlik, kötüye kullanımın önlenmesi ve hata incelemesi için IP adresi, tarayıcı/cihaz bilgisi ve teknik günlük kayıtları.",
+            "Bize e-posta gönderdiğinizde mesaj içeriği ve sizin iletmeyi seçtiğiniz iletişim bilgileri.",
+          ]}
         />
+      </TrustSection>
 
-        <Divider />
-
-        <Title level={3}>
-          <Database size={20} style={{ marginRight: 8, verticalAlign: "middle" }} />
-          Topladığımız Veriler
-        </Title>
-
-        <div style={{ marginBottom: 24 }}>
-          <Text strong>Hesap Bilgileri:</Text>
-          <Paragraph style={{ color: "rgba(0,0,0,0.70)", marginLeft: 24 }}>
-            • E-posta adresi (giriş ve iletişim için)<br/>
-            • Şifre (şifrelenmiş olarak saklanır)<br/>
-            • Hesap oluşturma tarihi
-          </Paragraph>
-
-          <Text strong>Araç Bilgileri:</Text>
-          <Paragraph style={{ color: "rgba(0,0,0,0.70)", marginLeft: 24 }}>
-            • Marka, model, yıl bilgileri<br/>
-            • Kilometre, yakıt türü gibi teknik özellikler<br/>
-            • Değerleme geçmişi (sadece sizin erişebileceğiniz)
-          </Paragraph>
-
-          <Text strong>Teknik Veriler:</Text>
-          <Paragraph style={{ color: "rgba(0,0,0,0.70)", marginLeft: 24 }}>
-            • IP adresi (güvenlik amaçlı)<br/>
-            • Tarayıcı bilgileri<br/>
-            • Kullanım istatistikleri (anonim)
-          </Paragraph>
-        </div>
-
-        <Title level={3}>
-          <Eye size={20} style={{ marginRight: 8, verticalAlign: "middle" }} />
-          Verilerin Kullanım Amacı
-        </Title>
-        <Paragraph>
-          • <Text strong>Hizmet Sunumu:</Text> Araç değerleme hizmeti sağlamak<br/>
-          • <Text strong>Hesap Yönetimi:</Text> Giriş, güvenlik ve destek<br/>
-          • <Text strong>İyileştirme:</Text> Hizmet kalitesini artırmak<br/>
-          • <Text strong>İletişim:</Text> Önemli güncellemeler ve destek
-        </Paragraph>
-
-        <Title level={3}>
-          <Lock size={20} style={{ marginRight: 8, verticalAlign: "middle" }} />
-          Veri Güvenliği
-        </Title>
-        <Paragraph>
-          • Tüm veriler şifrelenmiş olarak saklanır<br/>
-          • SSL/TLS ile güvenli veri aktarımı<br/>
-          • Düzenli güvenlik güncellemeleri<br/>
-          • Yetkisiz erişime karşı koruma<br/>
-          • Veri yedekleme ve kurtarma sistemleri
-        </Paragraph>
-
-        <Title level={3}>
-          <Calendar size={20} style={{ marginRight: 8, verticalAlign: "middle" }} />
-          Veri Saklama Süresi
-        </Title>
-        <Paragraph>
-          • <Text strong>Hesap Bilgileri:</Text> Hesap aktif olduğu sürece<br/>
-          • <Text strong>Değerleme Geçmişi:</Text> 2 yıl (yasal gereklilik)<br/>
-          • <Text strong>Log Kayıtları:</Text> 6 ay (güvenlik amaçlı)<br/>
-          • <Text strong>Pazarlama İzinleri:</Text> İzin geri alınana kadar
-        </Paragraph>
-
-        <Title level={3}>KVKK Hakları</Title>
-        <Paragraph>
-          6698 sayılı KVKK kapsamında sahip olduğunuz haklar:
-        </Paragraph>
-        <Paragraph style={{ color: "rgba(0,0,0,0.70)", marginLeft: 16 }}>
-          • Kişisel verilerinizin işlenip işlenmediğini öğrenme<br/>
-          • İşlenen verileriniz hakkında bilgi talep etme<br/>
-          • İşleme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme<br/>
-          • Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme<br/>
-          • Eksik veya yanlış işlenmiş olması halinde bunların düzeltilmesini isteme<br/>
-          • Kanunda öngörülen şartlar çerçevesinde silinmesini isteme
-        </Paragraph>
-
-        <Title level={3}>Çerezler (Cookies)</Title>
-        <Paragraph>
-          • <Text strong>Zorunlu Çerezler:</Text> Sitenin çalışması için gerekli<br/>
-          • <Text strong>Analitik Çerezler:</Text> Kullanım istatistikleri (anonim)<br/>
-          • <Text strong>Tercih Çerezler:</Text> Dil, tema gibi ayarlar<br/>
-          • Çerez ayarlarınızı tarayıcınızdan yönetebilirsiniz
-        </Paragraph>
-
-        <Title level={3}>Üçüncü Taraf Hizmetler</Title>
-        <Paragraph>
-          • <Text strong>Ödeme İşlemleri:</Text> Güvenli ödeme sağlayıcıları<br/>
-          • <Text strong>E-posta Servisi:</Text> Sistem e-postaları için<br/>
-          • <Text strong>Analitik:</Text> Anonim kullanım verileri<br/>
-          • Bu hizmetler kendi gizlilik politikalarına tabidir
-        </Paragraph>
-
-        <Divider />
-
-        <Alert
-          message="Veri Talepleriniz"
-          description={
-            <div>
-              KVKK haklarınızı kullanmak için{" "}
-              <Text strong style={{ color: "#FF7A18" }}>kvkk@ederapp.com</Text>{" "}
-              adresine yazabilir veya hesap ayarlarından veri dışa aktarma işlemini yapabilirsiniz.
-            </div>
-          }
-          type="success"
-          showIcon
-          style={{ marginBottom: 24 }}
+      <TrustSection number="02" title="Neden kullanıyoruz?">
+        <TrustList
+          items={[
+            "Araç değerleme sonucunu üretmek ve hesabınızla ilişkilendirdiğiniz geçmişi göstermek.",
+            "Oturum açma, hesap güvenliği, parola sıfırlama ve destek taleplerini yürütmek.",
+            "Hizmeti kötüye kullanımdan korumak, hız limitlerini uygulamak ve teknik sorunları incelemek.",
+            "Doğrulanmış satış geri bildirimlerinden yalnız toplulaştırılmış ve gizliliği koruyan piyasa içgörüleri üretmek.",
+            "Yasal yükümlülükleri yerine getirmek ve hizmetin güvenilirliğini geliştirmek.",
+          ]}
         />
+      </TrustSection>
 
-        <div style={{ textAlign: "center", padding: "16px 0" }}>
-          <Text style={{ color: "rgba(0,0,0,0.60)" }}>
-            Sorularınız için:{" "}
-            <Text strong style={{ color: "#FF7A18" }}>
-              <Mail size={14} style={{ verticalAlign: "middle", marginRight: 4 }} />
-              gizlilik@ederapp.com
-            </Text>
-          </Text>
-        </div>
-      </Card>
-    </div>
+      <TrustSection number="03" title="Hizmet sağlayıcılar">
+        <p>
+          EDER'in bazı işlevleri üçüncü taraf altyapılarından yararlanır. Bunlar,
+          aktif özelliğe göre Google Identity Services, Cloudflare Turnstile,
+          Google AdSense, Firebase Hosting, Render ve içerik altyapısı gibi
+          hizmetleri kapsayabilir.
+        </p>
+        <p>
+          Bu sağlayıcılar kendi koşulları ve gizlilik dokümanları çerçevesinde
+          veri işleyebilir. EDER, hizmet için gerekli olmayan kişisel veriyi
+          paylaşmayı amaçlamaz.
+        </p>
+      </TrustSection>
+
+      <TrustSection number="04" title="Saklama ve güvenlik">
+        <p>
+          Veriler, hizmetin yürütülmesi, hesap güvenliği, uyuşmazlıkların
+          yönetimi ve uygulanabilir hukuki yükümlülükler için gerekli olduğu
+          süre boyunca saklanabilir. Her veri türü için tek ve sabit bir saklama
+          süresi taahhüt etmiyoruz.
+        </p>
+        <TrustNote title="Güvenlik yaklaşımı">
+          Erişim kontrolü, güvenli bağlantı, kimlik doğrulama ve kötüye kullanım
+          önleme katmanları kullanılır. Hiçbir çevrim içi sistem için mutlak
+          güvenlik garantisi verilemez.
+        </TrustNote>
+      </TrustSection>
+
+      <TrustSection number="05" title="Reklamlar, çerezler ve tercihler">
+        <p>
+          AdSense ve benzeri teknolojiler reklam sunumu, ölçüm ve sahtekârlığın
+          önlenmesi için çerez veya benzer depolama yöntemlerinden
+          yararlanabilir. Ayrıntılar için Çerez Politikası'nı inceleyebilirsiniz.
+        </p>
+      </TrustSection>
+
+      <TrustSection number="06" title="Haklarınız ve iletişim">
+        <p>
+          Kişisel verilerinizle ilgili erişim, düzeltme, silme veya diğer
+          talepleriniz için kimliğinizi doğrulayabileceğimiz bir süreç
+          gerekebilir. KVKK kapsamındaki ayrıntılar ayrıca yayımlanan Aydınlatma
+          Metni'nde yer alır.
+        </p>
+        <TrustLinks />
+      </TrustSection>
+    </TrustPageShell>
   );
 }

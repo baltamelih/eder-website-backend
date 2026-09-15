@@ -1,159 +1,79 @@
-import { Button, Card, Col, Divider, Row, Typography } from "antd";
-import {
-  FileText,
-  HelpCircle,
-  Mail,
-  MessageCircle,
-  ShieldCheck,
-} from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  TrustLinks,
+  TrustNote,
+  TrustPageShell,
+  TrustSection,
+} from "../components/TrustPageShell";
 
-const { Title, Paragraph, Text } = Typography;
+const SUPPORT_TOPICS = [
+  {
+    title: "Değerleme",
+    text: "Sonuç alamama, araç seçimi, kondisyon bilgisi veya sonuç ekranıyla ilgili sorunlar.",
+    link: "/arac-degerleme",
+    label: "Değerlemeye git",
+  },
+  {
+    title: "Hesap & giriş",
+    text: "E-posta/şifre, Google ile giriş, parola sıfırlama ve hesap ayarları.",
+    link: "/login",
+    label: "Giriş sayfası",
+  },
+  {
+    title: "Veri & gizlilik",
+    text: "Kişisel veri, KVKK, çerez tercihleri veya hesap verileriyle ilgili talepler.",
+    link: "/gizlilik-politikasi",
+    label: "Gizlilik merkezi",
+  },
+  {
+    title: "Teknik sorun",
+    text: "Beklenmeyen hata, sayfa yükleme problemi veya tekrarlanabilir bir teknik problem.",
+    link: "/iletisim",
+    label: "Bize yazın",
+  },
+];
 
 export default function Support() {
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 16px" }}>
-      <Card style={{ borderRadius: 16 }}>
-        <Title level={2} style={{ marginTop: 0, color: "#FF7A18" }}>
-          Destek & Yardım
-        </Title>
-
-        <Paragraph
-          style={{
-            color: "rgba(0,0,0,0.70)",
-            fontSize: 16,
-            marginBottom: 24,
-          }}
-        >
-          Sorularınız ve teknik destek talepleriniz için aşağıdaki kanalları
-          kullanabilirsiniz.
-        </Paragraph>
-
-        <Divider />
-
-        <Row gutter={[24, 24]}>
-          <Col xs={24} md={12}>
-            <Card
-              size="small"
-              style={{
-                borderRadius: 12,
-                border: "1px solid rgba(255,122,24,0.2)",
-                background: "rgba(255,122,24,0.02)",
-              }}
-            >
-              <div style={{ textAlign: "center", padding: "16px 0" }}>
-                <Mail size={32} color="#FF7A18" style={{ marginBottom: 12 }} />
-                <Title level={4} style={{ margin: "0 0 8px 0" }}>
-                  E-posta Desteği
-                </Title>
-                <Text style={{ color: "rgba(0,0,0,0.70)" }}>
-                  Destek talepleriniz için
-                </Text>
-                <div style={{ marginTop: 16 }}>
-                  <Button type="primary" href="mailto:destek@ederapp.com">
-                    destek@ederapp.com
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs={24} md={12}>
-            <Card
-              size="small"
-              style={{
-                borderRadius: 12,
-                border: "1px solid rgba(0,0,0,0.1)",
-              }}
-            >
-              <div style={{ textAlign: "center", padding: "16px 0" }}>
-                <MessageCircle
-                  size={32}
-                  color="#666"
-                  style={{ marginBottom: 12 }}
-                />
-                <Title level={4} style={{ margin: "0 0 8px 0" }}>
-                  Canlı Destek
-                </Title>
-                <Text style={{ color: "rgba(0,0,0,0.70)" }}>
-                  Henüz aktif değil
-                </Text>
-                <div style={{ marginTop: 16 }}>
-                  <Button disabled>Yakında</Button>
-                </div>
-              </div>
-            </Card>
-          </Col>
-        </Row>
-
-        <Divider />
-
-        <Title level={3}>Sık Sorulan Sorular</Title>
-
-        <div style={{ marginBottom: 24 }}>
-          <Text strong style={{ display: "block", marginBottom: 8 }}>
-            <HelpCircle
-              size={16}
-              style={{ marginRight: 8, verticalAlign: "middle" }}
-            />
-            Değerleme sonucu kesin satış fiyatı mıdır?
-          </Text>
-          <Paragraph
-            style={{ color: "rgba(0,0,0,0.70)", marginLeft: 24 }}
-          >
-            Hayır. Sonuç, araç bilgileri ve piyasa verileri üzerinden üretilen
-            tahmini bir aralıktır; kesin fiyat garantisi değildir.
-          </Paragraph>
+    <TrustPageShell
+      eyebrow="DESTEK MERKEZİ"
+      title="Sorunu tanımlayın. Doğru kanala hızlıca ulaşın."
+      lead="EDER destek merkezi; değerleme, hesap, veri talepleri ve teknik sorunlar için sade bir başlangıç noktasıdır."
+      asideTitle="E-posta desteği"
+      asideText="Talebinizi doğrudan destek@ederapp.com adresine iletebilirsiniz. Yanıt süresi talebin kapsamına ve inceleme ihtiyacına göre değişir."
+    >
+      <TrustSection number="01" title="Destek konuları">
+        <div className="support-topic-grid">
+          {SUPPORT_TOPICS.map((topic) => (
+            <Link className="support-topic" to={topic.link} key={topic.title}>
+              <strong>{topic.title}</strong>
+              <span>{topic.text}</span>
+              <small>{topic.label} →</small>
+            </Link>
+          ))}
         </div>
+      </TrustSection>
 
-        <div style={{ marginBottom: 24 }}>
-          <Text strong style={{ display: "block", marginBottom: 8 }}>
-            <HelpCircle
-              size={16}
-              style={{ marginRight: 8, verticalAlign: "middle" }}
-            />
-            Değerleme limiti neden uygulanıyor?
-          </Text>
-          <Paragraph
-            style={{ color: "rgba(0,0,0,0.70)", marginLeft: 24 }}
-          >
-            Güvenlik, kötüye kullanımın önlenmesi ve kaynakların adil
-            kullanılması için dönemsel istek limitleri uygulanabilir.
-          </Paragraph>
-        </div>
+      <TrustSection number="02" title="Talebe ne eklemelisiniz?">
+        <p>
+          Teknik bir sorun için kullandığınız cihaz/tarayıcı, yaptığınız işlem,
+          gördüğünüz hata mesajı ve mümkünse ekran görüntüsü çözümü
+          hızlandırabilir. Şifre, erişim anahtarı veya ödeme bilgisi gibi gizli
+          verileri e-posta ile göndermeyin.
+        </p>
+        <TrustNote title="Gizli bilgi göndermeyin">
+          EDER destek ekibi sizden şifrenizi istememelidir. Hesap doğrulaması
+          gerekiyorsa güvenli doğrulama adımları kullanılmalıdır.
+        </TrustNote>
+      </TrustSection>
 
-        <div style={{ marginBottom: 24 }}>
-          <Text strong style={{ display: "block", marginBottom: 8 }}>
-            <ShieldCheck
-              size={16}
-              style={{ marginRight: 8, verticalAlign: "middle" }}
-            />
-            Verilerim nasıl işleniyor?
-          </Text>
-          <Paragraph
-            style={{ color: "rgba(0,0,0,0.70)", marginLeft: 24 }}
-          >
-            Ayrıntılı bilgi için Gizlilik Politikası sayfasını
-            inceleyebilirsiniz.
-          </Paragraph>
-        </div>
-
-        <Divider />
-
-        <div style={{ textAlign: "center", padding: "16px 0" }}>
-          <Text style={{ color: "rgba(0,0,0,0.60)" }}>
-            Daha fazla bilgi için{" "}
-            <Link to="/terms" style={{ color: "#FF7A18" }}>
-              <FileText
-                size={14}
-                style={{ verticalAlign: "middle", marginRight: 4 }}
-              />
-              Kullanım Şartları
-            </Link>{" "}
-            sayfamızı ziyaret edebilirsiniz.
-          </Text>
-        </div>
-      </Card>
-    </div>
+      <TrustSection number="03" title="Hesap ve veri talepleri">
+        <p>
+          Hesap silme veya kişisel veri taleplerinde hesabın size ait olduğunu
+          doğrulamak için ek adımlar gerekebilir.
+        </p>
+        <TrustLinks />
+      </TrustSection>
+    </TrustPageShell>
   );
 }
