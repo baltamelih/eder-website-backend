@@ -1,68 +1,60 @@
+import React from "react";
 import { Link } from "react-router-dom";
-import "./FooterBar.css";
-
-const groups = [
-  {
-    title: "Ürün",
-    links: [
-      ["/arac-degerleme", "Araç Değerleme"],
-      ["/blog", "Rehber"],
-      ["/hakkimizda", "Hakkımızda"],
-      ["/sss", "Sık Sorulan Sorular"],
-    ],
-  },
-  {
-    title: "Destek",
-    links: [
-      ["/destek", "Destek Merkezi"],
-      ["/iletisim", "İletişim"],
-      ["/login", "Giriş"],
-      ["/register", "Kayıt"],
-    ],
-  },
-  {
-    title: "Yasal",
-    links: [
-      ["/gizlilik-politikasi", "Gizlilik Politikası"],
-      ["/kvkk-aydinlatma-metni", "KVKK Aydınlatma Metni"],
-      ["/cerez-politikasi", "Çerez Politikası"],
-      ["/kullanim-kosullari", "Kullanım Koşulları"],
-    ],
-  },
-];
+import { ArrowUpRight, Mail } from "lucide-react";
+import "./footerbar.css";
 
 export default function FooterBar() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="eder-footer">
-      <div className="eder-footer__inner">
-        <div className="eder-footer__brand">
-          <Link to="/" className="eder-footer__wordmark">
-            EDER
-          </Link>
+    <footer className="fb">
+      <div className="fb-top">
+        <div className="fb-brand">
+          <span className="fb-kicker">EDER / ARAÇ DEĞER İSTİHBARATI</span>
+          <strong>EDER</strong>
           <p>
-            Araç özellikleri ve piyasa verileriyle tahmini değer aralığı sunan
-            karar destek platformu.
+            Araç kimliği, kilometre ve kondisyon bilgisini tek akışta birleştir;
+            tahmini piyasa değer aralığını daha anlaşılır şekilde gör.
           </p>
-          <a href="mailto:destek@ederapp.com">destek@ederapp.com</a>
         </div>
 
-        <div className="eder-footer__groups">
-          {groups.map((group) => (
-            <nav key={group.title} aria-label={group.title}>
-              <strong>{group.title}</strong>
-              {group.links.map(([to, label]) => (
-                <Link to={to} key={to}>
-                  {label}
-                </Link>
-              ))}
-            </nav>
-          ))}
+        <div className="fb-nav">
+          <div>
+            <span>ÜRÜN</span>
+            <Link to="/arac-degerleme">Araç Değerleme</Link>
+            <Link to="/blog">Rehber</Link>
+            <Link to="/sss">S.S.S.</Link>
+          </div>
+
+          <div>
+            <span>DESTEK</span>
+            <Link to="/iletisim">İletişim</Link>
+            <a href="mailto:destek@ederapp.com">
+              destek@ederapp.com
+              <Mail size={14} aria-hidden />
+            </a>
+          </div>
+
+          <div>
+            <span>YASAL</span>
+            <Link to="/gizlilik-politikasi">Gizlilik</Link>
+            <Link to="/kullanim-kosullari">Kullanım Şartları</Link>
+          </div>
         </div>
       </div>
 
-      <div className="eder-footer__bottom">
-        <span>© {new Date().getFullYear()} EDER</span>
-        <span>Değerleme sonuçları tahmini niteliktedir.</span>
+      <div className="fb-divider" />
+
+      <div className="fb-bottom">
+        <span>© {year} EDER</span>
+        <p>
+          Değerleme sonuçları tahminidir; aracın kondisyonu ve piyasa koşulları
+          nihai satış fiyatını değiştirebilir.
+        </p>
+        <Link to="/arac-degerleme">
+          Yeni değerleme
+          <ArrowUpRight size={15} aria-hidden />
+        </Link>
       </div>
     </footer>
   );

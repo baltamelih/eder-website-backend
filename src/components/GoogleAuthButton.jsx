@@ -5,6 +5,23 @@ import { setAuthTokens } from "../services/auth";
 import { useAuth } from "../services/AuthContext";
 import "./google-auth-button.css";
 
+
+function getEderGoogleOwnedMount(host) {
+  if (!host) return null;
+
+  const shadow = host.shadowRoot || host.attachShadow({ mode: "open" });
+
+  let mount = shadow.querySelector("[data-eder-google-owned]");
+  if (!mount) {
+    mount = document.createElement("div");
+    mount.setAttribute("data-eder-google-owned", "true");
+    shadow.appendChild(mount);
+  }
+
+  return mount;
+}
+
+
 // EDER_03F2B_V1_3_EXACT_GOOGLE_AUTH
 const GIS_SCRIPT_ID = "eder-google-identity-services";
 const GIS_SRC = "https://accounts.google.com/gsi/client";
@@ -116,7 +133,7 @@ export default function GoogleAuthButton({ mode = "login" }) {
         if (!buttonRef.current) return;
 
         buttonRef.current.innerHTML = "";
-        google.accounts.id.renderButton(buttonRef.current, {
+        google.accounts.id.renderButton(getEderGoogleOwnedMount(buttonRef.current), {
           type: "standard",
           theme: "outline",
           size: "large",
