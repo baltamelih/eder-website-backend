@@ -69,37 +69,8 @@
       })();
     </script>
     
-<script>
-  /* EDER_AUTH_REMOVECHILD_GUARD */
-  (() => {
-    const path = window.location.pathname.replace(/\/+$/, "") || "/";
-    const authPath = /^(\/login|\/register|\/forgot-password|\/reset-password)(\/|$)/.test(path);
-    if (!authPath || window.__EDER_AUTH_REMOVECHILD_GUARD__) return;
-
-    const nativeRemoveChild = Node.prototype.removeChild;
-
-    function ederSafeRemoveChild(child) {
-      if (child instanceof Node && child.parentNode !== this) {
-        window.__EDER_AUTH_STALE_REMOVE_COUNT__ =
-          (window.__EDER_AUTH_STALE_REMOVE_COUNT__ || 0) + 1;
-        return child;
-      }
-      return nativeRemoveChild.call(this, child);
-    }
-
-    Object.defineProperty(ederSafeRemoveChild, "__ederAuthGuard", {
-      value: true,
-      configurable: false,
-      enumerable: false,
-      writable: false
-    });
-
-    Node.prototype.removeChild = ederSafeRemoveChild;
-    window.__EDER_AUTH_REMOVECHILD_GUARD__ = true;
-  })();
-</script>
-
-<script type="module" src="/src/ads/bootstrap.jsx"></script>
+<script src="/eder-auth-bootstrap.js?v=03f6h7"></script>
+    <script type="module" src="/src/ads/bootstrap.jsx"></script>
   
 <script>
   /* EDER_AUTH_HARD_NAVIGATION */
