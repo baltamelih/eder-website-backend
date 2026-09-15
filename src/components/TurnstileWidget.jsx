@@ -18,7 +18,7 @@ function loadTurnstile() {
           resolve(window.turnstile);
         } else if (Date.now() - started > 10000) {
           window.clearInterval(timer);
-          reject(new Error("Turnstile yüklenemedi"));
+          reject(new Error("Güvenli doğrulama yüklenemedi"));
         }
       }, 100);
       return;
@@ -31,7 +31,7 @@ function loadTurnstile() {
     script.async = true;
     script.defer = true;
     script.onload = () => resolve(window.turnstile);
-    script.onerror = () => reject(new Error("Turnstile yüklenemedi"));
+    script.onerror = () => reject(new Error("Güvenli doğrulama yüklenemedi"));
     document.head.appendChild(script);
   });
 }

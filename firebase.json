@@ -7,34 +7,153 @@
       "**/node_modules/**"
     ],
     "redirects": [
-      { "source": "/valuation", "destination": "/arac-degerleme", "type": 301 },
-      { "source": "/pricing", "destination": "/arac-degerleme", "type": 301 },
-      { "source": "/faq", "destination": "/sss", "type": 301 },
-      { "source": "/support", "destination": "/destek", "type": 301 },
-      { "source": "/contact", "destination": "/iletisim", "type": 301 },
-      { "source": "/privacy", "destination": "/gizlilik-politikasi", "type": 301 },
-      { "source": "/terms", "destination": "/kullanim-kosullari", "type": 301 },
-      { "source": "/gizlilik.html", "destination": "/gizlilik-politikasi", "type": 301 },
-      { "source": "/cerez-politikasi.html", "destination": "/cerez-politikasi", "type": 301 },
-      { "source": "/kullanim-kosullari.html", "destination": "/kullanim-kosullari", "type": 301 }
+      {
+        "source": "/valuation",
+        "destination": "/arac-degerleme",
+        "type": 301
+      },
+      {
+        "source": "/pricing",
+        "destination": "/arac-degerleme",
+        "type": 301
+      },
+      {
+        "source": "/faq",
+        "destination": "/sss",
+        "type": 301
+      },
+      {
+        "source": "/support",
+        "destination": "/destek",
+        "type": 301
+      },
+      {
+        "source": "/contact",
+        "destination": "/iletisim",
+        "type": 301
+      },
+      {
+        "source": "/privacy",
+        "destination": "/gizlilik-politikasi",
+        "type": 301
+      },
+      {
+        "source": "/terms",
+        "destination": "/kullanim-kosullari",
+        "type": 301
+      },
+      {
+        "source": "/gizlilik.html",
+        "destination": "/gizlilik-politikasi",
+        "type": 301
+      },
+      {
+        "source": "/cerez-politikasi.html",
+        "destination": "/cerez-politikasi",
+        "type": 301
+      },
+      {
+        "source": "/kullanim-kosullari.html",
+        "destination": "/kullanim-kosullari",
+        "type": 301
+      }
     ],
     "rewrites": [
-      { "source": "/arac-degerleme", "destination": "/index.html" },
-      { "source": "/blog{,/**}", "destination": "/index.html" },
-      { "source": "/hakkimizda", "destination": "/index.html" },
-      { "source": "/sss", "destination": "/index.html" },
-      { "source": "/destek", "destination": "/index.html" },
-      { "source": "/iletisim", "destination": "/index.html" },
-      { "source": "/gizlilik-politikasi", "destination": "/index.html" },
-      { "source": "/kvkk-aydinlatma-metni", "destination": "/index.html" },
-      { "source": "/cerez-politikasi", "destination": "/index.html" },
-      { "source": "/kullanim-kosullari", "destination": "/index.html" },
-      { "source": "/login", "destination": "/index.html" },
-      { "source": "/register", "destination": "/index.html" },
-      { "source": "/forgot-password", "destination": "/index.html" },
-      { "source": "/reset-password", "destination": "/index.html" },
-      { "source": "/delete-account", "destination": "/index.html" },
-      { "source": "/app{,/**}", "destination": "/index.html" }
+      {
+        "source": "/arac-degerleme",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/blog{,/**}",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/hakkimizda",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/sss",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/destek",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/iletisim",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/gizlilik-politikasi",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/kvkk-aydinlatma-metni",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/cerez-politikasi",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/kullanim-kosullari",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/login",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/register",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/forgot-password",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/reset-password",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/delete-account",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/app{,/**}",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-src 'self' https:; media-src 'self' data: blob: https:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "X-XSS-Protection",
+            "value": "0"
+          }
+        ]
+      }
     ]
   }
 }

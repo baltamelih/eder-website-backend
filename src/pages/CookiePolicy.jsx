@@ -22,7 +22,7 @@ export default function CookiePolicy() {
 
       <TrustSection number="02" title="Güvenlik ve kimlik doğrulama">
         <p>
-          Cloudflare Turnstile gibi güvenlik hizmetleri otomatik kötüye kullanımı
+          Güvenli doğrulama gibi güvenlik hizmetleri otomatik kötüye kullanımı
           ayırt etmek için teknik sinyaller işleyebilir. Google ile giriş
           seçeneğini kullandığınızda Google Identity Services kendi teknik
           verilerini ve depolama mekanizmalarını kullanabilir.

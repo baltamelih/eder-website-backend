@@ -22,5 +22,20 @@ export default defineConfig({
 
   build: {
     chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/react-router")) return "vendor-react";
+          if (id.includes("/antd/") || id.includes("/@ant-design/")) return "vendor-antd";
+          if (id.includes("/@sanity/") || id.includes("/sanity/")) return "vendor-sanity";
+          if (id.includes("/framer-motion/")) return "vendor-motion";
+          if (id.includes("/three/") || id.includes("/@react-three/")) return "vendor-three";
+          if (id.includes("/lucide-react/")) return "vendor-icons";
+          return "vendor";
+        },
+      },
+    },
+
   },
 });

@@ -40,7 +40,7 @@ export default function Privacy() {
       <TrustSection number="03" title="Hizmet sağlayıcılar">
         <p>
           EDER'in bazı işlevleri üçüncü taraf altyapılarından yararlanır. Bunlar,
-          aktif özelliğe göre Google Identity Services, Cloudflare Turnstile,
+          aktif özelliğe göre Google Identity Services, Güvenli doğrulama,
           Google AdSense, Firebase Hosting, Render ve içerik altyapısı gibi
           hizmetleri kapsayabilir.
         </p>
