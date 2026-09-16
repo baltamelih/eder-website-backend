@@ -47,3 +47,58 @@
 [class*="valuation"] [class*="stepper"] > [data-stepper-decorative-car="true"] {
   display: none !important;
 }
+
+/* ==========================================================================
+   EDER 03J.20R2 — DARK PROGRESS CONTRAST
+   Requested-only fix: the progress banner must not be white text on cream.
+   ========================================================================== */
+.valuation-progress.eder-valuation {
+  color: #f8f5ef !important;
+  background:
+    linear-gradient(135deg, rgba(255, 107, 51, 0.12), transparent 34%),
+    radial-gradient(circle at 86% 0%, rgba(255, 255, 255, 0.055), transparent 30%),
+    #111315 !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  box-shadow:
+    0 24px 62px rgba(17, 19, 21, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055) !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__top,
+.valuation-progress.eder-valuation .valuation-progress__mark {
+  color: #f8f5ef !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__mark {
+  border-color: rgba(255, 107, 51, 0.38) !important;
+  background: rgba(255, 107, 51, 0.12) !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__copy > span {
+  color: #ff8a5e !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__copy > strong {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__copy > p {
+  color: rgba(248, 245, 239, 0.62) !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__counter > span {
+  color: rgba(248, 245, 239, 0.42) !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__counter > strong {
+  color: #ffffff !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__counter > em {
+  color: rgba(248, 245, 239, 0.42) !important;
+}
+
+.valuation-progress.eder-valuation .valuation-progress__rail {
+  background: rgba(255, 255, 255, 0.11) !important;
+}
