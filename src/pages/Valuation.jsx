@@ -23,6 +23,7 @@ import carDamageImage from "../assets/car_damage.png";
 import "./Valuation.css";
 
 import ValuationProgressCar3D from "../components/ValuationProgressCar3D";
+import "./valuation-premium-2026.css";
 const { Title, Paragraph, Text } = Typography;
 
 // EDER_03F1_V2_PRODUCT_FLOW_RECOVERY
@@ -59,7 +60,7 @@ function StepHeader({ step, total, title, subtitle }) {
 
   return (
     <motion.section
-      className="valuation-progress"
+      className="valuation-progress eder-valuation"
       initial="hidden"
       animate="show"
       variants={{ show: { transition: { staggerChildren: 0.08 } } }}
