@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import "./trust-vehicle-visual.css";
 
-// EDER_03F6A_TRUST_VEHICLE_VISUALS
-// EDER_03F6A_V2_7_PHOTOREAL_PREMIUM_VEHICLE
 const MODEL_VIEWER_SRC =
   "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js";
-const MODEL_SRC = "/models/eder-audi-r8.glb";
+
+const PRIMARY_MODEL = "/models/eder-realistic-car.glb";
+const FALLBACK_MODEL = "/media/eder/3d/eder-premium-sedan.glb";
 
 function ensureModelViewer() {
   if (customElements.get("model-viewer")) return Promise.resolve();
@@ -36,7 +36,7 @@ const HOTSPOTS = [
     label: "Kaput",
     state: "Boyalı",
     tone: "painted",
-    position: "0m 0.78m 1.55m",
+    position: "0m 0.66m 1.55m",
     normal: "0m 1m 0m",
     reason: "Ön bölümde sürtme sonrası komple boya işlemi.",
     record: "Çarpışma kaydı · Tramer 18.000 TL",
@@ -46,7 +46,7 @@ const HOTSPOTS = [
     label: "Tavan",
     state: "Orijinal",
     tone: "clean",
-    position: "0m 1.32m 0m",
+    position: "0m 1.08m 0.18m",
     normal: "0m 1m 0m",
     reason: "Boya veya parça değişim kaydı görünmüyor.",
     record: "Orijinal yüzey",
@@ -56,7 +56,7 @@ const HOTSPOTS = [
     label: "Ön kapı",
     state: "Lokal boya",
     tone: "local",
-    position: "-0.92m 0.78m 0.25m",
+    position: "-1.18m 0.58m 0.30m",
     normal: "-1m 0m 0m",
     reason: "Dar alandaki çizik ve sürtme sonrası lokal boya.",
     record: "Kozmetik işlem · parça değişimi yok",
@@ -66,7 +66,7 @@ const HOTSPOTS = [
     label: "Arka çamurluk",
     state: "Değişen",
     tone: "changed",
-    position: "0.92m 0.72m -1.42m",
+    position: "1.10m 0.54m -1.28m",
     normal: "1m 0m 0m",
     reason: "Arka bölüm çarpışması sonrası parça değişimi.",
     record: "Parça değişimi · hasar kaydı mevcut",
@@ -77,6 +77,7 @@ export default function TrustVehicleVisual({ mode = "identity" }) {
   const viewerRef = useRef(null);
   const [ready, setReady] = useState(() => Boolean(customElements.get("model-viewer")));
   const [failed, setFailed] = useState(false);
+  const [modelSrc, setModelSrc] = useState(PRIMARY_MODEL);
   const [activeHotspot, setActiveHotspot] = useState("hood");
 
   useEffect(() => {
@@ -105,9 +106,9 @@ export default function TrustVehicleVisual({ mode = "identity" }) {
         {ready && !failed ? (
           <model-viewer
             ref={viewerRef}
-            src={MODEL_SRC}
-            alt="Gerçekçi Audi R8 3D araç modeli"
-            loading="lazy"
+            src={modelSrc}
+            alt="Gerçekçi premium 3D araç"
+            loading="eager"
             reveal="auto"
             interaction-prompt="none"
             camera-controls
@@ -117,15 +118,22 @@ export default function TrustVehicleVisual({ mode = "identity" }) {
             rotation-per-second="5deg"
             shadow-intensity="1.25"
             shadow-softness="0.9"
-            exposure="1.08"
-            camera-orbit={conditionMode ? "-34deg 70deg 108%" : "34deg 70deg 108%"}
-            field-of-view="30deg"
+            exposure="1.02"
+            camera-target={modelSrc === PRIMARY_MODEL ? "0m 0.50m 0.24m" : "0m 0.82m 0m"}
+            camera-orbit={conditionMode ? "-35deg 70deg 110%" : "38deg 70deg 110%"}
+            field-of-view="29deg"
             min-field-of-view="24deg"
             max-field-of-view="34deg"
             min-camera-orbit="auto auto 92%"
-            max-camera-orbit="auto auto 132%"
+            max-camera-orbit="auto auto 138%"
             environment-image="neutral"
-            onError={() => setFailed(true)}
+            onError={() => {
+              if (modelSrc === PRIMARY_MODEL) {
+                setModelSrc(FALLBACK_MODEL);
+              } else {
+                setFailed(true);
+              }
+            }}
           >
             {conditionMode
               ? HOTSPOTS.map((item) => (
