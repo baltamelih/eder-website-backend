@@ -1,0 +1,15 @@
+﻿EDER 3D vehicle asset attribution
+---------------------------------
+Asset: Car Concept
+Source: KhronosGroup glTF-Sample-Assets
+Model page:
+https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept
+
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Credits documented by Khronos:
+- Â© 2024 Darmstadt Graphics Group GmbH
+- Eric Chadwick: model/textures
+The asset also contains Khronos / 3D Commerce logo material subject to the
+upstream trademark notices. Keep this attribution file with the deployed asset.
+
+Downloaded by EDER Batch 03J.19.

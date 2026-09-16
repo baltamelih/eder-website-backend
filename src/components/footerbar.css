@@ -1,50 +1,554 @@
-
-.fb{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);background:#101010;color:#fff}
-.fb-inner{width:min(1180px,calc(100% - 40px));min-height:72px;margin:0 auto;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:28px;padding:15px 0}
-.fb-brand{display:flex;align-items:baseline;gap:11px;color:#fff;text-decoration:none;white-space:nowrap}
-.fb-brand strong{color:#ff6432;font-size:14px;font-weight:900;letter-spacing:.13em}
-.fb-brand span{color:rgba(255,255,255,.42);font-size:9px;font-weight:700;letter-spacing:.11em;text-transform:uppercase}
-.fb-links{display:flex;align-items:center;justify-content:center;gap:18px;min-width:0}
-.fb-links a{color:rgba(255,255,255,.58);font-size:10px;font-weight:650;text-decoration:none;transition:color .18s ease}
-.fb-links a:hover{color:#fff}
-
-.fb-whosb-credit{
-  display:inline-flex;
-  align-items:baseline;
-  justify-content:flex-end;
-  gap:6px;
-  color:rgba(255,255,255,.46);
-  font-size:10px;
-  text-decoration:none;
-  white-space:nowrap;
-  transition:color .18s ease;
+.fb {
+  position: relative;
+  overflow: hidden;
+  padding: 88px var(--gutter) 34px;
+  color: #fff;
+  background:
+    linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px),
+    #090a0c;
+  background-size: 56px 56px;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
-.fb-whosb-credit:hover{color:rgba(255,255,255,.8)}
-.fb-whosb-prefix,.fb-whosb-suffix{font:600 10px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif}
-.fb-whosb-wordmark{
-  display:inline-flex;
-  align-items:baseline;
-  gap:5px;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
-  font-size:17px;
-  line-height:1;
-  letter-spacing:-.055em;
-  text-transform:lowercase;
-}
-.fb-whosb-wordmark b{font-weight:720}
-.fb-whosb-wordmark span{font-weight:300}
-.fb-whosb-wordmark sup{font-size:.28em;position:relative;top:-1.25em;margin-left:-2px;font-weight:400}
 
-@media(max-width:880px){
-  .fb-inner{grid-template-columns:1fr;justify-items:center;gap:10px;padding:18px 0}
-  .fb-brand{justify-content:center}
-  .fb-links{flex-wrap:wrap;gap:12px 16px}
-  .fb-whosb-credit{justify-content:center}
+.fb::after {
+  content: "EDER";
+  position: absolute;
+  left: var(--gutter);
+  bottom: -0.22em;
+  color: rgba(255,255,255,0.025);
+  font-size: clamp(120px, 21vw, 380px);
+  line-height: 0.8;
+  font-weight: 950;
+  letter-spacing: -0.08em;
+  pointer-events: none;
 }
-@media(max-width:520px){
-  .fb-inner{width:min(100% - 24px,1180px)}
-  .fb-brand span{display:none}
-  .fb-links{max-width:330px}
-  .fb-whosb-credit{white-space:normal;flex-wrap:wrap;justify-content:center}
+
+.fb-top,
+.fb-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.fb-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(520px, 0.85fr);
+  gap: clamp(50px, 8vw, 140px);
+  align-items: start;
+}
+
+.fb-brand {
+  max-width: 820px;
+}
+
+.fb-kicker,
+.fb-nav > div > span {
+  color: rgba(255,255,255,0.42);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.fb-brand > strong {
+  display: block;
+  margin-top: 18px;
+  color: #fff;
+  font-size: clamp(72px, 10vw, 164px);
+  line-height: 0.82;
+  letter-spacing: -0.075em;
+}
+
+.fb-brand > p {
+  max-width: 620px;
+  margin: 32px 0 0;
+  color: rgba(255,255,255,0.58);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.fb-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px;
+}
+
+.fb-nav > div {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.fb-nav > div > span {
+  margin-bottom: 7px;
+  color: #ff8458;
+}
+
+.fb-nav a {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255,255,255,0.72);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 680;
+  transition:
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.fb-nav a:hover {
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.fb-divider {
+  position: relative;
+  z-index: 1;
+  height: 1px;
+  margin: 76px 0 24px;
+  background: rgba(255,255,255,0.12);
+}
+
+.fb-bottom {
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) auto;
+  align-items: center;
+  gap: 30px;
+  color: rgba(255,255,255,0.42);
+}
+
+.fb-bottom > span {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.fb-bottom > p {
+  max-width: 760px;
+  margin: 0;
+  justify-self: center;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.fb-bottom > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 820;
+}
+
+@media (max-width: 980px) {
+  .fb {
+    padding-top: 68px;
+  }
+
+  .fb-top {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .fb-nav {
+    max-width: 760px;
+  }
+}
+
+@media (max-width: 700px) {
+  .fb {
+    padding-top: 54px;
+    padding-bottom: 28px;
+  }
+
+  .fb-brand > strong {
+    font-size: clamp(72px, 24vw, 112px);
+  }
+
+  .fb-brand > p {
+    margin-top: 24px;
+    font-size: 14px;
+  }
+
+  .fb-nav {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .fb-nav > div {
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.09);
+  }
+
+  .fb-divider {
+    margin-top: 48px;
+  }
+
+  .fb-bottom {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .fb-bottom > p {
+    justify-self: start;
+    text-align: left;
+  }
+
+  .fb::after {
+    display: none;
+  }
+}
+
+
+/* ==========================================================================
+   EDER 03C.3 ÔÇö PREMIUM FOOTER REBALANCE
+   ========================================================================== */
+
+.fb {
+  position: relative;
+  overflow: hidden;
+  color: #f4f1ea;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 105, 51, 0.09), transparent 28%),
+    #090a0c;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fb::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 107, 51, 0.16) 16%,
+    rgba(255, 107, 51, 0.72) 50%,
+    rgba(255, 107, 51, 0.16) 84%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.fb-top,
+.fb-divider,
+.fb-bottom {
+  width: min(1720px, calc(100% - 144px));
+  margin-inline: auto;
+}
+
+.fb-top {
+  padding: 76px 0 58px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.22fr) minmax(520px, 0.92fr);
+  gap: clamp(70px, 8vw, 150px);
+  align-items: end;
+}
+
+.fb-brand {
+  max-width: 680px;
+}
+
+.fb-kicker {
+  display: block;
+  margin-bottom: 22px;
+  color: rgba(244, 241, 234, 0.42);
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 850;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.fb-brand > strong {
+  display: block;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(56px, 6.2vw, 98px);
+  line-height: 0.88;
+  font-weight: 940;
+  letter-spacing: -0.075em;
+}
+
+.fb-brand > p {
+  max-width: 590px;
+  margin: 26px 0 0;
+  color: rgba(244, 241, 234, 0.58);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.fb-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(26px, 3vw, 48px);
+}
+
+.fb-nav > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.fb-nav > div > span {
+  margin-bottom: 18px;
+  color: #ff6b33;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.fb-nav a {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(244, 241, 234, 0.72);
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.fb-nav a:hover {
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.fb-nav a svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.62;
+}
+
+.fb-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.fb-bottom {
+  min-height: 92px;
+  padding: 24px 0;
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) auto;
+  gap: 34px;
+  align-items: center;
+}
+
+.fb-bottom > span {
+  color: rgba(244, 241, 234, 0.48);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.fb-bottom > p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: rgba(244, 241, 234, 0.38);
+  font-size: 11px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.fb-bottom > a {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.fb-bottom > a:hover {
+  color: #fff;
+  border-color: rgba(255, 107, 51, 0.38);
+  background: rgba(255, 107, 51, 0.08);
+}
+
+@media (max-width: 980px) {
+  .fb-top,
+  .fb-divider,
+  .fb-bottom {
+    width: calc(100% - 64px);
+  }
+
+  .fb-top {
+    grid-template-columns: 1fr;
+    gap: 54px;
+    align-items: start;
+  }
+
+  .fb-nav {
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 640px) {
+  .fb-top,
+  .fb-divider,
+  .fb-bottom {
+    width: calc(100% - 40px);
+  }
+
+  .fb-top {
+    padding: 58px 0 44px;
+    gap: 44px;
+  }
+
+  .fb-brand > strong {
+    font-size: clamp(52px, 17vw, 72px);
+  }
+
+  .fb-brand > p {
+    margin-top: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .fb-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px 24px;
+  }
+
+  .fb-nav > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .fb-nav a {
+    min-height: 40px;
+  }
+
+  .fb-bottom {
+    min-height: 0;
+    padding: 26px 0 32px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .fb-bottom > p {
+    margin: 0;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .fb-bottom > a {
+    width: fit-content;
+    margin-top: 4px;
+  }
+}
+
+
+/* ==========================================================================
+   EDER 03C.4 ÔÇö FOOTER MICRO-POLISH
+   ========================================================================== */
+
+.fb-nav a:focus-visible,
+.fb-bottom > a:focus-visible {
+  outline: 2px solid rgba(255, 107, 51, 0.44);
+  outline-offset: 2px;
+}
+
+.fb-nav > div > span {
+  margin-bottom: 20px;
+}
+
+.fb-bottom > a {
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.fb-bottom > a:hover {
+  transform: translateX(2px);
+}
+
+
+/* WhosB Studio - subtle product signature; CSS-only to preserve old JSX exactly. */
+.fb::after {
+  content: "bu bir whosb studio ├╝r├╝n├╝d├╝r.";
+  display: block;
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 8px 0 18px;
+  text-align: center;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  opacity: 0.72;
+}
+
+@media (max-width: 640px) {
+  .fb::after {
+    width: min(100% - 24px, 1180px);
+    padding-bottom: 14px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+}
+
+
+/* EDER legacy footer atmosphere: large faded background wordmark. */
+.fb {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.fb::before {
+  content: "EDER";
+  position: absolute;
+  left: clamp(18px, 7vw, 120px);
+  bottom: clamp(-42px, -3.5vw, -18px);
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(190px, 25vw, 520px);
+  font-weight: 900;
+  line-height: 0.78;
+  letter-spacing: -0.075em;
+  color: rgba(255, 255, 255, 0.026);
+}
+
+.fb > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 760px) {
+  .fb::before {
+    left: -18px;
+    bottom: -24px;
+    font-size: clamp(150px, 45vw, 280px);
+    color: rgba(255, 255, 255, 0.022);
+  }
+}
+
+/* EDER 03J.19: requested WHOSB text only */
+.footer-whosb-product {
+  font: inherit;
+  color: inherit;
+  opacity: 0.78;
 }

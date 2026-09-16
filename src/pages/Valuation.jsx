@@ -1440,8 +1440,7 @@ export default function Valuation() {
                   style={{ left: `calc(${(step / Math.max(totalSteps - 1, 1)) * 100}% - 16px)` }}
                   aria-hidden
                 >
-                  <Car size={14} />
-                </div>
+                  </div>
 
                 <Steps
                   className="valuation-steps"

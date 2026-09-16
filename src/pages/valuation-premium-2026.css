@@ -20,3 +20,30 @@
 @media(min-width:900px){.valuation-page [class*="result"],.valuation-shell [class*="result"]{max-width:1160px;margin-inline:auto}.valuation-page [class*="result"]>section,.valuation-shell [class*="result"]>section{margin-block:14px!important}}
 @media(max-width:760px){.valuation-page [class*="result"] [class*="card"],.valuation-shell [class*="result"] [class*="card"]{border-radius:19px!important}}
 @media(prefers-reduced-motion:reduce){.valuation-page [class*="result"] *,.valuation-shell [class*="result"] *{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+/* EDER 03J.19: valuation contrast + stepper icon only */
+
+.valuation-progress__top,
+.valuation-progress__mark,
+.valuation-progress__copy,
+.valuation-progress__counter {
+  color: #111315 !important;
+  text-shadow: none !important;
+}
+
+/* Fallbacks are intentionally limited to the valuation flow header. */
+[class*="valuation"][class*="hero"] h1,
+[class*="valuation"][class*="hero"] h2,
+[class*="valuation"][class*="hero"] [class*="title"],
+[class*="valuation"][class*="flow"] [class*="title"],
+[class*="valuation"][class*="flow"] [class*="eyebrow"] {
+  color: #111315 !important;
+  text-shadow: none !important;
+}
+
+/* Hide only decorative vehicle glyphs that may be CSS-generated beside step navigation. */
+[class*="valuation"] [class*="stepper"] > [class*="car-icon"],
+[class*="valuation"] [class*="steps"] > [class*="car-icon"],
+[class*="valuation"] [class*="stepper"] > [data-stepper-decorative-car="true"] {
+  display: none !important;
+}
