@@ -56,6 +56,20 @@ export default function FooterBar() {
           <ArrowUpRight size={15} aria-hidden />
         </Link>
       </div>
-    </footer>
+
+      <div className="fb-whosb-credit" aria-label="Ürün imzası">
+        <span>Bu bir </span>
+        <a
+          className="fb-whosb-credit__brand"
+          href="https://whosb-studio.vercel.app/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          whosb studio
+        </a>
+        <span> ürünüdür.</span>
+      </div>
+
+</footer>
   );
 }
