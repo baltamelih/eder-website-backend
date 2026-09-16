@@ -171,3 +171,178 @@
     justify-items: start;
   }
 }
+
+
+/* ==========================================================================
+   EDER 03J.20R1 — CLICKABLE REAL VALUATION HISTORY
+   Keeps the compact pre-03J18 Cars layout and only adds expandable history.
+   ========================================================================== */
+
+.eder-cars__history-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.eder-cars__history-head > small {
+  color: rgba(17, 17, 17, 0.42);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.eder-cars__item-wrap {
+  overflow: hidden;
+  border: 1px solid rgba(17, 17, 17, 0.07);
+  border-radius: 16px;
+  background: rgba(17, 17, 17, 0.018);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.eder-cars__item-wrap:hover,
+.eder-cars__item-wrap.is-open {
+  border-color: rgba(242, 99, 34, 0.23);
+  background: rgba(242, 99, 34, 0.022);
+  box-shadow: 0 12px 34px rgba(17, 17, 17, 0.045);
+}
+
+.eder-cars__item {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.eder-cars__item:focus-visible {
+  outline: 2px solid rgba(242, 99, 34, 0.5);
+  outline-offset: -2px;
+}
+
+.eder-cars__history-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 3px;
+  color: #d9541d;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.eder-cars__history-link b {
+  min-width: 14px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.eder-cars__valuation-history {
+  padding: 0 14px 14px;
+}
+
+.eder-cars__valuation-title {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 17px 2px 13px;
+  border-top: 1px solid rgba(17, 17, 17, 0.07);
+}
+
+.eder-cars__valuation-title > div {
+  display: grid;
+  gap: 3px;
+}
+
+.eder-cars__valuation-title span {
+  color: #f26322;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+.eder-cars__valuation-title strong {
+  font-size: 14px;
+}
+
+.eder-cars__valuation-title > small {
+  color: rgba(17, 17, 17, 0.42);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.eder-cars__valuation-list {
+  display: grid;
+  gap: 8px;
+}
+
+.eder-cars__valuation-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 1fr) minmax(120px, 0.55fr) minmax(180px, 0.75fr);
+  gap: 18px;
+  align-items: center;
+  padding: 13px 14px;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.eder-cars__valuation-row > div {
+  display: grid;
+  gap: 3px;
+}
+
+.eder-cars__valuation-row span,
+.eder-cars__valuation-row small {
+  color: rgba(17, 17, 17, 0.45);
+  font-size: 10px;
+}
+
+.eder-cars__valuation-row > div:first-child > span {
+  color: #111;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.eder-cars__valuation-row strong {
+  font-size: 12px;
+}
+
+.eder-cars__valuation-price {
+  justify-items: end;
+  text-align: right;
+}
+
+.eder-cars__valuation-price strong {
+  font-size: 16px;
+  letter-spacing: -0.025em;
+}
+
+.eder-cars__valuation-empty {
+  padding: 16px;
+  border: 1px dashed rgba(17, 17, 17, 0.12);
+  border-radius: 13px;
+  color: rgba(17, 17, 17, 0.48);
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .eder-cars__valuation-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .eder-cars__valuation-row > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .eder-cars__valuation-price {
+    justify-items: start;
+    text-align: left;
+  }
+}

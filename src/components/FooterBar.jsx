@@ -10,25 +10,25 @@ export default function FooterBar() {
     <footer className="fb">
       <div className="fb-top">
         <div className="fb-brand">
-          <span className="fb-kicker">EDER / ARA├ç DE─ŞER ─░ST─░HBARATI</span>
+          <span className="fb-kicker">EDER / ARAÇ DEĞER İSTİHBARATI</span>
           <strong>EDER</strong>
           <p>
-            Ara├ğ kimli─şi, kilometre ve kondisyon bilgisini tek ak─▒┼şta birle┼ştir;
-            tahmini piyasa de─şer aral─▒─ş─▒n─▒ daha anla┼ş─▒l─▒r ┼şekilde g├Âr.
+            Araç kimliği, kilometre ve kondisyon bilgisini tek akışta birleştir;
+            tahmini piyasa değer aralığını daha anlaşılır şekilde gör.
           </p>
         </div>
 
         <div className="fb-nav">
           <div>
-            <span>├£R├£N</span>
-            <Link to="/arac-degerleme">Ara├ğ De─şerleme</Link>
+            <span>ÜRÜN</span>
+            <Link to="/arac-degerleme">Araç Değerleme</Link>
             <Link to="/blog">Rehber</Link>
             <Link to="/sss">S.S.S.</Link>
           </div>
 
           <div>
             <span>DESTEK</span>
-            <Link to="/iletisim">─░leti┼şim</Link>
+            <Link to="/iletisim">İletişim</Link>
             <a href="mailto:destek@ederapp.com">
               destek@ederapp.com
               <Mail size={14} aria-hidden />
@@ -38,7 +38,7 @@ export default function FooterBar() {
           <div>
             <span>YASAL</span>
             <Link to="/gizlilik-politikasi">Gizlilik</Link>
-            <Link to="/kullanim-kosullari">Kullan─▒m ┼Şartlar─▒</Link>
+            <Link to="/kullanim-kosullari">Kullanım Şartları</Link>
           </div>
         </div>
       </div>
@@ -46,17 +46,16 @@ export default function FooterBar() {
       <div className="fb-divider" />
 
       <div className="fb-bottom">
-        <span>┬® {year} EDER</span>
+        <span>© {year} EDER</span>
         <p>
-          De─şerleme sonu├ğlar─▒ tahminidir; arac─▒n kondisyonu ve piyasa ko┼şullar─▒
-          nihai sat─▒┼ş fiyat─▒n─▒ de─şi┼ştirebilir.
+          Değerleme sonuçları tahminidir; aracın kondisyonu ve piyasa koşulları
+          nihai satış fiyatını değiştirebilir.
         </p>
         <Link to="/arac-degerleme">
-          Yeni de─şerleme
+          Yeni değerleme
           <ArrowUpRight size={15} aria-hidden />
         </Link>
       </div>
-              <span className="footer-whosb-product">Bu bir whosb studio ürünüdür.</span>
-</footer>
+    </footer>
   );
 }

@@ -204,7 +204,7 @@
 
 
 /* ==========================================================================
-   EDER 03C.3 ÔÇö PREMIUM FOOTER REBALANCE
+   EDER 03C.3 — PREMIUM FOOTER REBALANCE
    ========================================================================== */
 
 .fb {
@@ -455,7 +455,7 @@
 
 
 /* ==========================================================================
-   EDER 03C.4 ÔÇö FOOTER MICRO-POLISH
+   EDER 03C.4 — FOOTER MICRO-POLISH
    ========================================================================== */
 
 .fb-nav a:focus-visible,
@@ -483,7 +483,7 @@
 
 /* WhosB Studio - subtle product signature; CSS-only to preserve old JSX exactly. */
 .fb::after {
-  content: "bu bir whosb studio ├╝r├╝n├╝d├╝r.";
+  content: "Bu bir whosb studio ürünüdür.";
   display: block;
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
@@ -494,7 +494,7 @@
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0.12em;
-  text-transform: lowercase;
+  text-transform: none;
   opacity: 0.72;
 }
 
@@ -544,11 +544,4 @@
     font-size: clamp(150px, 45vw, 280px);
     color: rgba(255, 255, 255, 0.022);
   }
-}
-
-/* EDER 03J.19: requested WHOSB text only */
-.footer-whosb-product {
-  font: inherit;
-  color: inherit;
-  opacity: 0.78;
 }

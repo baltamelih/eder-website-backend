@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import "./valuation-progress-car-3d.css";
 
-// EDER_03F4_CINEMATIC_HERO_3D_PROGRESS
+// EDER_03J20R1_REALISTIC_PRIMARY_3D_CAR
 const MODEL_VIEWER_SRC =
   "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js";
-const LOCAL_MODEL = "/media/eder/3d/eder-premium-sedan.glb";
-const REMOTE_MODEL =
-  "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ToyCar/glTF-Binary/ToyCar.glb";
+const REALISTIC_MODEL = "/models/eder-realistic-car.glb";
 
 function ensureModelViewer() {
   if (customElements.get("model-viewer")) return Promise.resolve();
@@ -37,11 +35,11 @@ function ensureModelViewer() {
 export default function ValuationProgressCar3D({ progress = 0 }) {
   const clamped = Math.max(0, Math.min(1, Number(progress) || 0));
   const [ready, setReady] = useState(Boolean(customElements.get("model-viewer")));
-  const [modelSrc, setModelSrc] = useState(LOCAL_MODEL);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
+
     ensureModelViewer()
       .then(() => {
         if (active) setReady(true);
@@ -71,7 +69,7 @@ export default function ValuationProgressCar3D({ progress = 0 }) {
       <div className="valuation-car3d__model">
         {ready && !failed ? (
           <model-viewer
-            src={modelSrc}
+            src={REALISTIC_MODEL}
             alt=""
             loading="eager"
             reveal="auto"
@@ -83,13 +81,7 @@ export default function ValuationProgressCar3D({ progress = 0 }) {
             camera-orbit={orbit}
             field-of-view="31deg"
             environment-image="neutral"
-            onError={() => {
-              if (modelSrc === LOCAL_MODEL) {
-                setModelSrc(REMOTE_MODEL);
-              } else {
-                setFailed(true);
-              }
-            }}
+            onError={() => setFailed(true)}
           />
         ) : (
           <div className="valuation-car3d__fallback">
