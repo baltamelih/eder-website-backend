@@ -1,0 +1,43 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="bg" x1="600" y1="168" x2="600" y2="598" gradientUnits="userSpaceOnUse">
+<stop stop-color="#8A909A"/>
+<stop offset="0.42" stop-color="#6E747E"/>
+<stop offset="1" stop-color="#4C525B"/>
+</linearGradient>
+<linearGradient id="glass" x1="600" y1="228" x2="600" y2="442" gradientUnits="userSpaceOnUse">
+<stop stop-color="#C4CFD9" stop-opacity="0.9"/>
+<stop offset="1" stop-color="#4D5A68" stop-opacity="0.78"/>
+</linearGradient>
+<linearGradient id="shadow" x1="600" y1="550" x2="600" y2="646" gradientUnits="userSpaceOnUse">
+<stop stop-color="#111826" stop-opacity="0.6"/>
+<stop offset="1" stop-color="#111826" stop-opacity="0"/>
+</linearGradient>
+</defs>
+<ellipse cx="600" cy="628" rx="250" ry="40" fill="url(#shadow)"/>
+<ellipse cx="432" cy="590" rx="78" ry="28" fill="#1A2230"/>
+<ellipse cx="768" cy="590" rx="78" ry="28" fill="#1A2230"/>
+<g filter="url(#none)">
+<path d="M362 496C362 414 414 312 476 264C514 235 556 220 600 220C644 220 686 235 724 264C786 312 838 414 838 496V540H362V496Z" fill="url(#bg)"/>
+<path d="M444 470C444 402 485 318 534 284C554 270 576 262 600 262C624 262 646 270 666 284C715 318 756 402 756 470V492H444V470Z" fill="url(#glass)"/>
+<path d="M472 544V304" stroke="#232B36" stroke-width="10"/>
+<path d="M728 544V304" stroke="#232B36" stroke-width="10"/>
+<path d="M566 266L546 224" stroke="#555C66" stroke-width="14" stroke-linecap="round"/>
+<path d="M634 266L654 224" stroke="#555C66" stroke-width="14" stroke-linecap="round"/>
+<path d="M392 470C380 460 364 458 350 470L328 490V554H392V470Z" fill="#8E959E"/>
+<path d="M808 470C820 460 836 458 850 470L872 490V554H808V470Z" fill="#8E959E"/>
+<rect x="382" y="522" width="94" height="54" rx="12" fill="#DF5D45"/>
+<rect x="724" y="522" width="94" height="54" rx="12" fill="#DF5D45"/>
+<rect x="500" y="538" width="200" height="22" rx="11" fill="#A0A7B0"/>
+<path d="M360 540H840V566C840 586 824 602 804 602H396C376 602 360 586 360 566V540Z" fill="#59606B"/>
+<path d="M458 334C458 302 484 276 516 276H684C716 276 742 302 742 334V438H458V334Z" fill="rgba(255,255,255,0.06)"/>
+<path d="M408 292L374 260" stroke="#5A616A" stroke-width="10" stroke-linecap="round"/>
+<path d="M792 292L826 260" stroke="#5A616A" stroke-width="10" stroke-linecap="round"/>
+<g>
+<rect x="524" y="446" width="152" height="38" rx="19" fill="#0A0F17"/>
+<rect x="548" y="454" width="18" height="18" rx="9" fill="#E7EEF8" fill-opacity="0.9"/>
+<rect x="634" y="454" width="18" height="18" rx="9" fill="#E7EEF8" fill-opacity="0.9"/>
+<path d="M570 463H626" stroke="#D6DDE7" stroke-width="5" stroke-linecap="round"/>
+</g>
+</g>
+</svg>
