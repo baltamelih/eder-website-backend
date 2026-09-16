@@ -230,3 +230,50 @@
   .valuation-real-audi__record { left: 14px; right: 14px; bottom: 14px; width: auto; }
   .valuation-real-audi__legend { padding: 0 18px 20px; }
 }
+
+/* EDER 03J.23 - EXACT COMPACT RAIL PLACEMENT */
+.valuation-progress__rail--3d {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.valuation-progress__rail--3d .valuation-real-audi__compact {
+  position: absolute;
+  z-index: 5;
+  left: var(--eder-audi-progress, 7%);
+  top: 50%;
+  width: 110px;
+  height: 62px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.valuation-progress__rail--3d .valuation-real-audi__viewer--compact {
+  display: block;
+  width: 110px;
+  height: 62px;
+  min-height: 62px;
+  background: transparent;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.36));
+}
+
+.valuation-progress__rail--3d .valuation-real-audi__compact-placeholder {
+  position: absolute;
+  inset: 20px 14px 8px;
+  opacity: .58;
+}
+
+@media (max-width: 700px) {
+  .valuation-progress__rail--3d .valuation-real-audi__compact {
+    width: 88px;
+    height: 52px;
+  }
+
+  .valuation-progress__rail--3d .valuation-real-audi__viewer--compact {
+    width: 88px;
+    height: 52px;
+    min-height: 52px;
+  }
+}

@@ -284,17 +284,23 @@ function ConditionView(props) {
   );
 }
 
-function CompactView() {
+function CompactView({ progress = 0 }) {
   const [loaded, setLoaded] = useState(false);
+  const clamped = Math.max(0, Math.min(1, Number(progress) || 0));
+  const railPosition = 7 + clamped * 86;
 
   return (
-    <div className="valuation-real-audi__compact" aria-hidden>
+    <div
+      className="valuation-real-audi__compact"
+      aria-hidden
+      style={{ "--eder-audi-progress": `${railPosition}%` }}
+    >
       {!loaded && <span className="valuation-real-audi__compact-placeholder" />}
       <AudiViewer
         className="valuation-real-audi__viewer--compact"
         interactive={false}
-        orbit="38deg 68deg 110%"
-        fieldOfView="29deg"
+        orbit="34deg 70deg 106%"
+        fieldOfView="32deg"
         onLoad={() => setLoaded(true)}
       />
     </div>
@@ -322,11 +328,14 @@ export default function ValuationProgressCar3D(props) {
     };
   }, []);
 
-  if (!viewerReady) return <LoadingCar />;
-
   const mode = deriveMode(props);
+
+  // Keep the compact rail node mounted immediately. model-viewer upgrades
+  // the custom element in-place once its module is registered.
+  if (mode === "compact") return <CompactView progress={props.progress} />;
+  if (!viewerReady) return <LoadingCar />;
 
   if (mode === "identity") return <IdentityView {...props} />;
   if (mode === "condition") return <ConditionView {...props} />;
-  return <CompactView {...props} />;
+  return <CompactView progress={props.progress} />;
 }

@@ -5,7 +5,7 @@ import "./trust-vehicle-visual.css";
 // EDER_03F6A_V2_7_PHOTOREAL_PREMIUM_VEHICLE
 const MODEL_VIEWER_SRC =
   "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js";
-const MODEL_SRC = "/media/eder/3d/eder-premium-sedan.glb";
+const MODEL_SRC = "/models/eder-audi-r8.glb";
 
 function ensureModelViewer() {
   if (customElements.get("model-viewer")) return Promise.resolve();
@@ -36,8 +36,8 @@ const HOTSPOTS = [
     label: "Kaput",
     state: "Boyalı",
     tone: "painted",
-    position: "-1.58m 0.90m 0.87m",
-    normal: "0m 0.58m 0.82m",
+    position: "0m 0.78m 1.55m",
+    normal: "0m 1m 0m",
     reason: "Ön bölümde sürtme sonrası komple boya işlemi.",
     record: "Çarpışma kaydı · Tramer 18.000 TL",
   },
@@ -46,8 +46,8 @@ const HOTSPOTS = [
     label: "Tavan",
     state: "Orijinal",
     tone: "clean",
-    position: "0.18m 1.42m 0.04m",
-    normal: "0m 0.98m 0m",
+    position: "0m 1.32m 0m",
+    normal: "0m 1m 0m",
     reason: "Boya veya parça değişim kaydı görünmüyor.",
     record: "Orijinal yüzey",
   },
@@ -56,8 +56,8 @@ const HOTSPOTS = [
     label: "Ön kapı",
     state: "Lokal boya",
     tone: "local",
-    position: "-0.12m 0.83m 1.00m",
-    normal: "0.08m 0.12m 1m",
+    position: "-0.92m 0.78m 0.25m",
+    normal: "-1m 0m 0m",
     reason: "Dar alandaki çizik ve sürtme sonrası lokal boya.",
     record: "Kozmetik işlem · parça değişimi yok",
   },
@@ -66,8 +66,8 @@ const HOTSPOTS = [
     label: "Arka çamurluk",
     state: "Değişen",
     tone: "changed",
-    position: "1.52m 0.82m 0.95m",
-    normal: "0.22m 0.16m 1m",
+    position: "0.92m 0.72m -1.42m",
+    normal: "1m 0m 0m",
     reason: "Arka bölüm çarpışması sonrası parça değişimi.",
     record: "Parça değişimi · hasar kaydı mevcut",
   },
@@ -106,7 +106,7 @@ export default function TrustVehicleVisual({ mode = "identity" }) {
           <model-viewer
             ref={viewerRef}
             src={MODEL_SRC}
-            alt="Markasız premium sedan 3D araç"
+            alt="Gerçekçi Audi R8 3D araç modeli"
             loading="lazy"
             reveal="auto"
             interaction-prompt="none"
@@ -118,13 +118,12 @@ export default function TrustVehicleVisual({ mode = "identity" }) {
             shadow-intensity="1.25"
             shadow-softness="0.9"
             exposure="1.08"
-            camera-target="0m 0.82m 0m"
-            camera-orbit={conditionMode ? "-28deg 69deg 118%" : "92deg 72deg 116%"}
-            field-of-view="26deg"
-            min-field-of-view="22deg"
-            max-field-of-view="30deg"
-            min-camera-orbit="auto auto 108%"
-            max-camera-orbit="auto auto 138%"
+            camera-orbit={conditionMode ? "-34deg 70deg 108%" : "34deg 70deg 108%"}
+            field-of-view="30deg"
+            min-field-of-view="24deg"
+            max-field-of-view="34deg"
+            min-camera-orbit="auto auto 92%"
+            max-camera-orbit="auto auto 132%"
             environment-image="neutral"
             onError={() => setFailed(true)}
           >
