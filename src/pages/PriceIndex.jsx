@@ -23,6 +23,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
+import { trackEvent } from "../services/analytics";
 import priceIndexApi from "../services/priceIndexApi";
 import "./price-index.css";
 
@@ -446,7 +447,18 @@ function MoverRow({ item, type }) {
     : `/arac-fiyat-gecmisi/${item.brand_slug}`;
 
   return (
-    <Link to={target} className="pi-mover-row">
+    <Link
+      to={target}
+      className="pi-mover-row"
+      onClick={() =>
+        trackEvent("price_index_mover_click", {
+          mover_type: type,
+          scope_key: item.scope_key,
+          direction: trend,
+          destination: target,
+        })
+      }
+    >
       <div>
         <strong>{item.scope_label}</strong>
         <span>Endeks {formatIndex(item.index_value)}</span>
@@ -504,6 +516,7 @@ export default function PriceIndex() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const indexViewAnalyticsRef = useRef("");
 
   useEffect(() => {
     let alive = true;
@@ -538,6 +551,36 @@ export default function PriceIndex() {
   const national = data?.national || null;
   const series = data?.series || [];
 
+  useEffect(() => {
+    if (
+      loading ||
+      !national?.index_value
+    ) {
+      return;
+    }
+
+    const signature = [
+      range,
+      national.week_start,
+      national.index_value,
+    ].join("|");
+
+    if (indexViewAnalyticsRef.current === signature) {
+      return;
+    }
+
+    indexViewAnalyticsRef.current = signature;
+
+    trackEvent("price_index_view", {
+      range,
+      index_value: Number(national.index_value),
+      week_start: national.week_start,
+      matched_page_count: Number(
+        national.matched_page_count || 0,
+      ),
+    });
+  }, [range, national, loading]);
+
   const baseChange = useMemo(() => {
     const current = Number(national?.index_value);
     if (!Number.isFinite(current)) return null;
@@ -565,12 +608,28 @@ export default function PriceIndex() {
           </p>
 
           <div className="pi-hero__actions">
-            <a href="#endeks-grafigi" className="pi-primary-action">
+            <a
+              href="#endeks-grafigi"
+              className="pi-primary-action"
+              onClick={() =>
+                trackEvent("price_index_chart_cta_click", {
+                  destination: "#endeks-grafigi",
+                })
+              }
+            >
               Endeksi incele
               <ArrowRight size={17} aria-hidden />
             </a>
 
-            <Link to="/arac-fiyat-gecmisi" className="pi-secondary-action">
+            <Link
+              to="/arac-fiyat-gecmisi"
+              className="pi-secondary-action"
+              onClick={() =>
+                trackEvent("price_index_to_price_history_click", {
+                  destination: "/arac-fiyat-gecmisi",
+                })
+              }
+            >
               Araç fiyat geçmişine git
             </Link>
           </div>
@@ -716,7 +775,12 @@ export default function PriceIndex() {
                 key={option.key}
                 type="button"
                 className={range === option.key ? "is-active" : ""}
-                onClick={() => setRange(option.key)}
+                onClick={() => {
+                  trackEvent("price_index_range_change", {
+                    range: option.key,
+                  });
+                  setRange(option.key);
+                }}
                 title={option.label}
               >
                 {option.short}

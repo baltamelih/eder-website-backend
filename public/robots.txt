@@ -8,3 +8,5 @@ Disallow: /reset-password
 Disallow: /delete-account
 
 Sitemap: https://ederapp.com/sitemap.xml
+
+Sitemap: https://ederapp.com/sitemap-price-history.xml

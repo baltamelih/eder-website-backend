@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Layout } from "antd";
 import { Outlet, useLocation } from "react-router-dom";
+import AnalyticsRuntime from "../components/analytics/AnalyticsRuntime";
 import TopBar from "../components/TopBar";
 import FooterBar from "../components/FooterBar";
 import GlobalAdBar from "../components/GlobalAdBar";
@@ -165,8 +166,9 @@ function RouteMetadata() {
             description:
               "Marka, model, yıl ve paket bazında EDER araç fiyat geçmişi sayfası.",
             canonical: cleanPath,
-            // Programmatic SEO index eligibility is activated in 04I.
+            // 04I: exact eligible version pages override this to index,follow.
             index: false,
+            follow: true,
           }
         : isBlogPost
           ? {
@@ -195,7 +197,14 @@ function RouteMetadata() {
     canonical.setAttribute("href", absolute);
 
     setMeta("description", meta.description);
-    setMeta("robots", meta.index ? "index,follow" : "noindex,nofollow");
+    setMeta(
+      "robots",
+      meta.index
+        ? "index,follow"
+        : meta.follow
+          ? "noindex,follow"
+          : "noindex,nofollow",
+    );
     setMeta("og:title", meta.title, true);
     setMeta("og:description", meta.description, true);
     setMeta("og:url", absolute, true);
@@ -210,6 +219,7 @@ export default function PublicLayout() {
   return (
     <Layout className="public-layout">
       <RouteMetadata />
+      <AnalyticsRuntime />
       <TopBar />
       <Content className="public-content">
         <div className="container">

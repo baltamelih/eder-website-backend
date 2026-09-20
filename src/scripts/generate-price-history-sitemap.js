@@ -1,0 +1,121 @@
+import fs from "fs";
+import path from "path";
+
+const SITE_ORIGIN = "https://ederapp.com";
+const API_BASE = String(
+  process.env.EDER_API_BASE || "https://eder-backend.onrender.com",
+).replace(/\/+$/, "");
+
+const outputPath = path.resolve(
+  process.cwd(),
+  "public",
+  "sitemap-price-history.xml",
+);
+
+function escapeXml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
+
+function validDate(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+}
+
+async function main() {
+  const response = await fetch(
+    `${API_BASE}/api/price-history/seo-manifest`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `SEO manifest failed: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const manifest = await response.json();
+
+  if (
+    manifest?.ok !== true ||
+    manifest?.eligibility !== "chart_eligible_only" ||
+    !Array.isArray(manifest?.pages)
+  ) {
+    throw new Error("SEO manifest contract mismatch.");
+  }
+
+  if (manifest.pages.length !== Number(manifest.eligible_count)) {
+    throw new Error("SEO manifest eligible count mismatch.");
+  }
+
+  const staticUrls = [
+    {
+      path: "/arac-fiyat-gecmisi",
+      lastmod: manifest.latest_data_date,
+    },
+    {
+      path: "/fiyat-endeksi",
+      lastmod: manifest.latest_data_date,
+    },
+  ];
+
+  const programmaticUrls = manifest.pages.map((page) => {
+    if (!String(page.path || "").startsWith("/arac-fiyat-gecmisi/")) {
+      throw new Error(`Unexpected SEO path: ${page.path}`);
+    }
+
+    return {
+      path: page.path,
+      lastmod: page.last_data_date,
+    };
+  });
+
+  const urls = [...staticUrls, ...programmaticUrls];
+
+  const unique = new Set(urls.map((item) => item.path));
+  if (unique.size !== urls.length) {
+    throw new Error("Duplicate sitemap URL detected.");
+  }
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map((item) => {
+    const lastmod = validDate(item.lastmod)
+      ? `\n    <lastmod>${escapeXml(item.lastmod)}</lastmod>`
+      : "";
+
+    return `  <url>
+    <loc>${escapeXml(`${SITE_ORIGIN}${item.path}`)}</loc>${lastmod}
+  </url>`;
+  })
+  .join("\n")}
+</urlset>
+`;
+
+  fs.writeFileSync(outputPath, xml, "utf8");
+
+  console.log(
+    JSON.stringify({
+      ok: true,
+      output: outputPath,
+      eligible_programmatic_pages: manifest.pages.length,
+      static_market_pages: staticUrls.length,
+      total_urls: urls.length,
+      low_data_excluded: Number(manifest.low_data_count || 0),
+      eligibility: manifest.eligibility,
+    }),
+  );
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

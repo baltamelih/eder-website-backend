@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../services/AuthContext";
+import { trackValuationCta } from "../services/analytics";
 import "./topbar.css";
 import ederLogo from "../assets/eder-logo.png";
 
@@ -145,7 +146,11 @@ export default function TopBar() {
                 <Link to="/login" className="tb-hide-mobile">
                   <Button className="tb-login">Giriş</Button>
                 </Link>
-                <Link to="/valuation" className="tb-hide-mobile">
+                <Link
+                  to="/valuation"
+                  className="tb-hide-mobile"
+                  onClick={() => trackValuationCta("topbar_desktop")}
+                >
                   <Button
                     type="primary"
                     className="tb-new-valuation"
@@ -215,7 +220,13 @@ export default function TopBar() {
 
               {!isAuthed ? (
                 <>
-                  <Link to="/valuation" onClick={() => setOpen(false)}>
+                  <Link
+                    to="/valuation"
+                    onClick={() => {
+                      trackValuationCta("topbar_mobile");
+                      setOpen(false);
+                    }}
+                  >
                     <Button block type="primary" size="large">
                       Aracını Değerle
                     </Button>

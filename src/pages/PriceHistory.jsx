@@ -20,6 +20,8 @@ import {
 
 import AdSenseRuntime from "../components/ads/AdSenseRuntime";
 import AdSlot from "../components/ads/AdSlot";
+import PriceHistorySeo from "../components/seo/PriceHistorySeo";
+import { trackEvent } from "../services/analytics";
 import priceHistoryApi from "../services/priceHistoryApi";
 import "./price-history.css";
 
@@ -587,6 +589,7 @@ export default function PriceHistory() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [error, setError] = useState("");
   const pendingScrollRef = useRef(null);
+  const detailAnalyticsRef = useRef("");
 
   const parsedYear = year ? Number(year) : undefined;
 
@@ -774,6 +777,56 @@ export default function PriceHistory() {
     };
   }, [brand, model, parsedYear, version, rangeKey]);
 
+  useEffect(() => {
+    if (
+      detailLoading ||
+      !brand ||
+      !model ||
+      !parsedYear ||
+      !version ||
+      !detail?.summary
+    ) {
+      return;
+    }
+
+    const signature = [
+      brand,
+      model,
+      parsedYear,
+      version,
+      rangeKey,
+      detail?.summary?.chart_eligible ? "eligible" : "low",
+    ].join("|");
+
+    if (detailAnalyticsRef.current === signature) {
+      return;
+    }
+
+    detailAnalyticsRef.current = signature;
+
+    trackEvent("price_history_detail_view", {
+      brand_slug: brand,
+      model_slug: model,
+      vehicle_year: parsedYear,
+      version_slug: version,
+      range: rangeKey,
+      chart_eligible: Boolean(
+        detail?.summary?.chart_eligible,
+      ),
+      listing_count: Number(
+        detail?.summary?.total_listing_count || 0,
+      ),
+    });
+  }, [
+    brand,
+    model,
+    parsedYear,
+    version,
+    rangeKey,
+    detail,
+    detailLoading,
+  ]);
+
   useLayoutEffect(() => {
     if (pendingScrollRef.current === null) return undefined;
 
@@ -892,18 +945,36 @@ export default function PriceHistory() {
   }
 
   function onBrandChange(value) {
+    trackEvent("price_history_select_brand", {
+      brand_slug: value,
+    });
     navigateWithoutJump(`/arac-fiyat-gecmisi/${value}`);
   }
 
   function onModelChange(value) {
+    trackEvent("price_history_select_model", {
+      brand_slug: brand,
+      model_slug: value,
+    });
     navigateWithoutJump(`/arac-fiyat-gecmisi/${brand}/${value}`);
   }
 
   function onYearChange(value) {
+    trackEvent("price_history_select_year", {
+      brand_slug: brand,
+      model_slug: model,
+      vehicle_year: value,
+    });
     navigateWithoutJump(`/arac-fiyat-gecmisi/${brand}/${model}/${value}`);
   }
 
   function onVersionChange(value) {
+    trackEvent("price_history_select_version", {
+      brand_slug: brand,
+      model_slug: model,
+      vehicle_year: parsedYear,
+      version_slug: value,
+    });
     navigateWithoutJump(
       `/arac-fiyat-gecmisi/${brand}/${model}/${parsedYear}/${value}`,
     );
@@ -925,6 +996,18 @@ export default function PriceHistory() {
 
   return (
     <>
+      <PriceHistorySeo
+        brand={brand}
+        model={model}
+        year={year}
+        version={version}
+        brandLabel={selectedBrand?.brand_name}
+        modelLabel={selectedModel?.model_name}
+        versionLabel={selectedVersion?.version_label}
+        detail={detail}
+        detailLoading={detailLoading}
+      />
+
       <AdSenseRuntime />
 
       <AdSlot
@@ -1386,7 +1469,16 @@ export default function PriceHistory() {
                               ? "ph-range-tab ph-range-tab--active"
                               : "ph-range-tab"
                           }
-                          onClick={() => setRangeKey(item.key)}
+                          onClick={() => {
+                            trackEvent("price_history_range_change", {
+                              brand_slug: brand,
+                              model_slug: model,
+                              vehicle_year: parsedYear,
+                              version_slug: version,
+                              range: item.key,
+                            });
+                            setRangeKey(item.key);
+                          }}
                         >
                           {item.short}
                         </button>
