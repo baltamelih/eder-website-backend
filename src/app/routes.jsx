@@ -25,6 +25,7 @@ const Faq = lazy(() => import("../pages/Faq"));
 const BlogIndex = lazy(() => import("../pages/BlogIndex"));
 const BlogPost = lazy(() => import("../pages/BlogPost"));
 const PriceHistory = lazy(() => import("../pages/PriceHistory"));
+const PriceIndex = lazy(() => import("../pages/PriceIndex"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("../pages/ResetPassword"));
 
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
       {
         path: "arac-fiyat-gecmisi/:brand/:model/:year/:version",
         element: withSuspense(<PriceHistory />),
+      },
+      {
+        path: "fiyat-endeksi",
+        element: withSuspense(<PriceIndex />),
       },
       { path: "blog", element: withSuspense(<BlogIndex />) },
       { path: "blog/:slug", element: withSuspense(<BlogPost />) },

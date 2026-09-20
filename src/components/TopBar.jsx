@@ -25,6 +25,11 @@ const publicNav = [
     to: "/arac-fiyat-gecmisi",
     label: "Fiyat Geçmişi",
   },
+  {
+    key: "/fiyat-endeksi",
+    to: "/fiyat-endeksi",
+    label: "Fiyat Endeksi",
+  },
   { key: "/blog", to: "/blog", label: "Rehber" },
   { key: "/faq", to: "/faq", label: "S.S.S" },
 ];

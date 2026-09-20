@@ -68,6 +68,10 @@
         "destination": "/index.html"
       },
       {
+        "source": "/fiyat-endeksi",
+        "destination": "/index.html"
+      },
+      {
         "source": "/blog{,/**}",
         "destination": "/index.html"
       },

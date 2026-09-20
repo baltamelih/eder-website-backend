@@ -32,6 +32,13 @@ const META = {
     canonical: "/arac-fiyat-gecmisi",
     index: true,
   },
+  "/fiyat-endeksi": {
+    title: "EDER Fiyat Endeksi | İkinci El Araç Piyasa Endeksi",
+    description:
+      "Türkiye ikinci el araç ilan fiyatlarındaki yönü EDER Fiyat Endeksi ile takip edin. Marka ve model bazında piyasa hareketlerini inceleyin.",
+    canonical: "/fiyat-endeksi",
+    index: true,
+  },
   "/blog": {
     title: "Araç Değerleme Rehberi | EDER",
     description:
