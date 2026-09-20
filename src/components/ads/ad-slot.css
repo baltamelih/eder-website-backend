@@ -1,0 +1,204 @@
+.eder-ad-slot {
+  --ad-border: rgba(17, 18, 20, 0.11);
+  --ad-bg: rgba(17, 18, 20, 0.028);
+  --ad-muted: rgba(17, 18, 20, 0.48);
+  position: relative;
+  width: 100%;
+  margin: 18px auto;
+}
+
+.eder-ad-slot__surface {
+  position: relative;
+  width: 100%;
+  min-height: 90px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--ad-border);
+  border-radius: 16px;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0,
+      transparent 9px,
+      rgba(17, 18, 20, 0.018) 9px,
+      rgba(17, 18, 20, 0.018) 10px
+    ),
+    var(--ad-bg);
+}
+
+.eder-ad-slot__label {
+  position: absolute;
+  top: 7px;
+  left: 9px;
+  color: var(--ad-muted);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.eder-ad-slot__preview-copy {
+  display: grid;
+  gap: 3px;
+  place-items: center;
+  padding: 18px;
+  color: var(--ad-muted);
+  text-align: center;
+}
+
+.eder-ad-slot__preview-copy strong {
+  color: rgba(17, 18, 20, 0.62);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.eder-ad-slot__preview-copy span {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.eder-ad-slot__mount {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+.eder-ad-slot--leaderboard {
+  max-width: 970px;
+}
+
+.eder-ad-slot--leaderboard .eder-ad-slot__surface {
+  min-height: 90px;
+}
+
+.eder-ad-slot--in-content {
+  max-width: 970px;
+}
+
+.eder-ad-slot--in-content .eder-ad-slot__surface {
+  min-height: 180px;
+}
+
+.eder-ad-slot--rail {
+  position: fixed;
+  top: 118px;
+  z-index: 6;
+  width: 160px;
+  height: 600px;
+  margin: 0;
+}
+
+.eder-ad-slot--rail .eder-ad-slot__surface {
+  height: 600px;
+  min-height: 600px;
+  border-radius: 18px;
+}
+
+.eder-ad-slot--left {
+  left: max(10px, calc(50vw - 820px));
+}
+
+.eder-ad-slot--right {
+  right: max(10px, calc(50vw - 820px));
+}
+
+.eder-ad-slot--mobile-sticky {
+  display: none;
+}
+
+@media (max-width: 1599px) {
+  .eder-ad-slot--rail {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .eder-ad-slot {
+    margin: 14px auto;
+  }
+
+  .eder-ad-slot--leaderboard {
+    max-width: 360px;
+  }
+
+  .eder-ad-slot--leaderboard .eder-ad-slot__surface {
+    min-height: 100px;
+  }
+
+  .eder-ad-slot--in-content {
+    max-width: 360px;
+  }
+
+  .eder-ad-slot--in-content .eder-ad-slot__surface {
+    min-height: 160px;
+  }
+
+  .eder-ad-slot--mobile-sticky {
+    position: fixed;
+    left: 50%;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    z-index: 80;
+    display: block;
+    width: min(320px, calc(100vw - 24px));
+    margin: 0;
+    transform: translateX(-50%);
+  }
+
+  .eder-ad-slot--mobile-sticky .eder-ad-slot__surface {
+    min-height: 50px;
+    border-radius: 12px;
+    background: rgba(250, 249, 246, 0.96);
+    box-shadow: 0 10px 34px rgba(17, 18, 20, 0.15);
+    backdrop-filter: blur(12px);
+  }
+
+  .eder-ad-slot--mobile-sticky .eder-ad-slot__preview-copy {
+    grid-auto-flow: column;
+    gap: 8px;
+    padding: 10px 42px 10px 12px;
+  }
+
+  .eder-ad-slot--mobile-sticky .eder-ad-slot__label {
+    top: 50%;
+    right: 10px;
+    left: auto;
+    transform: translateY(-50%);
+  }
+}
+
+
+/* 04G.1 AdSense-ready UX polish */
+.eder-ad-slot__adsense {
+  width: 100%;
+  min-height: inherit;
+}
+
+.eder-ad-slot--preview .eder-ad-slot__surface {
+  border-style: dashed;
+}
+
+@media (max-width: 760px) {
+  .eder-ad-slot--mobile-sticky {
+    animation: eder-ad-sticky-in 180ms ease-out both;
+  }
+
+  .eder-ad-slot--mobile-sticky .eder-ad-slot__preview-copy strong {
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@keyframes eder-ad-sticky-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

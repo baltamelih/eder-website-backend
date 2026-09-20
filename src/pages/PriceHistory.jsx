@@ -18,6 +18,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 
+import AdSenseRuntime from "../components/ads/AdSenseRuntime";
+import AdSlot from "../components/ads/AdSlot";
 import priceHistoryApi from "../services/priceHistoryApi";
 import "./price-history.css";
 
@@ -922,7 +924,19 @@ export default function PriceHistory() {
     .join(" ");
 
   return (
-    <main className="ph-page">
+    <>
+      <AdSenseRuntime />
+
+      <AdSlot
+        slot="priceHistoryLeftRail"
+        side="left"
+      />
+      <AdSlot
+        slot="priceHistoryRightRail"
+        side="right"
+      />
+
+      <main className="ph-page">
       <Breadcrumbs
         brand={brand}
         model={model}
@@ -975,6 +989,8 @@ export default function PriceHistory() {
           </div>
         </aside>
       </section>
+
+      <AdSlot slot="priceHistoryTopLeaderboard" />
 
       <section className="ph-selector-shell" aria-label="Araç seçimi">
         <div className="ph-selector-heading">
@@ -1046,6 +1062,8 @@ export default function PriceHistory() {
           </label>
         </div>
       </section>
+
+      <AdSlot slot="priceHistoryAfterSelector" />
 
       <ErrorNotice message={error} />
 
@@ -1425,6 +1443,11 @@ export default function PriceHistory() {
           ) : null}
         </section>
       ) : null}
-    </main>
+
+      <AdSlot slot="priceHistoryInContent" />
+      </main>
+
+      <AdSlot slot="priceHistoryMobileSticky" />
+    </>
   );
 }
