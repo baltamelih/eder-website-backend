@@ -20,6 +20,11 @@ import ederLogo from "../assets/eder-logo.png";
 const publicNav = [
   { key: "/", to: "/", label: "Ana Sayfa" },
   { key: "/valuation", to: "/valuation", label: "Değerleme" },
+  {
+    key: "/arac-fiyat-gecmisi",
+    to: "/arac-fiyat-gecmisi",
+    label: "Fiyat Geçmişi",
+  },
   { key: "/blog", to: "/blog", label: "Rehber" },
   { key: "/faq", to: "/faq", label: "S.S.S" },
 ];

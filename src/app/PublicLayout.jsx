@@ -25,6 +25,13 @@ const META = {
     canonical: "/arac-degerleme",
     index: true,
   },
+  "/arac-fiyat-gecmisi": {
+    title: "Araç Fiyat Geçmişi | EDER",
+    description:
+      "Marka, model, yıl ve paket bazında ikinci el araç ilan fiyat geçmişini EDER ile inceleyin.",
+    canonical: "/arac-fiyat-gecmisi",
+    index: true,
+  },
   "/blog": {
     title: "Araç Değerleme Rehberi | EDER",
     description:
@@ -141,22 +148,33 @@ function RouteMetadata() {
       pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
 
     const isBlogPost = cleanPath.startsWith("/blog/");
+    const isPriceHistoryPage =
+      cleanPath.startsWith("/arac-fiyat-gecmisi/");
     const meta =
       META[cleanPath] ||
-      (isBlogPost
+      (isPriceHistoryPage
         ? {
-            title: "Araç Değerleme Rehberi | EDER",
+            title: "Araç Fiyat Geçmişi | EDER",
             description:
-              "EDER araç değerleme rehberindeki güncel içerik ve açıklamalar.",
+              "Marka, model, yıl ve paket bazında EDER araç fiyat geçmişi sayfası.",
             canonical: cleanPath,
-            index: true,
-          }
-        : {
-            title: "Sayfa Bulunamadı | EDER",
-            description: "Aradığınız sayfa bulunamadı.",
-            canonical: cleanPath,
+            // Programmatic SEO index eligibility is activated in 04I.
             index: false,
-          });
+          }
+        : isBlogPost
+          ? {
+              title: "Araç Değerleme Rehberi | EDER",
+              description:
+                "EDER araç değerleme rehberindeki güncel içerik ve açıklamalar.",
+              canonical: cleanPath,
+              index: true,
+            }
+          : {
+              title: "Sayfa Bulunamadı | EDER",
+              description: "Aradığınız sayfa bulunamadı.",
+              canonical: cleanPath,
+              index: false,
+            });
 
     const absolute = `https://ederapp.com${meta.canonical}`;
     document.title = meta.title;

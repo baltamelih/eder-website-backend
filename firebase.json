@@ -64,6 +64,10 @@
         "destination": "/index.html"
       },
       {
+        "source": "/arac-fiyat-gecmisi{,/**}",
+        "destination": "/index.html"
+      },
+      {
         "source": "/blog{,/**}",
         "destination": "/index.html"
       },

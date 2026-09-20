@@ -24,6 +24,7 @@ const Contact = lazy(() => import("../pages/Contact"));
 const Faq = lazy(() => import("../pages/Faq"));
 const BlogIndex = lazy(() => import("../pages/BlogIndex"));
 const BlogPost = lazy(() => import("../pages/BlogPost"));
+const PriceHistory = lazy(() => import("../pages/PriceHistory"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("../pages/ResetPassword"));
 
@@ -64,6 +65,26 @@ export const router = createBrowserRouter([
 
       // Canonical public routes
       { path: "arac-degerleme", element: withSuspense(<Valuation />) },
+      {
+        path: "arac-fiyat-gecmisi",
+        element: withSuspense(<PriceHistory />),
+      },
+      {
+        path: "arac-fiyat-gecmisi/:brand",
+        element: withSuspense(<PriceHistory />),
+      },
+      {
+        path: "arac-fiyat-gecmisi/:brand/:model",
+        element: withSuspense(<PriceHistory />),
+      },
+      {
+        path: "arac-fiyat-gecmisi/:brand/:model/:year",
+        element: withSuspense(<PriceHistory />),
+      },
+      {
+        path: "arac-fiyat-gecmisi/:brand/:model/:year/:version",
+        element: withSuspense(<PriceHistory />),
+      },
       { path: "blog", element: withSuspense(<BlogIndex />) },
       { path: "blog/:slug", element: withSuspense(<BlogPost />) },
       { path: "hakkimizda", element: withSuspense(<About />) },
