@@ -158,6 +158,15 @@ function RouteMetadata() {
     const isBlogPost = cleanPath.startsWith("/blog/");
     const isPriceHistoryPage =
       cleanPath.startsWith("/arac-fiyat-gecmisi/");
+    const priceHistorySegments = isPriceHistoryPage
+      ? cleanPath
+          .slice("/arac-fiyat-gecmisi/".length)
+          .split("/")
+          .filter(Boolean)
+      : [];
+    const isExactPriceHistoryDetail =
+      priceHistorySegments.length === 4;
+
     const meta =
       META[cleanPath] ||
       (isPriceHistoryPage
@@ -166,8 +175,9 @@ function RouteMetadata() {
             description:
               "Marka, model, yıl ve paket bazında EDER araç fiyat geçmişi sayfası.",
             canonical: cleanPath,
-            // 04I: exact eligible version pages override this to index,follow.
-            index: false,
+            // Exact detail pages stay indexable while async eligibility resolves.
+            // PriceHistorySeo downgrades resolved low-data/error pages to noindex.
+            index: isExactPriceHistoryDetail,
             follow: true,
           }
         : isBlogPost

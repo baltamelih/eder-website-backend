@@ -69,6 +69,7 @@ export default function PriceHistorySeo({
   versionLabel,
   detail,
   detailLoading,
+  detailResolved,
 }) {
   const state = useMemo(() => {
     const cleanPath = [
@@ -117,8 +118,13 @@ export default function PriceHistorySeo({
 
     const eligible = Boolean(
       exactDetail &&
-      !detailLoading &&
+      detailResolved &&
       detail?.summary?.chart_eligible,
+    );
+
+    const indexable = Boolean(
+      hubPage ||
+      (exactDetail && (!detailResolved || eligible)),
     );
 
     const listingCount = Number(
@@ -179,6 +185,8 @@ export default function PriceHistorySeo({
       description,
       eligible,
       hubPage,
+      exactDetail,
+      indexable,
       breadcrumbItems,
     };
   }, [
@@ -191,6 +199,7 @@ export default function PriceHistorySeo({
     versionLabel,
     detail,
     detailLoading,
+    detailResolved,
   ]);
 
   useEffect(() => {
@@ -200,9 +209,7 @@ export default function PriceHistorySeo({
     upsertMeta("description", state.description);
     upsertMeta(
       "robots",
-      state.hubPage || state.eligible
-        ? "index,follow"
-        : "noindex,follow",
+      state.indexable ? "index,follow" : "noindex,follow",
     );
 
     upsertMeta("og:title", state.title, true);

@@ -587,6 +587,7 @@ export default function PriceHistory() {
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [branchLoading, setBranchLoading] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [detailResolved, setDetailResolved] = useState(false);
   const [error, setError] = useState("");
   const pendingScrollRef = useRef(null);
   const detailAnalyticsRef = useRef("");
@@ -739,9 +740,11 @@ export default function PriceHistory() {
     async function loadDetail() {
       if (!brand || !model || !parsedYear || !version) {
         setDetail(null);
+        setDetailResolved(false);
         return;
       }
 
+      setDetailResolved(false);
       setDetailLoading(true);
       setError("");
 
@@ -767,7 +770,10 @@ export default function PriceHistory() {
             : err?.message || "Fiyat geçmişi yüklenemedi.",
         );
       } finally {
-        if (active) setDetailLoading(false);
+        if (active) {
+          setDetailLoading(false);
+          setDetailResolved(true);
+        }
       }
     }
 
@@ -1006,6 +1012,7 @@ export default function PriceHistory() {
         versionLabel={selectedVersion?.version_label}
         detail={detail}
         detailLoading={detailLoading}
+        detailResolved={detailResolved}
       />
 
       <AdSenseRuntime />
