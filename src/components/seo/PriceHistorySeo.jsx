@@ -111,6 +111,10 @@ export default function PriceHistorySeo({
       brand && model && year && version,
     );
 
+    const hubPage = Boolean(
+      !brand && !model && !year && !version,
+    );
+
     const eligible = Boolean(
       exactDetail &&
       !detailLoading &&
@@ -174,6 +178,7 @@ export default function PriceHistorySeo({
       title,
       description,
       eligible,
+      hubPage,
       breadcrumbItems,
     };
   }, [
@@ -195,7 +200,9 @@ export default function PriceHistorySeo({
     upsertMeta("description", state.description);
     upsertMeta(
       "robots",
-      state.eligible ? "index,follow" : "noindex,follow",
+      state.hubPage || state.eligible
+        ? "index,follow"
+        : "noindex,follow",
     );
 
     upsertMeta("og:title", state.title, true);
