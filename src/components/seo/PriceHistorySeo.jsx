@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { isPriceHistoryEligiblePath } from "../../generated/priceHistoryEligibility";
 
 const SITE_ORIGIN = "https://ederapp.com";
 const SCHEMA_ID = "eder-price-history-breadcrumb-schema";
@@ -69,7 +70,6 @@ export default function PriceHistorySeo({
   versionLabel,
   detail,
   detailLoading,
-  detailResolved,
 }) {
   const state = useMemo(() => {
     const cleanPath = [
@@ -118,13 +118,11 @@ export default function PriceHistorySeo({
 
     const eligible = Boolean(
       exactDetail &&
-      detailResolved &&
-      detail?.summary?.chart_eligible,
+      isPriceHistoryEligiblePath(cleanPath),
     );
 
     const indexable = Boolean(
-      hubPage ||
-      (exactDetail && (!detailResolved || eligible)),
+      hubPage || eligible,
     );
 
     const listingCount = Number(
@@ -199,7 +197,6 @@ export default function PriceHistorySeo({
     versionLabel,
     detail,
     detailLoading,
-    detailResolved,
   ]);
 
   useEffect(() => {
