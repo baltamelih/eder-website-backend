@@ -6,8 +6,15 @@ function envString(value) {
   return String(value || "").trim();
 }
 
+// Production safety lock.
+// Keep false until AdSense approval is explicitly confirmed and a dedicated
+// activation release intentionally changes this source-level gate.
+export const ADSENSE_APPROVAL_UNLOCKED = false;
+
 export const adRuntime = Object.freeze({
-  enabled: envBoolean(import.meta.env.VITE_ADS_ENABLED),
+  enabled:
+    ADSENSE_APPROVAL_UNLOCKED &&
+    envBoolean(import.meta.env.VITE_ADS_ENABLED),
   provider: envString(import.meta.env.VITE_AD_PROVIDER || "none").toLowerCase(),
   adsenseClient: envString(import.meta.env.VITE_ADSENSE_CLIENT),
 });
@@ -121,6 +128,7 @@ export function isValidAdSenseClient(value = adRuntime.adsenseClient) {
 
 export function isAdSenseRuntimeReady() {
   return (
+    ADSENSE_APPROVAL_UNLOCKED &&
     adRuntime.enabled &&
     adRuntime.provider === "adsense" &&
     isValidAdSenseClient()
