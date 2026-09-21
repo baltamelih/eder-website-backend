@@ -52,22 +52,7 @@
     </script>
 
     <meta name="google-adsense-account" content="ca-pub-7415512901536849" />
-    <script>
-      /* EDER_AUTH_ADSENSE_ISOLATION */
-      (() => {
-        const path = window.location.pathname.replace(/\/+$/, "") || "/";
-        const authOrPrivate = /^(\/login|\/register|\/forgot-password|\/reset-password|\/app)(\/|$)/.test(path);
-        if (authOrPrivate) {
-          window.__EDER_ADSENSE_SKIPPED_FOR_AUTH__ = true;
-          return;
-        }
-        const script = document.createElement("script");
-        script.async = true;
-        script.crossOrigin = "anonymous";
-        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7415512901536849";
-        document.head.appendChild(script);
-      })();
-    </script>
+    <!-- EDER: AdSense loader dormant until explicit approval activation release. -->
     
 <script src="/eder-auth-bootstrap.js?v=03f6h7"></script>
     <script type="module" src="/src/ads/bootstrap.jsx"></script>

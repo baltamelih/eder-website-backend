@@ -8,6 +8,7 @@ import { MetaTags } from '../components/MetaTags';
 import { BlogPostSkeleton } from '../components/SkeletonLoader';
 
 import AdSlot from "../components/AdSlot";
+import { ADSENSE_APPROVAL_UNLOCKED } from "../config/adSlots";
 import { sanity } from "../lib/sanity";
 
 function safeDate(d) {
@@ -32,7 +33,9 @@ export default function BlogPost() {
   const [loading, setLoading] = useState(true);
 
   // AdSense env ile kontrol (opsiyonel)
-  const ADS_ENABLED = Boolean(import.meta.env.VITE_ADSENSE_CLIENT);
+  const ADS_ENABLED =
+    ADSENSE_APPROVAL_UNLOCKED &&
+    Boolean(import.meta.env.VITE_ADSENSE_CLIENT);
   const TOP_SLOT = import.meta.env.VITE_ADSENSE_SLOT_TOP;
   const INARTICLE_SLOT = import.meta.env.VITE_ADSENSE_SLOT_INARTICLE;
   const BOTTOM_SLOT = import.meta.env.VITE_ADSENSE_SLOT_BOTTOM;

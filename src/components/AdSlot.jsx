@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
+import { ADSENSE_APPROVAL_UNLOCKED } from "../config/adSlots";
 
 const ADS_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT;
 
@@ -10,6 +11,7 @@ export default function AdSlot({ enabled = true, slot, style }) {
 
   // ✅ Hook order safe: return-null check AFTER hooks are declared
   const canRender = useMemo(() => {
+    if (!ADSENSE_APPROVAL_UNLOCKED) return false;
     if (adsDisabled) return false;
     if (!enabled) return false;
     if (!ADS_CLIENT) return false;
