@@ -21,6 +21,7 @@ import {
 import AdSenseRuntime from "../components/ads/AdSenseRuntime";
 import AdSlot from "../components/ads/AdSlot";
 import PriceHistorySeo from "../components/seo/PriceHistorySeo";
+import PriceIntelligencePanel from "../components/price-history/PriceIntelligencePanel";
 import { trackEvent } from "../services/analytics";
 import priceHistoryApi from "../services/priceHistoryApi";
 import "./price-history.css";
@@ -1344,6 +1345,15 @@ export default function PriceHistory() {
                     : "Yeterince ilan yok"}
                 </span>
               </div>
+
+              <PriceIntelligencePanel
+                brand={brand}
+                model={model}
+                year={parsedYear}
+                version={version}
+                vehicleTitle={vehicleTitle}
+                chartEligible={Boolean(summary.chart_eligible)}
+              />
 
               <div className="ph-metric-grid">
                 <MetricCard

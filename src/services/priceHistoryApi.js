@@ -39,6 +39,27 @@ export const priceHistoryApi = {
     );
   },
 
+  priceCheck(brand, model, year, version, price) {
+    const encodedPath = [
+      brand,
+      model,
+      year,
+      version,
+    ]
+      .map((part) => encodeURIComponent(String(part)))
+      .join("/");
+
+    return apiFetch(
+      `/api/price-history/price-check/${encodedPath}${query({ price })}`,
+    );
+  },
+
+  compare(brand, model, year) {
+    return apiFetch(
+      `/api/price-history/compare${query({ brand, model, year })}`,
+    );
+  },
+
   detail(
     brand,
     model,
