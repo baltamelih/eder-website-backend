@@ -2,7 +2,8 @@ name: Blog Automation (Generate -> Sync to Sanity)
 
 on:
   schedule:
-    - cron: "0 6 * * *"   # 09:00 TR (UTC+3)
+    - cron: "0 6 * * *"    # 09:00 TR (UTC+3)
+    - cron: "0 18 * * *"   # 21:00 TR (UTC+3)
   workflow_dispatch:
 
 permissions:
