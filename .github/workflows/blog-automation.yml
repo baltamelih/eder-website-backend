@@ -5,6 +5,11 @@ on:
     - cron: "0 6 * * *"    # 09:00 TR (UTC+3)
     - cron: "0 18 * * *"   # 21:00 TR (UTC+3)
   workflow_dispatch:
+    inputs:
+      retry_slugs:
+        description: "Comma-separated slugs to retry regardless of Sheet status"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -40,6 +45,7 @@ jobs:
           GSERVICE_ACCOUNT_JSON: ${{ secrets.GSERVICE_ACCOUNT_JSON }}
           SHEET_WORKSHEET: "Sheet1"
           MAX_POSTS_PER_RUN: "3"
+          RETRY_SLUGS: ${{ inputs.retry_slugs }}
         run: |
           python content_pipeline/generate_posts.py
 

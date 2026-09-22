@@ -18,6 +18,7 @@ from slugify import slugify
 SHEET_CSV_URL = os.environ.get("SHEET_CSV_URL", "").strip()
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "").strip()
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "").strip() or "gpt-4o-mini"
+RETRY_SLUGS_RAW = os.environ.get("RETRY_SLUGS", "").strip()
 
 SHEET_ID = os.environ.get("SHEET_ID", "").strip()
 SHEET_WORKSHEET = os.environ.get("SHEET_WORKSHEET", "Sheet1").strip()
@@ -202,7 +203,54 @@ def fetch_rows():
 # ----------------------------
 # Selection
 # ----------------------------
-def pick_ready(rows, limit=3):
+def parse_retry_slugs(raw: str):
+    seen = set()
+    ordered = []
+    for item in (raw or "").split(","):
+        slug = item.strip()
+        if not slug or slug in seen:
+            continue
+        seen.add(slug)
+        ordered.append(slug)
+    return ordered
+
+
+def row_slug(row):
+    title = (row.get("title") or "").strip()
+    return (
+        (row.get("slug") or "").strip()
+        or (slugify(title, lowercase=True) if title else "")
+    )
+
+
+def pick_ready(rows, limit=3, retry_slugs=None):
+    retry_slugs = list(retry_slugs or [])
+
+    # Manual recovery mode is deliberately exact: only the slugs explicitly
+    # supplied in workflow_dispatch are retried, regardless of current status.
+    if retry_slugs:
+        by_slug = {}
+        for row in rows:
+            slug = row_slug(row)
+            if slug and slug not in by_slug:
+                by_slug[slug] = row
+
+        picked = []
+        for slug in retry_slugs:
+            row = by_slug.get(slug)
+            if row is None:
+                print(f"[warn] Retry slug not found in sheet: {slug}")
+                continue
+            picked.append(row)
+            if len(picked) >= limit:
+                break
+
+        print(
+            "Manual retry selection:",
+            ",".join(row_slug(row) for row in picked),
+        )
+        return picked
+
     picked = []
     seen_slugs = set()
 
@@ -214,10 +262,7 @@ def pick_ready(rows, limit=3):
         if not title:
             continue
 
-        slug = (
-            (row.get("slug") or "").strip()
-            or slugify(title, lowercase=True)
-        )
+        slug = row_slug(row)
 
         if not slug or slug in seen_slugs:
             continue
@@ -428,6 +473,120 @@ def explicit_price_leaks(text: str):
 # ----------------------------
 # Quality gates
 # ----------------------------
+_EDER_SECTION = """## EDER ile Değerleme
+
+Araç hakkında topladığın bilgileri tek bir ayrıntıya bakarak değil, kilometre, bakım geçmişi, ekspertiz bulguları, kullanım biçimi ve benzer araçların genel piyasa görünümüyle birlikte değerlendirmek daha sağlıklıdır. EDER üzerinde app/valuation bölümünden araç bilgilerini kullanarak güncel bir değerleme oluşturabilir, /pricing sayfasından da sunulan özelliklerin kapsamını inceleyebilirsin. EDER sonucu kararın tek dayanağı olarak değil, ilan incelemesi, ekspertiz ve bakım kayıtlarını tamamlayan bir referans olarak kullanmak en doğru yaklaşımdır.
+"""
+
+_FAQ_SECTION = """## Sık Sorulan Sorular
+
+### Tek bir özellik aracın değerini belirler mi?
+Hayır. İkinci el araç değerlendirmesinde kilometre, yaş, bakım geçmişi, donanım, mekanik durum, kaporta geçmişi ve piyasa koşulları birlikte ele alınmalıdır.
+
+### Ekspertiz raporu neden önemlidir?
+Ekspertiz raporu, ilandaki anlatımla aracın fiziksel ve mekanik durumunu karşılaştırmaya yardımcı olur. Özellikle bakım kayıtları ve geçmiş işlemlerle birlikte okunduğunda daha anlamlıdır.
+
+### Değerleme sonucunu nasıl kullanmalıyım?
+Değerleme sonucunu pazarlık veya satın alma kararında tek başına kesin sonuç olarak değil, ekspertiz, servis kayıtları ve benzer araç incelemeleriyle birlikte bir referans olarak kullanmak daha uygundur.
+"""
+
+_DISCLAIMER_SECTION = """## Önemli Not
+
+İkinci el araç fiyatları piyasa koşulları, aracın gerçek durumu, kilometresi, bakım geçmişi, donanımı ve bölgesel arz-talep gibi etkenlerle zaman içinde değişebilir. Bu nedenle içerikteki değerlendirmeler genel bilgilendirme amacı taşır; güncel araç ve piyasa verileri ayrıca kontrol edilmelidir.
+"""
+
+_DEPTH_SECTIONS = [
+    """## Değerlendirmeyi Güçlendiren Kontroller
+
+Bir aracı değerlendirirken ilandaki tek bir bilgiye odaklanmak yerine verilerin birbiriyle tutarlı olup olmadığına bakmak faydalıdır. Kilometre bilgisini bakım kayıtlarıyla, kaporta durumunu ekspertiz raporuyla, kullanım izlerini ise aracın yaşı ve kullanım amacıyla birlikte değerlendirmek daha gerçekçi bir tablo verir. Test sürüşünde motorun çalışma karakteri, direksiyon tepkileri, fren hissi, süspansiyon sesleri ve gösterge panelindeki uyarılar not edilebilir. Böylece satın alma kararı yalnızca ilan açıklamasına değil, birden fazla bağımsız gözleme dayanır.
+""",
+    """## Bakım ve Kullanım Geçmişini Birlikte Okuyun
+
+Düzenli bakım kayıtları aracın geçmişi hakkında önemli bağlam sağlar. Servis faturaları, periyodik bakım tarihleri, değişen sarf parçaları ve önceki ekspertiz kayıtları mümkünse kronolojik olarak karşılaştırılmalıdır. Uzun süreli kullanımda ortaya çıkabilecek masrafları değerlendirirken sadece mevcut görünümü değil, yaklaşan bakım ihtiyaçlarını da hesaba katmak gerekir. Aynı modelde iki araç benzer görünse bile kullanım biçimi ve bakım disiplini farklı olduğunda genel kondisyonları da farklı olabilir.
+""",
+    """## İlan Bilgilerini Yerinde Doğrulayın
+
+İlanda belirtilen donanım, kilometre, hasar geçmişi ve bakım bilgileri aracı görmeden önce bir ön çerçeve sunar. Aracı incelerken bu bilgilerin mümkün olduğunca belge, servis kaydı ve fiziksel kontrol ile doğrulanması önemlidir. Şasi ve gövde birleşim noktaları, lastiklerin eşit aşınması, iç mekândaki kullanım izleri ve elektronik ekipmanların çalışması gibi detaylar genel kondisyon hakkında ek ipuçları verir. Belirsiz kalan noktalar için satıcıdan açıklama istemek ve gerekirse bağımsız uzman görüşü almak daha güvenli bir süreç oluşturur.
+""",
+    """## Karar Verirken Bütün Resme Bakın
+
+İkinci el araç seçiminde amaç yalnızca kusursuz görünen aracı bulmak değildir; bilinen durumu, bakım geçmişi ve kullanım ihtiyacınla uyumu anlaşılır olan aracı seçmektir. Küçük kozmetik kusurlar ile mekanik veya yapısal riskleri aynı ağırlıkta değerlendirmemek gerekir. Aracın günlük kullanım, uzun yol, şehir içi veya aile kullanımı gibi planlanan senaryoya uygunluğu da kararın parçasıdır. Toplanan bilgileri birlikte değerlendirmek, tek bir olumlu ya da olumsuz ayrıntının kararı gereğinden fazla etkilemesini önler.
+""",
+]
+
+
+def _has_faq(body: str) -> bool:
+    match = re.search(
+        r"(?im)^##\s+.*s[ıi]k\s+sorulan\s+sorular.*$",
+        body or "",
+    )
+    if not match:
+        return False
+    return (body or "")[match.start():].count("?") >= 3
+
+
+def _has_eder_section(body: str) -> bool:
+    return bool(
+        re.search(
+            r"(?im)^##\s+.*EDER.*Değerleme.*$",
+            body or "",
+        )
+    )
+
+
+def _has_price_disclaimer(body: str) -> bool:
+    lowered = (body or "").lower()
+    tail = lowered[-3500:]
+    return (
+        "fiyat" in tail
+        and (
+            "değiş" in tail
+            or "güncel" in tail
+            or "piyasa koşul" in tail
+        )
+    )
+
+
+def ensure_required_sections(body: str) -> str:
+    out = (body or "").strip()
+
+    if not _has_eder_section(out):
+        out += "\n\n" + _EDER_SECTION.strip()
+
+    lowered = out.lower()
+    if "app/valuation" not in lowered or "/pricing" not in lowered:
+        out += (
+            "\n\nEDER bağlantıları: araç değerleme için app/valuation, "
+            "özellik kapsamını incelemek için /pricing."
+        )
+
+    if not _has_faq(out):
+        out += "\n\n" + _FAQ_SECTION.strip()
+
+    if not _has_price_disclaimer(out):
+        out += "\n\n" + _DISCLAIMER_SECTION.strip()
+
+    return sanitize_prices(out).strip()
+
+
+def append_depth_until_minimum(body: str) -> str:
+    out = (body or "").strip()
+    existing = out.lower()
+
+    for section in _DEPTH_SECTIONS:
+        if word_count(out) >= MIN_WORDS:
+            break
+
+        heading = section.splitlines()[0].strip().lower()
+        if heading in existing:
+            continue
+
+        out += "\n\n" + section.strip()
+        existing = out.lower()
+
+    return out
+
+
 def validate_quality(body: str):
     issues = []
     wc = word_count(body)
@@ -446,24 +605,10 @@ def validate_quality(body: str):
     if h2_count < 4:
         issues.append(f"h2_count={h2_count} < 4")
 
-    faq_match = re.search(
-        r"(?im)^##\s+.*s[ıi]k\s+sorulan\s+sorular.*$",
-        body or "",
-    )
-    if not faq_match:
-        issues.append("faq_section_missing")
-    else:
-        faq_text = (body or "")[faq_match.start():]
-        faq_question_count = faq_text.count("?")
-        if faq_question_count < 3:
-            issues.append(
-                f"faq_question_count={faq_question_count} < 3"
-            )
+    if not _has_faq(body):
+        issues.append("faq_section_missing_or_incomplete")
 
-    if not re.search(
-        r"(?im)^##\s+.*EDER.*Değerleme.*$",
-        body or "",
-    ):
+    if not _has_eder_section(body):
         issues.append("eder_degerleme_section_missing")
 
     lowered = (body or "").lower()
@@ -472,15 +617,7 @@ def validate_quality(body: str):
     if "/pricing" not in lowered:
         issues.append("/pricing_missing")
 
-    tail = lowered[-3000:]
-    if not (
-        "fiyat" in tail
-        and (
-            "değiş" in tail
-            or "güncel" in tail
-            or "piyasa koşul" in tail
-        )
-    ):
+    if not _has_price_disclaimer(body):
         issues.append("price_disclaimer_missing")
 
     leaks = explicit_price_leaks(body)
@@ -496,22 +633,12 @@ def call_model(client: OpenAI, user_prompt: str, temperature: float):
     resp = client.chat.completions.create(
         model=OPENAI_MODEL,
         messages=[
-            {
-                "role": "system",
-                "content": SYSTEM,
-            },
-            {
-                "role": "user",
-                "content": user_prompt,
-            },
+            {"role": "system", "content": SYSTEM},
+            {"role": "user", "content": user_prompt},
         ],
         temperature=temperature,
     )
-
-    return (
-        resp.choices[0].message.content
-        or ""
-    ).strip()
+    return (resp.choices[0].message.content or "").strip()
 
 
 def expand_to_range(
@@ -519,36 +646,58 @@ def expand_to_range(
     title: str,
     kw: str,
     draft_md: str,
-    tries: int = 2,
+    tries: int = 3,
 ) -> str:
-    out = draft_md
+    out = ensure_required_sections(draft_md)
+    best = out
+    best_wc = word_count(out)
 
     for _ in range(max(1, tries)):
-        if word_count(out) >= MIN_WORDS:
-            return out
+        if best_wc >= 1080:
+            break
 
         prompt = f"""
-Aşağıdaki yazıyı 1000-1500 kelime aralığına çıkar.
-- Yapıyı koru ve bilgiyi derinleştir.
-- En az 4 H2, 3 soruluk FAQ, EDER ile Değerleme ve fiyat değişkenliği notu bulunsun.
-- app/valuation ve /pricing düz metin olarak geçsin.
-- Kesinlikle fiyat veya TL/₺ tutarı ekleme.
-- Yıl, kilometre, motor hacmi gibi teknik sayıları bozma.
-- Başlık: {title}
-- Ana anahtar kelime: {kw}
+Aşağıdaki mevcut Markdown yazıyı tamamen yeniden yazma.
+Mevcut başlıkları, paragrafları ve özellikle şu literal metinleri KORU:
+- ## EDER ile Değerleme
+- app/valuation
+- /pricing
+- ## Sık Sorulan Sorular
+- ## Önemli Not
+
+Yalnızca konuya gerçekten değer katacak yeni açıklamalar ekleyerek toplam metni
+1100-1300 kelime aralığına yaklaştır. Fiyat veya TL/₺ tutarı ekleme.
+Yıl, kilometre ve motor hacmi gibi teknik sayıları bozma.
+
+Başlık: {title}
+Ana anahtar kelime: {kw}
 
 Mevcut taslak:
-{out}
+{best}
 """
         candidate = call_model(
             client,
             prompt,
-            temperature=0.55,
+            temperature=0.35,
         )
-        if candidate:
-            out = sanitize_prices(candidate)
 
-    return out
+        if not candidate:
+            continue
+
+        candidate = ensure_required_sections(
+            sanitize_prices(candidate)
+        )
+        candidate_wc = word_count(candidate)
+
+        # Never accept a repair that makes an under-length draft even shorter.
+        if candidate_wc > best_wc:
+            best = candidate
+            best_wc = candidate_wc
+
+    if best_wc < MIN_WORDS:
+        best = append_depth_until_minimum(best)
+
+    return ensure_required_sections(best)
 
 
 def trim_to_range(
@@ -557,29 +706,40 @@ def trim_to_range(
     kw: str,
     draft_md: str,
 ) -> str:
-    if word_count(draft_md) <= MAX_WORDS:
-        return draft_md
+    out = ensure_required_sections(draft_md)
+    if word_count(out) <= MAX_WORDS:
+        return out
 
     prompt = f"""
-Aşağıdaki yazıyı 1000-1500 kelime aralığına indir.
-- En az 4 H2, 3 soruluk FAQ, EDER ile Değerleme ve fiyat değişkenliği notunu koru.
-- app/valuation ve /pricing düz metin olarak kalsın.
-- Kesinlikle fiyat veya TL/₺ tutarı ekleme.
-- Yıl, kilometre, motor hacmi gibi teknik sayıları bozma.
-- Başlık: {title}
-- Ana anahtar kelime: {kw}
+Aşağıdaki Markdown yazıyı 1150-1300 kelime aralığına indir.
+Tekrarlanan veya gereksiz cümleleri kısalt; faydalı bilgiyi koru.
+
+Şunları AYNEN koru:
+- ## EDER ile Değerleme
+- app/valuation
+- /pricing
+- ## Sık Sorulan Sorular ve en az 3 soru
+- ## Önemli Not
+
+Fiyat veya TL/₺ tutarı ekleme. Yıl, kilometre ve motor hacmi gibi teknik sayıları bozma.
+
+Başlık: {title}
+Ana anahtar kelime: {kw}
 
 Mevcut taslak:
-{draft_md}
+{out}
 """
     candidate = call_model(
         client,
         prompt,
-        temperature=0.35,
+        temperature=0.25,
     )
-    return sanitize_prices(
-        candidate or draft_md
+
+    candidate = ensure_required_sections(
+        sanitize_prices(candidate or out)
     )
+
+    return candidate
 
 
 def repair_quality(
@@ -589,43 +749,39 @@ def repair_quality(
     draft_md: str,
     issues,
 ) -> str:
-    issue_text = "\n".join(
-        f"- {item}"
-        for item in issues
-    )
+    # Deterministic structure repair first; model is only used to add/trim
+    # substantive depth. This prevents a repair pass from deleting mandatory
+    # EDER links/headings that were already present.
+    out = ensure_required_sections(draft_md)
 
-    prompt = f"""
-Aşağıdaki Türkçe EDER blog taslağı kalite kontrolünden geçemedi.
+    if word_count(out) < MIN_WORDS:
+        out = expand_to_range(
+            client,
+            title,
+            kw,
+            out,
+            tries=3,
+        )
 
-Sorunlar:
-{issue_text}
+    out = ensure_required_sections(out)
 
-Taslağı TEK SEFERDE düzelt:
-- 1000-1500 kelime.
-- En az 4 adet ## H2.
-- ## Sık Sorulan Sorular bölümü ve en az 3 soru-cevap.
-- ## EDER ile Değerleme bölümü.
-- app/valuation ve /pricing düz metin olarak geçsin.
-- Son bölümde fiyatların/piyasa koşullarının değişebileceğini açıkça belirt.
-- Kesinlikle gerçek fiyat, fiyat aralığı, TL/₺ tutarı yazma.
-- Yıl, kilometre ve motor hacmi gibi teknik sayıları koru.
-- Markdown dışında açıklama yazma.
+    if word_count(out) < MIN_WORDS:
+        out = append_depth_until_minimum(out)
 
-Başlık: {title}
-Ana anahtar kelime: {kw}
+    if word_count(out) > MAX_WORDS:
+        out = trim_to_range(
+            client,
+            title,
+            kw,
+            out,
+        )
 
-Taslak:
-{draft_md}
-"""
+    out = ensure_required_sections(out)
 
-    candidate = call_model(
-        client,
-        prompt,
-        temperature=0.35,
-    )
-    return sanitize_prices(
-        candidate or draft_md
-    )
+    if word_count(out) < MIN_WORDS:
+        out = append_depth_until_minimum(out)
+
+    return sanitize_prices(out).strip()
 
 
 # ----------------------------
@@ -748,9 +904,11 @@ def main():
     )
 
     rows = fetch_rows()
+    retry_slugs = parse_retry_slugs(RETRY_SLUGS_RAW)
     selected = pick_ready(
         rows,
         limit=max_posts,
+        retry_slugs=retry_slugs,
     )
 
     manifest = {
@@ -766,7 +924,10 @@ def main():
 
     if not selected:
         write_manifest(manifest)
-        print("No READY rows found.")
+        if retry_slugs:
+            print("No matching retry slugs found.")
+        else:
+            print("No READY rows found.")
         return
 
     client = OpenAI(
@@ -836,7 +997,9 @@ def main():
                     "OpenAI returned empty content"
                 )
 
-            body = sanitize_prices(body)
+            body = ensure_required_sections(
+                sanitize_prices(body)
+            )
 
             if word_count(body) < MIN_WORDS:
                 body = expand_to_range(
@@ -844,8 +1007,11 @@ def main():
                     title,
                     kw,
                     body,
-                    tries=2,
+                    tries=3,
                 )
+
+            if word_count(body) < MIN_WORDS:
+                body = append_depth_until_minimum(body)
 
             if word_count(body) > MAX_WORDS:
                 body = trim_to_range(
@@ -854,6 +1020,11 @@ def main():
                     kw,
                     body,
                 )
+
+            body = ensure_required_sections(body)
+
+            if word_count(body) < MIN_WORDS:
+                body = append_depth_until_minimum(body)
 
             issues = validate_quality(body)
 
