@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Layout } from "antd";
 import { Outlet, useLocation } from "react-router-dom";
 import AnalyticsRuntime from "../components/analytics/AnalyticsRuntime";
+import { isPriceHistoryModelYearSeoEligiblePath } from "../generated/priceHistoryModelYearSeo";
 import TopBar from "../components/TopBar";
 import FooterBar from "../components/FooterBar";
 import GlobalAdBar from "../components/GlobalAdBar";
@@ -177,7 +178,9 @@ function RouteMetadata() {
             canonical: cleanPath,
             // Exact detail pages stay indexable while async eligibility resolves.
             // PriceHistorySeo downgrades resolved low-data/error pages to noindex.
-            index: isExactPriceHistoryDetail,
+            index:
+              isExactPriceHistoryDetail ||
+              isPriceHistoryModelYearSeoEligiblePath(cleanPath),
             follow: true,
           }
         : isBlogPost

@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from "react";
 import { isPriceHistoryEligiblePath } from "../../generated/priceHistoryEligibility";
+import {
+  getPriceHistoryModelYearSeo,
+  isPriceHistoryModelYearSeoEligiblePath,
+} from "../../generated/priceHistoryModelYearSeo";
 
 const SITE_ORIGIN = "https://ederapp.com";
 const SCHEMA_ID = "eder-price-history-breadcrumb-schema";
@@ -83,14 +87,17 @@ export default function PriceHistorySeo({
       .join("/");
 
     const absolute = `${SITE_ORIGIN}${cleanPath}`;
+    const modelYearSeo = getPriceHistoryModelYearSeo(cleanPath);
 
     const resolvedBrand =
       detail?.vehicle?.brand_name ||
+      modelYearSeo?.brandName ||
       brandLabel ||
       titleCaseSlug(brand);
 
     const resolvedModel =
       detail?.vehicle?.model_name ||
+      modelYearSeo?.modelName ||
       modelLabel ||
       titleCaseSlug(model);
 
@@ -108,21 +115,20 @@ export default function PriceHistorySeo({
       .filter(Boolean)
       .join(" ");
 
-    const exactDetail = Boolean(
-      brand && model && year && version,
-    );
-
-    const hubPage = Boolean(
-      !brand && !model && !year && !version,
-    );
+    const exactDetail = Boolean(brand && model && year && version);
+    const modelYearPage = Boolean(brand && model && year && !version);
+    const hubPage = Boolean(!brand && !model && !year && !version);
 
     const eligible = Boolean(
-      exactDetail &&
-      isPriceHistoryEligiblePath(cleanPath),
+      exactDetail && isPriceHistoryEligiblePath(cleanPath),
+    );
+
+    const modelYearEligible = Boolean(
+      modelYearPage && isPriceHistoryModelYearSeoEligiblePath(cleanPath),
     );
 
     const indexable = Boolean(
-      hubPage || eligible,
+      hubPage || eligible || modelYearEligible,
     );
 
     const listingCount = Number(
@@ -131,22 +137,23 @@ export default function PriceHistorySeo({
 
     const title = exactDetail
       ? `${vehicleTitle} Fiyat Geçmişi ve Piyasa Grafiği | EDER`
-      : vehicleTitle
-        ? `${vehicleTitle} Fiyat Geçmişi | EDER`
-        : "Araç Fiyat Geçmişi | EDER";
+      : modelYearEligible
+        ? `${year} ${resolvedBrand} ${resolvedModel} Paketleri ve İkinci El Fiyatları | EDER`
+        : vehicleTitle
+          ? `${vehicleTitle} Fiyat Geçmişi | EDER`
+          : "Araç Fiyat Geçmişi | EDER";
 
     const description =
       eligible && listingCount > 0
         ? `${vehicleTitle} ikinci el fiyat geçmişini, haftalık piyasa seviyesini ve fiyat bandını EDER'de inceleyin. ${listingCount} ilan verisinden türetilen görünüm.`
-        : vehicleTitle
-          ? `${vehicleTitle} için ikinci el araç fiyat geçmişi, paket seçenekleri ve piyasa görünümünü EDER'de inceleyin.`
-          : "Marka, model, yıl ve paket bazında ikinci el araç ilan fiyat geçmişini EDER ile inceleyin.";
+        : modelYearEligible
+          ? `${year} ${resolvedBrand} ${resolvedModel} için ${modelYearSeo.eligibleVersionCount} veri yeterliliği olan paketi, toplam ${modelYearSeo.totalListingCount} ilan kaydını ve paket bazlı fiyat geçmişlerini EDER'de karşılaştırın.`
+          : vehicleTitle
+            ? `${vehicleTitle} için ikinci el araç fiyat geçmişi, paket seçenekleri ve piyasa görünümünü EDER'de inceleyin.`
+            : "Marka, model, yıl ve paket bazında ikinci el araç ilan fiyat geçmişini EDER ile inceleyin.";
 
     const breadcrumbItems = [
-      {
-        name: "Araç fiyat geçmişi",
-        path: "/arac-fiyat-gecmisi",
-      },
+      { name: "Araç fiyat geçmişi", path: "/arac-fiyat-gecmisi" },
     ];
 
     if (brand) {
@@ -182,8 +189,11 @@ export default function PriceHistorySeo({
       title,
       description,
       eligible,
+      modelYearEligible,
+      modelYearSeo,
       hubPage,
       exactDetail,
+      modelYearPage,
       indexable,
       breadcrumbItems,
     };
@@ -217,8 +227,7 @@ export default function PriceHistorySeo({
     upsertMeta("twitter:description", state.description);
 
     if (state.breadcrumbItems.length > 1) {
-      setJsonLd({
-        "@context": "https://schema.org",
+      const breadcrumbSchema = {
         "@type": "BreadcrumbList",
         itemListElement: state.breadcrumbItems.map(
           (item, index) => ({
@@ -228,7 +237,40 @@ export default function PriceHistorySeo({
             item: `${SITE_ORIGIN}${item.path}`,
           }),
         ),
-      });
+      };
+
+      if (
+        state.modelYearEligible &&
+        state.modelYearSeo?.versions?.length
+      ) {
+        setJsonLd({
+          "@context": "https://schema.org",
+          "@graph": [
+            breadcrumbSchema,
+            {
+              "@type": "ItemList",
+              name:
+                `${state.modelYearSeo.year} ` +
+                `${state.modelYearSeo.brandName} ` +
+                `${state.modelYearSeo.modelName} paketleri`,
+              numberOfItems: state.modelYearSeo.versions.length,
+              itemListElement: state.modelYearSeo.versions.map(
+                (item, index) => ({
+                  "@type": "ListItem",
+                  position: index + 1,
+                  name: item.versionLabel,
+                  url: `${SITE_ORIGIN}${item.pagePath}`,
+                }),
+              ),
+            },
+          ],
+        });
+      } else {
+        setJsonLd({
+          "@context": "https://schema.org",
+          ...breadcrumbSchema,
+        });
+      }
     } else {
       removeJsonLd();
     }

@@ -22,6 +22,7 @@ import AdSenseRuntime from "../components/ads/AdSenseRuntime";
 import AdSlot from "../components/ads/AdSlot";
 import PriceHistorySeo from "../components/seo/PriceHistorySeo";
 import PriceIntelligencePanel from "../components/price-history/PriceIntelligencePanel";
+import ModelYearSeoComparison from "../components/price-history/ModelYearSeoComparison";
 import { trackEvent } from "../services/analytics";
 import priceHistoryApi from "../services/priceHistoryApi";
 import "./price-history.css";
@@ -1264,6 +1265,14 @@ export default function PriceHistory() {
             ))}
           </div>
         </section>
+      ) : null}
+
+      {brand && model && year && !version ? (
+        <ModelYearSeoComparison
+          brand={brand}
+          model={model}
+          year={parsedYear || year}
+        />
       ) : null}
 
       {brand && model && year && !version ? (

@@ -1495,20 +1495,12 @@ const ELIGIBLE_PATHS = new Set(PRICE_HISTORY_ELIGIBLE_PATHS);
 
 export function normalizePriceHistoryPath(pathname) {
   const value = String(pathname || "").trim();
-
   if (!value) return "/";
-
   const withoutQuery = value.split("?")[0].split("#")[0];
-  const normalized =
-    withoutQuery.length > 1
-      ? withoutQuery.replace(/\/+$/, "")
-      : withoutQuery;
-
+  const normalized = withoutQuery.length > 1 ? withoutQuery.replace(/\/+$/, "") : withoutQuery;
   return normalized || "/";
 }
 
 export function isPriceHistoryEligiblePath(pathname) {
-  return ELIGIBLE_PATHS.has(
-    normalizePriceHistoryPath(pathname),
-  );
+  return ELIGIBLE_PATHS.has(normalizePriceHistoryPath(pathname));
 }
