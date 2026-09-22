@@ -1,4 +1,4 @@
-name: Blog Automation (Generate -> Sync to Sanity -> Tweet)
+name: Blog Automation (Generate -> Sync to Sanity)
 
 on:
   schedule:
@@ -71,15 +71,13 @@ jobs:
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
         run: node src/lib/sync_md_to_sanity.js
 
-      - name: Finalize published posts + tweet + mark DONE
+      - name: Finalize published posts + mark DONE (tweet disabled)
         if: always()
         env:
           SHEET_ID: ${{ secrets.SHEET_ID }}
           GSERVICE_ACCOUNT_JSON: ${{ secrets.GSERVICE_ACCOUNT_JSON }}
           SHEET_WORKSHEET: "Sheet1"
-          ENABLE_TWEET: "1"
-          TWEET_WEBHOOK_URL: ${{ secrets.TWEET_WEBHOOK_URL }}
-          TWEET_WEBHOOK_TOKEN: ${{ secrets.TWEET_WEBHOOK_TOKEN }}
+          ENABLE_TWEET: "0"
         run: |
           python content_pipeline/finalize_posts.py
 
