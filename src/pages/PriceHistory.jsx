@@ -22,6 +22,7 @@ import AdSenseRuntime from "../components/ads/AdSenseRuntime";
 import AdSlot from "../components/ads/AdSlot";
 import PriceHistorySeo from "../components/seo/PriceHistorySeo";
 import PriceIntelligencePanel from "../components/price-history/PriceIntelligencePanel";
+import LifecycleIntelligencePanel from "../components/price-history/LifecycleIntelligencePanel";
 import ModelYearSeoComparison from "../components/price-history/ModelYearSeoComparison";
 import { trackEvent } from "../services/analytics";
 import priceHistoryApi from "../services/priceHistoryApi";
@@ -1362,6 +1363,14 @@ export default function PriceHistory() {
                 version={version}
                 vehicleTitle={vehicleTitle}
                 chartEligible={Boolean(summary.chart_eligible)}
+              />
+
+              <LifecycleIntelligencePanel
+                brand={brand}
+                model={model}
+                year={parsedYear}
+                version={version}
+                vehicleTitle={vehicleTitle}
               />
 
               <div className="ph-metric-grid">
