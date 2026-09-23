@@ -9,7 +9,7 @@ function envString(value) {
 // Production safety lock.
 // Keep false until AdSense approval is explicitly confirmed and a dedicated
 // activation release intentionally changes this source-level gate.
-export const ADSENSE_APPROVAL_UNLOCKED = false;
+export const ADSENSE_APPROVAL_UNLOCKED = true;
 
 export const adRuntime = Object.freeze({
   enabled:
