@@ -6,6 +6,8 @@ import {
   Check,
   ChevronDown,
   Gauge,
+  History,
+  SearchCheck,
   ShieldCheck,
   Sparkles,
   TrendingUp,
@@ -369,6 +371,53 @@ export default function Home() {
             <p>
               Sonuçlar tahminidir; kondisyon ve piyasa koşulları nihai satış fiyatını değiştirebilir.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-price-check" aria-labelledby="home-price-check-title">
+        <div className="home-price-check__shell">
+          <div className="home-price-check__copy">
+            <span className="home-section-kicker">EDER FİYAT KONTROLÜ</span>
+            <h2 id="home-price-check-title">Bir ilan gördün mü? Bu araç bu kadar eder mi?</h2>
+            <p>
+              Marka, model, yıl ve paketi seç. İlan fiyatını gir. EDER sana
+              fiyatın piyasa seviyesine, tipik banda ve diğer paketlere göre
+              nerede durduğunu göstersin.
+            </p>
+
+            <div className="home-price-check__proof">
+              <span><SearchCheck size={16} aria-hidden />İlan fiyatını kontrol et</span>
+              <span><TrendingUp size={16} aria-hidden />Piyasa bandını gör</span>
+              <span><History size={16} aria-hidden />Fiyat geçmişini incele</span>
+            </div>
+
+            <Link className="home-price-check__cta" to="/arac-fiyat-gecmisi">
+              Fiyatı kontrol et
+              <ArrowRight size={18} aria-hidden />
+            </Link>
+          </div>
+
+          <div className="home-price-check__preview" aria-label="EDER fiyat kontrolü akışı">
+            <div className="home-price-check__preview-head">
+              <span>3 ADIMDA KARAR DESTEĞİ</span>
+              <strong>EDER</strong>
+            </div>
+            <div className="home-price-check__step">
+              <span>01</span>
+              <div><strong>Aracı seç</strong><small>Marka · model · yıl · paket</small></div>
+            </div>
+            <div className="home-price-check__step">
+              <span>02</span>
+              <div><strong>İlan fiyatını yaz</strong><small>Gördüğün ilandaki fiyat</small></div>
+            </div>
+            <div className="home-price-check__step">
+              <span>03</span>
+              <div><strong>Piyasadaki yerini gör</strong><small>Piyasa seviyesi · bant · paketler · hareket</small></div>
+            </div>
+            <div className="home-price-check__preview-foot">
+              Fiyat geçmişi + paket karşılaştırması + gerçek ilan gözlemi
+            </div>
           </div>
         </div>
       </section>

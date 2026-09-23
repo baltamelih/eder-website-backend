@@ -98,6 +98,37 @@ function positionCopy(position) {
   );
 }
 
+function verdictDetail(position, difference) {
+  const number = Number(difference);
+  const pct = Number.isFinite(number)
+    ? Math.abs(number).toLocaleString("tr-TR", { maximumFractionDigits: 1 })
+    : null;
+
+  if (position === "notably_below_market") {
+    return pct
+      ? `İlan fiyatı piyasa medyanının %${pct} altında. Fiyat dikkat çekici; kondisyon, kilometre ve geçmiş bilgilerini doğrulamadan yalnızca fiyata göre karar verme.`
+      : "Fiyat dikkat çekici biçimde piyasanın altında. Kondisyon ve araç geçmişini ayrıca doğrula.";
+  }
+
+  if (position === "below_market") {
+    return pct
+      ? `İlan fiyatı piyasa medyanının %${pct} altında. Tipik fiyat bandını ve aracın kondisyonunu birlikte kontrol et.`
+      : "İlan fiyatı piyasa seviyesinin altında. Tipik fiyat bandı ve kondisyonla birlikte değerlendir.";
+  }
+
+  if (position === "above_market") {
+    return pct
+      ? `İlan fiyatı piyasa medyanının %${pct} üzerinde. Bu farkın kilometre, kondisyon veya donanımla açıklanıp açıklanmadığını kontrol et.`
+      : "İlan fiyatı piyasa seviyesinin üzerinde. Farkın araç özellikleriyle açıklanıp açıklanmadığını kontrol et.";
+  }
+
+  if (position === "market_range") {
+    return "İlan fiyatı EDER'in tipik piyasa aralığında. Son kararda kilometre, kondisyon, hasar geçmişi ve donanımı birlikte değerlendir.";
+  }
+
+  return "İlan fiyatını piyasa seviyesi, tipik fiyat bandı ve araç kondisyonuyla birlikte değerlendir.";
+}
+
 function normalizePriceInput(value) {
   return String(value || "").replace(/[^\d]/g, "");
 }
@@ -222,10 +253,11 @@ export default function PriceIntelligencePanel({
       <div className="pi-heading">
         <div>
           <span className="pi-eyebrow">EDER Fiyat Kontrolü</span>
-          <h3>Bir ilan gördün mü? Fiyatının piyasadaki yerini gör.</h3>
+          <h3>Bu araç bu kadar eder mi?</h3>
           <p>
-            {vehicleTitle || "Seçtiğin araç"} için ilan fiyatını, EDER'in
-            haftalık piyasa seviyesi ve tipik fiyat bandıyla karşılaştır.
+            {vehicleTitle || "Seçtiğin araç"} için gördüğün ilan fiyatını yaz.
+            EDER fiyatı piyasa seviyesi, tipik fiyat bandı ve benzer paketlerle
+            birlikte konumlandırsın.
           </p>
         </div>
         <div className="pi-heading-icon" aria-hidden>
@@ -284,19 +316,25 @@ export default function PriceIntelligencePanel({
               <span>{position.eyebrow}</span>
               <strong>{position.title}</strong>
               <p>
+                {verdictDetail(
+                  assessment?.position,
+                  assessment?.difference_vs_median_pct,
+                )}
+              </p>
+              <div className="pi-result-delta">
                 Piyasa medyanına göre{" "}
                 <b>{signedPercent(assessment?.difference_vs_median_pct)}</b>
-              </p>
+              </div>
             </div>
           </div>
 
           <div className="pi-result-grid">
             <div>
-              <span>İlan fiyatı</span>
+              <span>Girdiğin fiyat</span>
               <strong>{money(priceResult.asking_price)}</strong>
             </div>
             <div>
-              <span>Piyasa medyanı</span>
+              <span>EDER piyasa seviyesi</span>
               <strong>{money(reference?.median_price)}</strong>
             </div>
             <div>
@@ -306,7 +344,7 @@ export default function PriceIntelligencePanel({
               </strong>
             </div>
             <div>
-              <span>Veri güveni</span>
+              <span>Veri kapsamı</span>
               <strong>{confidenceLabel(assessment?.confidence)}</strong>
               <small>
                 {integer.format(Number(marketContext?.total_listing_count || 0))} ilan ·{" "}
@@ -327,7 +365,11 @@ export default function PriceIntelligencePanel({
         <div className="pi-compare-heading">
           <div>
             <span className="pi-eyebrow">Paket karşılaştırması</span>
-            <h3>Aynı model ve yıldaki diğer paketler</h3>
+            <h3>Aynı model ve yıldaki paketler nasıl ayrışıyor?</h3>
+            <p>
+              Seçtiğin paketi aynı model yılındaki diğer versiyonların medyan
+              ilan fiyatı ve son 4 haftalık hareketiyle yan yana gör.
+            </p>
           </div>
           <BarChart3 size={22} aria-hidden />
         </div>
