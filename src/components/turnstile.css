@@ -18,3 +18,49 @@
   padding: 12px 14px;
   text-align: center;
 }
+
+/* EDER_06D1_PRICE_CHECK_SECURITY */
+.eder-security-gate {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(17, 18, 20, 0.08);
+  border-radius: 16px;
+  background: #faf9f7;
+}
+
+.eder-security-gate__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #34373b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.eder-security-gate__heading svg {
+  color: #ff5a1f;
+}
+
+.eder-security-gate__copy,
+.eder-security-gate__error {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.eder-security-gate__copy {
+  color: #777b81;
+}
+
+.eder-security-gate__error {
+  color: #9a3412;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .eder-security-gate {
+    padding: 13px;
+  }
+}

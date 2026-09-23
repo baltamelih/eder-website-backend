@@ -6,10 +6,12 @@ import {
   BarChart3,
   CircleAlert,
   SearchCheck,
+  ShieldCheck,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
 
+import TurnstileWidget from "../TurnstileWidget";
 import priceHistoryApi from "../../services/priceHistoryApi";
 import { trackEvent } from "../../services/analytics";
 import "./price-intelligence.css";
@@ -151,6 +153,9 @@ export default function PriceIntelligencePanel({
   const [priceResult, setPriceResult] = useState(null);
   const [priceLoading, setPriceLoading] = useState(false);
   const [priceError, setPriceError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileError, setTurnstileError] = useState("");
+  const [turnstileNonce, setTurnstileNonce] = useState(0);
 
   const [comparison, setComparison] = useState(null);
   const [comparisonLoading, setComparisonLoading] = useState(false);
@@ -192,6 +197,9 @@ export default function PriceIntelligencePanel({
     setPriceInput("");
     setPriceResult(null);
     setPriceError("");
+    setTurnstileToken("");
+    setTurnstileError("");
+    setTurnstileNonce((value) => value + 1);
   }, [brand, model, year, version]);
 
   const rows = useMemo(
@@ -210,6 +218,12 @@ export default function PriceIntelligencePanel({
       return;
     }
 
+    if (!turnstileToken) {
+      setPriceError("Fiyat kontrolünden önce güvenli doğrulamayı tamamla.");
+      setPriceResult(null);
+      return;
+    }
+
     setPriceLoading(true);
     setPriceError("");
 
@@ -220,6 +234,7 @@ export default function PriceIntelligencePanel({
         year,
         version,
         amount,
+        turnstileToken,
       );
 
       setPriceResult(result || null);
@@ -239,6 +254,8 @@ export default function PriceIntelligencePanel({
       );
     } finally {
       setPriceLoading(false);
+      setTurnstileToken("");
+      setTurnstileNonce((value) => value + 1);
     }
   }
 
@@ -284,10 +301,44 @@ export default function PriceIntelligencePanel({
             </div>
           </label>
 
-          <button type="submit" disabled={priceLoading}>
-            {priceLoading ? "Kontrol ediliyor..." : "Fiyatı kontrol et"}
+          <button type="submit" disabled={priceLoading || !turnstileToken}>
+            {priceLoading
+              ? "Kontrol ediliyor..."
+              : turnstileToken
+                ? "Fiyatı kontrol et"
+                : "Güvenlik kontrolü bekleniyor"}
             <ArrowRight size={18} aria-hidden />
           </button>
+
+          <div className="eder-security-gate">
+            <div className="eder-security-gate__heading">
+              <ShieldCheck size={16} aria-hidden />
+              <span>Güvenli fiyat kontrolü</span>
+            </div>
+            <p className="eder-security-gate__copy">
+              Bu doğrulama otomatik sorguları ve toplu veri çekimini azaltmak
+              için kullanılır. Çoğu kullanıcı için kendiliğinden tamamlanır.
+            </p>
+            <TurnstileWidget
+              key={`price-check-${brand}-${model}-${year}-${version}-${turnstileNonce}`}
+              action="price_check"
+              onToken={(token) => {
+                setTurnstileToken(token || "");
+                if (token) setTurnstileError("");
+              }}
+              onUnavailable={(message) => {
+                setTurnstileToken("");
+                setTurnstileError(
+                  message || "Güvenli doğrulama şu anda kullanılamıyor.",
+                );
+              }}
+            />
+            {turnstileError ? (
+              <p className="eder-security-gate__error" role="status">
+                {turnstileError}
+              </p>
+            ) : null}
+          </div>
         </form>
       ) : (
         <div className="pi-data-note">

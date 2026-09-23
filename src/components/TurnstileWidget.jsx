@@ -36,7 +36,7 @@ function loadTurnstile() {
   });
 }
 
-export default function TurnstileWidget({ onToken, onUnavailable }) {
+export default function TurnstileWidget({ onToken, onUnavailable, action = "" }) {
   const hostRef = useRef(null);
   const widgetIdRef = useRef(null);
   const tokenCallbackRef = useRef(onToken);
@@ -77,6 +77,8 @@ export default function TurnstileWidget({ onToken, onUnavailable }) {
           sitekey: SITE_KEY,
           theme: "light",
           size: "flexible",
+          appearance: "interaction-only",
+          ...(action ? { action } : {}),
           callback: (token) => tokenCallbackRef.current?.(token || ""),
           "expired-callback": () => tokenCallbackRef.current?.(""),
           "timeout-callback": () => tokenCallbackRef.current?.(""),
@@ -110,7 +112,7 @@ export default function TurnstileWidget({ onToken, onUnavailable }) {
         widgetIdRef.current = null;
       }
     };
-  }, []);
+  }, [action]);
 
   if (!SITE_KEY) {
     return (
